@@ -18,15 +18,15 @@ const styles = StyleSheet.create({
   }
 });
 
-class Test extends React.Component{
+class Homepage extends React.Component{
   render(){
     return(
       <View style={styles.wrapper}>
-        <Text style={styles.view}>Testing Component</Text>
+        <Text style={styles.view}>Homepage Component</Text>
       </View>
     )
   }
 }
 
 
-module.exports = Test;
+module.exports = Homepage;

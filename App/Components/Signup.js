@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
 });
 
-class Main extends React.Component{
+class Signup extends React.Component{
   constructor(props) {
     super(props);
     this.state={
@@ -103,7 +103,7 @@ class Main extends React.Component{
 }
 
 
-module.exports = Main;
+module.exports = Signup;
 
 
 

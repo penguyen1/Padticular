@@ -1,7 +1,6 @@
-'use strict'
 var React = require('react-native');
-var Main = require('./App/Components/Main');
-var Test = require('./App/Components/Test');
+var Signup = require('./App/Components/Signup');
+var Homepage = require('./App/Components/Homepage');
 
 var {
   AppRegistry,
@@ -13,24 +12,23 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#111111'
-  },
-  wrapper: {
-    flex: 1,
   }
 });
 
 class Padticular extends React.Component{
+    
   render() {
+    var token = true;       // temporary replacement for user auth!
+
+    // determines if user token already exists or not
+    var goHere = token ? {title: 'Padticular App', component: Homepage}
+                       : {title: 'Padticular App', component: Signup}
     return (
       <NavigatorIOS
-        style={styles.wrapper}
-        initialRoute={{
-          title: 'Padticular App',
-          component: Test
-        }} />
+        style={styles.container}
+        initialRoute={goHere} />
     );
   }
 };
 
-module.exports = Padticular;
 AppRegistry.registerComponent('Padticular', () => Padticular);
