@@ -68,6 +68,34 @@ module.exports = StyleSheet.create({
   link: {
     color: 'blue',
     marginLeft: 7
+  },
+  header: {
+    marginTop: -50,
+    fontSize: 27,
+    textAlign: 'center',
+    backgroundColor: 'white'
+  },
+  favorites: {
+    padding: 20,
+    marginTop: 40,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    backgroundColor: '#1da362',
+    borderWidth: 2,
+    borderColor: 'black',
+    height: 330,
+    position: 'relative'
+  },
+  listTitle: {
+    backgroundColor: 'yellow',
+    fontSize: 15,
+    textAlign: 'center',
+    position: 'absolute',
+    top: 15,
+  },
+  listFavs: {
+    color: 'white',
+    fontSize: 30,
   }
 });
 

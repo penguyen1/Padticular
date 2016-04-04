@@ -31,7 +31,7 @@ class Login extends React.Component{
     // console.log('You entered: ', this.state)
     
     // redirect to homepage
-    this.props.navigator.replace({
+    this.props.navigator.push({
       title: 'Homepage',
       component: Homepage
     })
