@@ -1,6 +1,7 @@
 'use strict'
 var React = require('react-native');
 var Login = require('./Login');
+var styles = require('./Helpers/Styles')
 
 var {
   Text,
@@ -12,72 +13,6 @@ var {
   Navigator
 } = React;
 
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    padding: 30,
-    marginTop: 65,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    backgroundColor: '#48BBEC'
-  },
-  formContainer: {
-    flex: 1,
-    padding: 20,
-    marginTop: 10,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    backgroundColor: '#1da362'
-  },
-  title: {
-    marginTop: -50,
-    marginBottom: 20,
-    fontSize: 45,
-    textAlign: 'left',
-    color: '#fff'
-  },
-  textInput: {
-    height: 50,
-    padding: 2,
-    marginRight: 5,
-    marginTop: 15,
-    fontSize: 18,
-    borderWidth: 1,
-    borderColor: 'white',
-    borderRadius: 3,
-    color: 'black',
-    textAlign: 'center',
-    backgroundColor: 'white',
-    opacity: 0.8
-  },
-  buttonText: {
-    fontSize: 18,
-    color: '#111',
-    alignSelf: 'center'
-  },
-  button: {
-    height: 45,
-    width: 120,
-    flexDirection: 'row',
-    backgroundColor: '#00b8ff',
-    borderColor: '#233fc7',
-    borderWidth: 2,
-    borderRadius: 8,
-    marginBottom: 10,
-    marginTop: 30,
-    marginLeft: 75,
-    justifyContent: 'center'
-  },
-  footer: {
-    marginTop: 30,
-    marginBottom: -20,
-    marginLeft: 65,
-  },
-  link: {
-    color: 'blue',
-    marginLeft: 25
-  }
-});
 
 class Signup extends React.Component{
   constructor(props) {
@@ -112,6 +47,7 @@ class Signup extends React.Component{
 
     return (
       <View style={styles.mainContainer}>
+        {/*<View style={styles.nav} />*/}
         <View style={styles.formContainer}>
           <Text style={styles.title}> Signup </Text>
           <TextInput
