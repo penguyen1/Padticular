@@ -1,6 +1,5 @@
 var React = require('react-native');
 var Signup = require('./App/Components/Signup');
-var Login = require('./App/Components/Login');
 var Homepage = require('./App/Components/Homepage');
 
 var {
@@ -24,7 +23,7 @@ class Padticular extends React.Component{
 
     // determines if user token already exists or not
     var goHere = token ? {title: 'Padticular', component: Homepage}
-                       : {title: 'Welcome to Padticular!', component: Login}
+                       : {title: 'Welcome to Padticular!', component: Signup}
     return (
       <NavigatorIOS
         style={styles.container}

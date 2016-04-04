@@ -1,5 +1,6 @@
-'use strict'
 var React = require('react-native');
+var Signup = require('./Signup');
+var Homepage = require('./Homepage');
 
 var {
   Text,
@@ -7,7 +8,8 @@ var {
   TouchableHighlight,
   ActivityIndicatorIOS,
   StyleSheet,
-  View
+  View,
+  Navigator
 } = React;
 
 const styles = StyleSheet.create({
@@ -28,22 +30,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#1da362'
   },
   title: {
-    marginTop: 40,
-    fontSize: 25,
+    marginTop: -50,
+    marginBottom: 50,
+    fontSize: 45,
     textAlign: 'left',
     color: '#fff'
   },
   textInput: {
     height: 50,
-    padding: 4,
+    padding: 2,
     marginRight: 5,
-    marginTop: 40,
+    marginTop: 15,
     fontSize: 18,
     borderWidth: 1,
     borderColor: 'white',
-    borderRadius: 8,
-    color: 'white',
-    justifyContent: 'center',
+    borderRadius: 3,
+    color: 'black',
+    textAlign: 'center',
+    backgroundColor: 'white',
+    opacity: 0.8
   },
   buttonText: {
     fontSize: 18,
@@ -54,15 +59,24 @@ const styles = StyleSheet.create({
     height: 45,
     width: 120,
     flexDirection: 'row',
-    backgroundColor: 'white',
-    borderColor: 'white',
-    borderWidth: 1,
+    backgroundColor: '#00b8ff',
+    borderColor: '#233fc7',
+    borderWidth: 2,
     borderRadius: 8,
     marginBottom: 10,
-    marginTop: 40,
+    marginTop: 30,
     marginLeft: 75,
     justifyContent: 'center'
   },
+  footer: {
+    marginTop: 30,
+    marginBottom: 20,
+    marginLeft: 85,
+  },
+  link: {
+    color: 'blue',
+    marginLeft: 7
+  }
 });
 
 class Login extends React.Component{
@@ -76,13 +90,19 @@ class Login extends React.Component{
     }
   }
 
-  handleChange(event) {
-    this.setState({ username: event.nativeEvent.text })
+  handleSubmit() {
+    this.setState({ isLoading: false })
+    // authenticate user & get token
+    // redirect to homepage
+    console.log('You entered: ', this.state)
   }
 
-  handleSubmit() {
-    this.setState({ isLoading: true })
-    console.log('username: ', this.state.username)
+  handleNextRoute() {
+    this.props.navigator.replace({
+      title: 'Signup',
+      component: Signup
+    });
+    // this.props.navigator.replace('Signup')
   }
 
   render(){
@@ -97,13 +117,13 @@ class Login extends React.Component{
           <TextInput
             style={styles.textInput}
             placeholder="Enter Username"
-            value={this.state.username}
-            onChange={this.handleChange.bind(this)} />
+            onChangeText={(text)=>this.setState({ username: text})}
+            value={this.state.username} />
           <TextInput
             style={styles.textInput}
             placeholder="Enter Password"
-            value={this.state.password}
-            onChange={this.handleChange.bind(this)} />
+            onChangeText={(text)=>this.setState({ password: text})}
+            value={this.state.password} />
 
           <TouchableHighlight 
             style={styles.button}
@@ -116,6 +136,13 @@ class Login extends React.Component{
             color="#111"
             size="large"  />
           {showError}
+          <View style={styles.footer}>
+            <Text>Not a member?</Text>
+            <TouchableHighlight 
+              onPress={this.handleNextRoute.bind(this)}>
+              <Text style={styles.link}>Sign up here</Text>
+            </TouchableHighlight>
+          </View>
         </View>
       </View>
     )

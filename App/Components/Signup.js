@@ -1,5 +1,6 @@
 'use strict'
 var React = require('react-native');
+var Login = require('./Login');
 
 var {
   Text,
@@ -7,7 +8,8 @@ var {
   TouchableHighlight,
   ActivityIndicatorIOS,
   StyleSheet,
-  View
+  View,
+  Navigator
 } = React;
 
 const styles = StyleSheet.create({
@@ -19,21 +21,34 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#48BBEC'
   },
+  formContainer: {
+    flex: 1,
+    padding: 20,
+    marginTop: 10,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    backgroundColor: '#1da362'
+  },
   title: {
+    marginTop: -50,
     marginBottom: 20,
-    fontSize: 25,
-    textAlign: 'center',
+    fontSize: 45,
+    textAlign: 'left',
     color: '#fff'
   },
-  searchInput: {
+  textInput: {
     height: 50,
-    padding: 4,
+    padding: 2,
     marginRight: 5,
-    fontSize: 23,
+    marginTop: 15,
+    fontSize: 18,
     borderWidth: 1,
     borderColor: 'white',
-    borderRadius: 8,
-    color: 'white'
+    borderRadius: 3,
+    color: 'black',
+    textAlign: 'center',
+    backgroundColor: 'white',
+    opacity: 0.8
   },
   buttonText: {
     fontSize: 18,
@@ -42,16 +57,26 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 45,
+    width: 120,
     flexDirection: 'row',
-    backgroundColor: 'white',
-    borderColor: 'white',
-    borderWidth: 1,
+    backgroundColor: '#00b8ff',
+    borderColor: '#233fc7',
+    borderWidth: 2,
     borderRadius: 8,
     marginBottom: 10,
-    marginTop: 10,
-    alignSelf: 'stretch',
+    marginTop: 30,
+    marginLeft: 75,
     justifyContent: 'center'
   },
+  footer: {
+    marginTop: 30,
+    marginBottom: -20,
+    marginLeft: 65,
+  },
+  link: {
+    color: 'blue',
+    marginLeft: 25
+  }
 });
 
 class Signup extends React.Component{
@@ -59,18 +84,25 @@ class Signup extends React.Component{
     super(props);
     this.state={
       username: '',
+      fullname: '',
+      password: '',
       isLoading: false,
       error: false
     }
   }
 
-  handleChange(event) {
-    this.setState({ username: event.nativeEvent.text })
+  handleSubmit() {
+    this.setState({ isLoading: false })
+    // authenticate user & get token
+    // redirect to homepage
+    console.log('You entered: ', this.state)
   }
 
-  handleSubmit() {
-    this.setState({ isLoading: true })
-    console.log('username: ', this.state.username)
+  handleNextRoute() {
+    this.props.navigator.replace({
+      title: 'Login',
+      component: Login
+    });
   }
 
   render(){
@@ -80,23 +112,43 @@ class Signup extends React.Component{
 
     return (
       <View style={styles.mainContainer}>
-        <Text style={styles.title}> Search for a GitHub User </Text>
-        <TextInput
-          style={styles.searchInput}
-          value={this.state.username}
-          onChange={this.handleChange.bind(this)}
-        />
-        <TouchableHighlight 
-          style={styles.button}
-          onPress={this.handleSubmit.bind(this)}
-          underlayColor="white" >
-            <Text style={styles.buttonText}>Search</Text>
-        </TouchableHighlight>
-        <ActivityIndicatorIOS
-          animating={this.state.isLoading}
-          color="#111"
-          size="large"  />
-        {showError}
+        <View style={styles.formContainer}>
+          <Text style={styles.title}> Signup </Text>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Enter your full Name"
+            onChangeText={(text)=>this.setState({ fullname: text})}
+            value={this.state.fullname} />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Create a Username"
+            onChangeText={(text)=>this.setState({ username: text})}
+            value={this.state.username} />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Create a Password"
+            onChangeText={(text)=>this.setState({ password: text})}
+            value={this.state.password} />
+
+          <TouchableHighlight 
+            style={styles.button}
+            onPress={this.handleSubmit.bind(this)}
+            underlayColor="white" >
+              <Text style={styles.buttonText}>Sign Me Up!</Text>
+          </TouchableHighlight>
+          <ActivityIndicatorIOS
+            animating={this.state.isLoading}
+            color="#111"
+            size="large"  />
+          {showError}
+          <View style={styles.footer}>
+            <Text>Already a member?</Text>
+            <TouchableHighlight 
+              onPress={this.handleNextRoute.bind(this)}>
+              <Text style={styles.link}>Log In here</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
       </View>
     )
   }
@@ -104,12 +156,3 @@ class Signup extends React.Component{
 
 
 module.exports = Signup;
-
-
-
-
-
-
-
-
-
