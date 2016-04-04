@@ -1,5 +1,6 @@
 var React = require('react-native');
 var Signup = require('./App/Components/Signup');
+var Login = require('./App/Components/Login');
 var Homepage = require('./App/Components/Homepage');
 
 var {
@@ -18,11 +19,12 @@ var styles = StyleSheet.create({
 class Padticular extends React.Component{
     
   render() {
-    var token = true;       // temporary replacement for user auth!
+    var token = false;       // temporary replacement for user auth!
+    // var token = true;
 
     // determines if user token already exists or not
-    var goHere = token ? {title: 'Padticular App', component: Homepage}
-                       : {title: 'Padticular App', component: Signup}
+    var goHere = token ? {title: 'Padticular', component: Homepage}
+                       : {title: 'Welcome to Padticular!', component: Login}
     return (
       <NavigatorIOS
         style={styles.container}
