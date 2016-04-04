@@ -99,7 +99,7 @@ class Signup extends React.Component{
   }
 
   handleNextRoute() {
-    this.props.navigator.replace({
+    this.props.navigator.push({
       title: 'Login',
       component: Login
     });

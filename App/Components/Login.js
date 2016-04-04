@@ -98,11 +98,11 @@ class Login extends React.Component{
   }
 
   handleNextRoute() {
-    this.props.navigator.replace({
-      title: 'Signup',
-      component: Signup
-    });
-    // this.props.navigator.replace('Signup')
+    // this.props.navigator.replace({
+    //   title: 'Signup',
+    //   component: Signup
+    // });
+    this.props.navigator.pop()
   }
 
   render(){
