@@ -1,4 +1,5 @@
-var React = require('react-native');
+const React = require('react-native');
+const Firebase = require('firebase');
 // var Search = require('./Search');
 var Profile = require('./Profile');
 // var Nav = require('./Nav');

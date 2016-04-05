@@ -1,5 +1,6 @@
 'use strict'
-var React = require('react-native');
+const React = require('react-native');
+const Firebase = require('firebase');
 var Login = require('./Login');
 var styles = require('./Helpers/Styles')
 

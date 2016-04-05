@@ -1,11 +1,16 @@
-var React = require('react-native');
+const React = require('react-native');
+const Firebase = require('firebase');
 var Signup = require('./App/Components/Signup');
 var Homepage = require('./App/Components/Homepage');
+const userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
+const userInfo = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
+// var users = userRef.child('users');
 
 var {
   AppRegistry,
   StyleSheet,
-  NavigatorIOS
+  NavigatorIOS,
+  ListView
 } = React;
 
 var styles = StyleSheet.create({
@@ -16,7 +21,31 @@ var styles = StyleSheet.create({
 });
 
 class Padticular extends React.Component{
-    
+  constructor(props){
+    super(props);
+    this.state = {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      }),
+      user: ''
+    };
+    // this.favsRef = new Firebase("https://dazzling-inferno-3629.firebaseio.com/items");
+  }
+
+  componentWillMount(){
+    console.log('userRef.getAuth() is: ', userRef.getAuth())
+    if(userRef.getAuth()){
+      var currentuser = userRef.getAuth().uid;
+      userInfo.on('value', (snapshot) => {
+        console.log('snapshot! ', snapshot)
+        // this.setState({user: snapshot.val()[currentuser].firstname})
+      });
+    } else {
+      console.log('WHOMP, No user auth!')
+      // this.setState({user: ''});
+    }
+  }
+
   render() {
     var token = false;       // temporary replacement for user auth!
     // var token = true;
