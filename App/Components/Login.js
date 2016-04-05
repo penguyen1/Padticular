@@ -1,8 +1,12 @@
-var React = require('react-native');
+'use strict'
+const React = require('react-native');
+const Firebase = require('firebase');
 var Signup = require('./Signup');
 var Homepage = require('./Homepage');
-var Separator = require('./Helpers/Separator');
+// var Separator = require('./Helpers/Separator');
 var styles = require('./Helpers/Styles');
+var userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
+var userInfo = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
 
 var {
   Text,
@@ -18,7 +22,7 @@ class Login extends React.Component{
   constructor(props) {
     super(props);
     this.state={
-      username: '',
+      email: '',
       password: '',
       isLoading: false,
       error: false
@@ -26,18 +30,51 @@ class Login extends React.Component{
   }
 
   handleSubmit() {
-    this.setState({ isLoading: false })
-    // authenticate user & get token
     // console.log('You entered: ', this.state)
-    
-    // redirect to homepage
-    this.props.navigator.push({
-      title: 'Homepage',
-      component: Homepage
+    var login = {
+      email: this.state.email,
+      password: this.state.password
+    }
+    // how do we reset the Login Form??
+    this.setState({
+      email: '',
+      password: '',
+      isLoading: false,
+      error: false
+    })
+
+    // authenticates & logs in returning user
+    userRef.authWithPassword(login, (error, authData) => {
+      //authData contains UID!!
+      console.log('LOGIN authData is: ', authData.uid);    // string
+      if(error){
+        alert('Oops! Invalid login credentials, please try again!');
+      } else {
+        userInfo.on('value', (snapshot) => {
+          // console.log('userInfo snapshot! ', snapshot.val()[authData.uid])
+          console.log('LOGIN user uid: ', authData.uid);
+          console.log('LOGIN user first name: ', snapshot.val()[authData.uid].fullname.split(' ')[0])
+          this.props.navigator.push({
+            title: 'Login to Homepage', 
+            component: Homepage, 
+            passProps: { 
+              user: { 
+                uid: authData.uid,     // user UID
+                name: snapshot.val()[authData.uid].fullname.split(' ')[0]  // user's first name
+              }
+            }
+          })
+        });
+      }
     })
   }
 
-  handleNextRoute() {
+  // Redirect to Signup Component
+  handleGoToSignup() {
+    // this.props.navigator.replace({
+    //   title: 'Signup',
+    //   component: Signup
+    // });
     this.props.navigator.pop()
   }
 
@@ -50,15 +87,15 @@ class Login extends React.Component{
       <View style={styles.mainContainer}>
         <View style={styles.formContainer}>
           <Text style={styles.title}> Login </Text>
-        {/*<Separator />*/}
+          {/* <Separator /> */}
           <TextInput
             style={styles.textInput}
-            placeholder="Enter Username"
-            onChangeText={(text)=>this.setState({ username: text})}
-            value={this.state.username} />
+            placeholder="Email Address"
+            onChangeText={(text)=>this.setState({ email: text})}
+            value={this.state.email} />
           <TextInput
             style={styles.textInput}
-            placeholder="Enter Password"
+            placeholder="Password"
             onChangeText={(text)=>this.setState({ password: text})}
             value={this.state.password} />
 
@@ -76,7 +113,7 @@ class Login extends React.Component{
           <View style={styles.footer}>
             <Text>Not a member?</Text>
             <TouchableHighlight 
-              onPress={this.handleNextRoute.bind(this)}>
+              onPress={this.handleGoToSignup.bind(this)}>
               <Text style={styles.link}>Sign up here</Text>
             </TouchableHighlight>
           </View>

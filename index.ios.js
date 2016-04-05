@@ -1,6 +1,9 @@
-var React = require('react-native');
+const React = require('react-native');
+const Firebase = require('firebase');
 var Signup = require('./App/Components/Signup');
 var Homepage = require('./App/Components/Homepage');
+const userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
+const userInfo = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
 
 var {
   AppRegistry,
@@ -16,19 +19,34 @@ var styles = StyleSheet.create({
 });
 
 class Padticular extends React.Component{
-    
   render() {
-    var token = false;       // temporary replacement for user auth!
-    // var token = true;
+    // console.log('userRef.getAuth() is: ', userRef.getAuth())
+    if(userRef.getAuth()){
+      var currentuser = userRef.getAuth().uid;
+      // gets all users from Firebase
+      userInfo.on('value', (snapshot) => {
+        console.log('userInfo snapshot! ', snapshot.val()[currentuser])
+        var goHere = {
+          title: 'index to Homepage', 
+          component: Homepage, 
+          passProps: { 
+            user: { 
+              uid: currentuser,     // user UID
+              name: snapshot.val()[currentuser].fullname.split(' ')[0]  // user's first name
+            }
+          }
+        }
+      });
+    } else {
+      console.log('Whoops! No user currently available.')
+      var goHere = {title: 'index to Signup', component: Signup}
+    }
 
-    // determines if user token already exists or not
-    var goHere = token ? {title: 'Padticular', component: Homepage}
-                       : {title: 'Welcome to Padticular!', component: Signup}
     return (
       <NavigatorIOS
         style={styles.container}
         initialRoute={goHere} />
-    );
+    )
   }
 };
 
