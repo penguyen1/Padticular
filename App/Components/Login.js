@@ -30,24 +30,19 @@ class Login extends React.Component{
   }
 
   handleSubmit() {
+    this.setState({ isLoading: false })
     // console.log('You entered: ', this.state)
     var login = {
       email: this.state.email,
       password: this.state.password
     }
     // how do we reset the Login Form??
-    this.setState({
-      email: '',
-      password: '',
-      isLoading: false,
-      error: false
-    })
 
     // authenticates & logs in returning user
     userRef.authWithPassword(login, (error, authData) => {
       //authData contains UID!!
-      console.log('LOGIN authData is: ', authData.uid);    // string
-      if(error){
+      console.log('LOGIN authData is: ', authData);    // string
+      if(error || !authData){
         alert('Oops! Invalid login credentials, please try again!');
       } else {
         userInfo.on('value', (snapshot) => {
