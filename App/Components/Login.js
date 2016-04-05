@@ -22,7 +22,7 @@ class Login extends React.Component{
   constructor(props) {
     super(props);
     this.state={
-      username: '',
+      email: '',
       password: '',
       isLoading: false,
       error: false
@@ -30,13 +30,18 @@ class Login extends React.Component{
   }
 
   handleSubmit() {
-    this.setState({ isLoading: false })
     // console.log('You entered: ', this.state)
     var login = {
       email: this.state.email,
       password: this.state.password
     }
     // how do we reset the Login Form??
+    this.setState({
+      email: '',
+      password: '',
+      isLoading: false,
+      error: false
+    })
 
     // authenticates & logs in returning user
     userRef.authWithPassword(login, (error, authData) => {
@@ -45,23 +50,6 @@ class Login extends React.Component{
       if(error){
         alert('Oops! Invalid login credentials, please try again!');
       } else {
-
-        // console.log('fullname: ', this.state.fullname);
-        // console.log('first name only: ', this.state.fullname.split(' ')[0])
-
-        // // Redirect to Homepage with user info
-        // this.props.navigator.push({
-        //   title: 'Login to Homepage',
-        //   component: Homepage,
-        //   passProps: {
-        //     user: {
-        //       uid: userData.uid,
-        //       // name: this.state.fullname
-        //       // need to pass user info! -- user: {}
-        //     }
-        //   }
-        // }) 
-
         userInfo.on('value', (snapshot) => {
           // console.log('userInfo snapshot! ', snapshot.val()[authData.uid])
           console.log('LOGIN user uid: ', authData.uid);
@@ -77,13 +65,16 @@ class Login extends React.Component{
             }
           })
         });
-
-
       }
     })
   }
 
-  handleNextRoute() {
+  // Redirect to Signup Component
+  handleGoToSignup() {
+    // this.props.navigator.replace({
+    //   title: 'Signup',
+    //   component: Signup
+    // });
     this.props.navigator.pop()
   }
 
@@ -122,7 +113,7 @@ class Login extends React.Component{
           <View style={styles.footer}>
             <Text>Not a member?</Text>
             <TouchableHighlight 
-              onPress={this.handleNextRoute.bind(this)}>
+              onPress={this.handleGoToSignup.bind(this)}>
               <Text style={styles.link}>Sign up here</Text>
             </TouchableHighlight>
           </View>

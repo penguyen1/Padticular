@@ -39,6 +39,7 @@ class Signup extends React.Component{
       password: this.state.password
     }
     // how do we reset the Signup Form??
+    
 
     // creates new user
     userRef.createUser(login, (error, userData) => {
@@ -54,7 +55,7 @@ class Signup extends React.Component{
         // authenticates & logs in new user (returns user.uid)
         userRef.authWithPassword(login, (error, authData) => {
           //authData contains UID & token
-          console.log('authData is: ', authData);    // string
+          console.log('authData is: ', authData.uid);    // string
           if(error){
             alert('Oops! Invalid login credentials, please try again!');
           } else {
@@ -68,7 +69,7 @@ class Signup extends React.Component{
               passProps: {
                 user: {
                   uid: userData.uid,
-                  // name: this.state.fullname
+                  name: this.state.fullname.split(' ')[0]
                   // need to pass user info! -- user: {}
                 }
               }
@@ -80,9 +81,9 @@ class Signup extends React.Component{
   }
 
   // Redirect to Login Component
-  handleNextRoute() {
+  handleGoToLogin() {
     this.props.navigator.push({      // replace???
-      title: 'Signup to Login',
+      title: 'Login',
       component: Login
     });
   }
@@ -103,7 +104,7 @@ class Signup extends React.Component{
             placeholder="Enter your full Name"
             onChangeText={(text)=>this.setState({ fullname: text })}
             value={this.state.fullname} />
-          {/* Create Username */}
+          {/* Email Address */}
           <TextInput
             style={styles.textInput}
             placeholder="Enter your Email Address"
@@ -133,7 +134,7 @@ class Signup extends React.Component{
           <View style={styles.footer}>
             <Text>Already a member?</Text>
             <TouchableHighlight 
-              onPress={this.handleNextRoute.bind(this)}>
+              onPress={this.handleGoToLogin.bind(this)}>
               <Text style={styles.link}>Log In here</Text>
             </TouchableHighlight>
           </View>

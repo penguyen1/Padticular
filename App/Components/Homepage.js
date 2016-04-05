@@ -30,7 +30,7 @@ class Homepage extends React.Component{
   }
 
   // called ONCE Homepage Component is rendered
-  componentDidMount(){
+  componentWillMount(){
     console.log('passed user info from Login | Signup: ', this.props.user);
     console.log('I should be getting users apartment favorites from Firebase here');
     // this.getFavorites();
@@ -50,7 +50,7 @@ class Homepage extends React.Component{
   }
 
   // Redirect to Profile Component
-  handleNextRoute(){      // needs to be passed apartment list id!
+  handleGoToProfile(){      // needs to be passed apartment list id!
     this.props.navigator.push({
       title: 'Profile',
       component: Profile,
@@ -60,11 +60,12 @@ class Homepage extends React.Component{
 
   // Logout & Redirect to Login Component
   handleLogout(){
-    userRef.unauth();   // Destroys User Auth
-    this.props.navigator.replace({    
-      title: 'To: Login',
-      component: Login
-    })
+    userRef.unauth();             // Destroys User Auth
+    // this.props.navigator.replace({
+    //   title: 'Login',
+    //   component: Login
+    // })
+    this.props.navigator.pop();
   }
 
   render(){
@@ -80,7 +81,7 @@ class Homepage extends React.Component{
           {/* Temp 'View' Button to Profile Component */}
           <TouchableHighlight
             style={styles.button}
-            onPress={this.handleNextRoute.bind(this)}
+            onPress={this.handleGoToProfile.bind(this)}
             underlayColor='white' >
             <Text style={styles.buttonText}>Go to Profile</Text>
           </TouchableHighlight>
