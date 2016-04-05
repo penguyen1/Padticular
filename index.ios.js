@@ -20,16 +20,26 @@ var styles = StyleSheet.create({
 
 class Padticular extends React.Component{
   render() {
-    console.log('userRef.getAuth() is: ', userRef.getAuth())
+    // console.log('userRef.getAuth() is: ', userRef.getAuth())
     if(userRef.getAuth()){
       var currentuser = userRef.getAuth().uid;
+      // gets all users from Firebase
       userInfo.on('value', (snapshot) => {
-        console.log('userInfo snapshot! ', snapshot)
-        var goHere = {title: 'index to Homepage', component: Homepage}     // ++ passProps: { user: GET_USER_INFO! }
+        console.log('userInfo snapshot! ', snapshot.val()[currentuser])
+        var goHere = {
+          title: 'index to Homepage', 
+          component: Homepage, 
+          passProps: { 
+            user: { 
+              uid: currentuser,     // user UID
+              name: snapshot.val()[currentuser].fullname.split(' ')[0]  // user's first name
+            }
+          }
+        }
       });
     } else {
       console.log('Whoops! No user currently available.')
-      var goHere = {title: 'Welcome to Padticular!', component: Signup}
+      var goHere = {title: 'index to Signup', component: Signup}
     }
 
     return (

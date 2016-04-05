@@ -1,3 +1,4 @@
+'use strict'
 const React = require('react-native');
 const Firebase = require('firebase');
 var styles = require('./Helpers/Styles');
@@ -22,35 +23,49 @@ class Homepage extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      dataSource: new ListView.DataSource({
-        rowHasChanged: (row1, row2) => row1 !== row2,
-      })
+      dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
+      error: '',
+      apartment: {}, 
     };
   }
 
-  componentDidMount() {
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(????)   // what do i put in here?
-    })
+  // called ONCE Homepage Component is rendered
+  componentDidMount(){
+    console.log('passed user info from Login | Signup: ', this.props.user);
+    console.log('I should be getting users apartment favorites from Firebase here');
+    // this.getFavorites();
   }
 
-  handleNextRoute(){
-    // needs to be passed the apartment_id!
+  // Queries & setState of apartment favorites from Firebase  // apartment favorites: [apt_ids]? or [{apt_info}]?
+  getFavorites(){
+    fetch( FIREBASE_FAVORITE_APARTMENT_QUERY )
+      .then( (res)=>res.json() )      // turns response into JSON first
+      .then( (resData)=>{
+        console.log('resData is: ', resData)
+        // this.setState({
+        //   dataSource: this.state.dataSource.cloneWithRows(resData)
+        // })
+      })
+      .done();
+  }
+
+  // Redirect to Profile Component
+  handleNextRoute(){      // needs to be passed apartment list id!
     this.props.navigator.push({
       title: 'Profile',
       component: Profile,
+      // need to pass apartment id to get its info!
     })
   }
 
+  // Logout & Redirect to Login Component
   handleLogout(){
-    // Destroys User Auth
-    userRef.unauth();
-    // Redirect to Login Component
-    this.props.navigator.replace({
+    userRef.unauth();   // Destroys User Auth
+    this.props.navigator.replace({    
       title: 'To: Login',
       component: Login
     })
-  },
+  }
 
   render(){
     return(

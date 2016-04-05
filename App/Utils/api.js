@@ -2,7 +2,7 @@ const api = {
   const AirBnB = '3092nxybyb0otqw18e8nh5nty';
   // access_token = 'afb4dyafgux8f9xvr6ec9z9f1' to be stored in header?
 
-  // AirBnB API
+  // AirBnB API - gets list of apartments
   getListings(params){
     const url = `https://api.airbnb.com/v2/search_results?client_id=${AirBnB}&locale=en-US&currency=USD&_format=for_search_results_with_minimal_pricing&_offset=0&${params}`;
     // return fetch(url).then(res => res.json());  
@@ -12,6 +12,7 @@ const api = {
     });
   },
 
+  // AirBnB API - gets apartment info
   getListingInfo(id){
     const url = `https://api.airbnb.com/v2/listings/${id}?client_id=${AirBnB}&locale=en-US&currency=USD&_format=v1_legacy_for_p3`;
     // return fetch(url).then(res => res.json());  
@@ -21,7 +22,10 @@ const api = {
     }); 
   },
 
-  // Google Places - Text Search around area (placeID)
+  // // Firebase - gets all apartments favorited by user
+  // getFavorites(){},
+
+  // Google Places API - Text Search (name & address) nearest to placeID
   getLaundromats(){},
   getSchools(){},
   getMTA(){},
@@ -29,7 +33,7 @@ const api = {
   getGyms(){},
   getParks(){},
 
-  // Open NYC Data Crimes around listing area
+  // Open NYC Data Crimes API - gets recent crimes around listing area
   getCrimes(){}
 };
 

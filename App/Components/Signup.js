@@ -38,7 +38,7 @@ class Signup extends React.Component{
       email: this.state.email,
       password: this.state.password
     }
-    // how to reset the Signup Form??
+    // how do we reset the Signup Form??
 
     // creates new user
     userRef.createUser(login, (error, userData) => {
@@ -49,45 +49,46 @@ class Signup extends React.Component{
       } else {
         users.child(userData.uid).set({
           fullname: this.state.fullname,
-          email: this.state.email,
-          password: this.state.password
+          email: this.state.email
         });
         // authenticates & logs in new user (returns user.uid)
         userRef.authWithPassword(login, (error, authData) => {
-          console.log('authData is: ', authData);    // string
           //authData contains UID & token
+          console.log('authData is: ', authData);    // string
           if(error){
             alert('Oops! Invalid login credentials, please try again!');
           } else {
-            // alert('Welcome. You will be redirected in a few moment.');
-            // this.context.setCurrentUserId(authData.uid);
-            // this.context.router.push('/user');
             console.log('fullname: ', this.state.fullname);
             console.log('first name only: ', this.state.fullname.split(' ')[0])
 
+            // Redirect to Homepage with user info
             this.props.navigator.push({
-              title: 'To: Homepage',
+              title: 'Signup to Homepage',
               component: Homepage,
-              user: {
-                uid: userData.uid,
-                name: this.state.fullname
+              passProps: {
+                user: {
+                  uid: userData.uid,
+                  // name: this.state.fullname
+                  // need to pass user info! -- user: {}
+                }
               }
-            })
+            })  
           }
-        })
-      }
-    })
+        })  // ends user authentication
+      }   
+    })  // ends createUser
   }
 
+  // Redirect to Login Component
   handleNextRoute() {
-    this.props.navigator.push({
-      title: 'Login',
+    this.props.navigator.push({      // replace???
+      title: 'Signup to Login',
       component: Login
     });
   }
 
   render(){
-    const showError = (
+    const showError = (       // style Text?
       this.state.error ? <Text>{this.state.error}</Text> : <View />
     );
 
