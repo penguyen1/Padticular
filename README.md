@@ -9,7 +9,7 @@ Experience the ease of apartment searching in NYC with just the swipe of a finge
 ---
 
 #### Introduction
-Apartment hunting has never been so easy! This mobile application provides a simplistic and interactive user experience in searching for apartments throughout New York City. This application answers all the major questions that play a crucial contributing factor in finding your ideal apartment such as: the nearest laundromat, MTA buses & trains, schools, _gyms, resturants, bars, parks_ and **the most recent crimes in the area**.
+Apartment hunting has never been so easy! This mobile application provides a simplistic and interactive user experience in searching for apartments throughout New York City. This application answers all the major questions that play a crucial contributing factor in finding your ideal apartment such as: the nearest laundromat, MTA buses & trains, schools, _gyms, resturants, parks_ and **the most recent crimes in the area**.
 
 ---
 
