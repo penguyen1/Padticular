@@ -4,7 +4,8 @@ const Firebase = require('firebase');
 var styles = require('./Helpers/Styles');
 var Profile = require('./Profile');
 var Login = require('./Login');
-var userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
+var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
+var userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
 // var Search = require('./Search');
 // var Nav = require('./Nav');
 
@@ -19,6 +20,16 @@ var {
   ListView
 } = React;
 
+
+
+function authDataCallback(authData) {
+  if (authData) {
+    console.log("User is logged in!");
+  } else {
+    console.log("User is logged out!");
+  }
+}
+
 class Homepage extends React.Component{
   constructor(props){
     super(props);
@@ -31,6 +42,7 @@ class Homepage extends React.Component{
 
   // called ONCE Homepage Component is rendered
   componentWillMount(){
+    console.log('checking user auth @Homepage: ', ref.onAuth(authDataCallback));   // checks user auth state
     console.log('passed user info from Login | Signup: ', this.props.user);
     console.log('I should be getting users apartment favorites from Firebase here');
     // this.getFavorites();
@@ -60,7 +72,7 @@ class Homepage extends React.Component{
 
   // Logout & Redirect to Login Component
   handleLogout(){
-    userRef.unauth();             // Destroys User Auth
+    ref.unauth();             // Destroys User Auth
     // this.props.navigator.replace({
     //   title: 'Login',
     //   component: Login

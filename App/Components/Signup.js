@@ -38,7 +38,7 @@ class Signup extends React.Component{
     }
   }
 
-  componentDidMount(){
+  componentWillMount(){
     console.log('checking user auth @Signup: ', userRef.onAuth(authDataCallback));   // checks user auth state
   }
 
@@ -78,6 +78,7 @@ class Signup extends React.Component{
               component: Homepage,
               passProps: {
                 user: {
+                  uid: authData.uid,
                   name: this.state.fullname.split(' ')[0]
                 }
               }

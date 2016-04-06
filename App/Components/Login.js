@@ -5,8 +5,8 @@ var Signup = require('./Signup');
 var Homepage = require('./Homepage');
 // var Separator = require('./Helpers/Separator');
 var styles = require('./Helpers/Styles');
-var userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
-var userInfo = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
+var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
+var userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
 
 var {
   Text,
@@ -39,8 +39,9 @@ class Login extends React.Component{
     }
   }
 
-  componentDidMount(){
-    console.log('checking user auth @Login: ', userRef.onAuth(authDataCallback));   // checks user auth state
+  componentWillMount(){
+
+    console.log('checking user auth @Login: ', ref.onAuth(authDataCallback));   // checks user auth state
   }
 
   handleSubmit() {
@@ -53,29 +54,54 @@ class Login extends React.Component{
     // how do we reset the Login Form fields??
 
     // authenticates & logs in returning user
-    userRef.authWithPassword(login, (error, authData) => {
+    ref.authWithPassword(login, (error, authData) => {
       //authData contains UID!!
-      console.log('authData @Login: ', authData);    // string
+      console.log('authData.uid @Login: ', authData.uid);    // string
       if(error || !authData){
         alert('Oops! Invalid login credentials, please try again!');
       } else {
-        userInfo.on('value', (snapshot) => {
-          // console.log('userInfo snapshot! ', snapshot.val()[authData.uid])
-          // console.log('LOGIN user uid: ', authData.uid);
-          // console.log('LOGIN user first name: ', snapshot.val()[authData.uid].fullname.split(' ')[0])
-          var firstname = snapshot.val()[authData.uid].fullname.split(' ')[0]  // user's first name
-          console.log('Login - first name: ', firstname)
+        // var yo = userRef.child(authData.uid)
+        // console.log('user data: ', yo.val())
+
+        // userRef.once('value', (authData.uid)=>{})
+        userRef.once('value', (snapshot)=>{
+          var member = snapshot.val()[authData.uid];
+          var first = member.fullname.split(' ')[0]
+          console.log('member: ', member)
+          console.log('firstname: ', first)
 
           this.props.navigator.push({
             title: 'Homepage', 
             component: Homepage, 
             passProps: { 
               user: { 
-                name: snapshot.val()[authData.uid].fullname.split(' ')[0]  // user's first name
+                uid: authData.uid,
+                name: first  // user's first name
               }
             }
           })
-        });
+
+        })
+
+        // userRef.on('value', (snapshot) => {
+        //   // snapshot.forEach((user) => console.log('A user snapshot: ', user))
+        //   console.log('snapshot: ', snapshot.val())
+        //   console.log('user snapshot: ', snapshot.val()[authData.uid])
+          
+          
+        //   // var firstname = snapshot.val()[authData.uid].fullname.split(' ')[0]  // user's first name
+        //   // console.log('Login - first name: ', firstname)
+
+        //   // this.props.navigator.push({
+        //   //   title: 'Homepage', 
+        //   //   component: Homepage, 
+        //   //   passProps: { 
+        //   //     user: { 
+        //   //       name: snapshot.val()[authData.uid].fullname.split(' ')[0]  // user's first name
+        //   //     }
+        //   //   }
+        //   // })
+        // });
       }
     })
   }
