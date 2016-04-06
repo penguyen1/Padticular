@@ -5,7 +5,7 @@ var Login = require('./Login');
 var Homepage = require('./Homepage');
 var styles = require('./Helpers/Styles')
 var userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
-var users = userRef.child('users');
+var users = userRef.child('users/');
 
 var {
   Text,
