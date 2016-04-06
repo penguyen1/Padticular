@@ -17,14 +17,10 @@ var {
   Navigator
 } = React;
 
+// verifies user auth state 
 function authDataCallback(authData) {
-  if (authData) {
-    console.log("User is logged in!");
-  } else {
-    console.log("User is logged out!");
-  }
+  console.log( authData ? "User is logged in!" : "User is logged out!" );
 }
-
 
 class Signup extends React.Component{
   constructor(props) {
@@ -39,7 +35,7 @@ class Signup extends React.Component{
   }
 
   componentWillMount(){
-    console.log('checking user auth @Signup: ', userRef.onAuth(authDataCallback));   // checks user auth state
+    userRef.onAuth(authDataCallback);   // checks user auth state
   }
 
   handleSubmit() {
@@ -69,9 +65,6 @@ class Signup extends React.Component{
           if(error){
             alert('Invalid login credentials -- Please try again');
           } else {
-            // console.log('fullname: ', this.state.fullname);
-            // console.log('first name only: ', this.state.fullname.split(' ')[0])
-
             // Redirect to Homepage with user info
             this.props.navigator.push({
               title: 'Homepage',

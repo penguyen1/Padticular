@@ -6,7 +6,7 @@ var Homepage = require('./Homepage');
 // var Separator = require('./Helpers/Separator');
 var styles = require('./Helpers/Styles');
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
-var userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
+var userRef = ref.child('users/');
 
 var {
   Text,
@@ -18,15 +18,10 @@ var {
   Navigator
 } = React;
 
-
+// verifies user auth state 
 function authDataCallback(authData) {
-  if (authData) {
-    console.log("User is logged in!");
-  } else {
-    console.log("User is logged out!");
-  }
+  console.log( authData ? "User is logged in!" : "User is logged out!" );
 }
-
 
 class Login extends React.Component{
   constructor(props) {
@@ -40,13 +35,33 @@ class Login extends React.Component{
   }
 
   componentWillMount(){
+    // user auth exists - but WHO??
+    if(ref.getAuth()){
+      // this.props.navigator.jumpBack();
+      var user = userRef.child(ref.getAuth().uid)
 
-    console.log('checking user auth @Login: ', ref.onAuth(authDataCallback));   // checks user auth state
+      user.once('value', (snapshot)=>{
+        var firstname = snapshot.val().fullname.split(' ')[0]
+        console.log('SNAPSHOT BABY: ', firstname)
+
+        // save info (firstname + uid) & redirect to Homepage         // DRY THIS LATER
+        this.props.navigator.push({     // WHY ISNT THIS WORKING!!
+          title: 'Homepage',
+          component: Homepage,
+          passProps: {
+            user: {
+              uid: ref.getAuth().uid,
+              name: firstname
+            }
+          }
+        })
+      })    // end of user.once
+
+    }
   }
 
   handleSubmit() {
     this.setState({ isLoading: false })
-    // console.log('You entered: ', this.state)
     var login = {
       email: this.state.email,
       password: this.state.password
@@ -60,15 +75,9 @@ class Login extends React.Component{
       if(error || !authData){
         alert('Oops! Invalid login credentials, please try again!');
       } else {
-        // var yo = userRef.child(authData.uid)
-        // console.log('user data: ', yo.val())
-
-        // userRef.once('value', (authData.uid)=>{})
         userRef.once('value', (snapshot)=>{
           var member = snapshot.val()[authData.uid];
-          var first = member.fullname.split(' ')[0]
-          console.log('member: ', member)
-          console.log('firstname: ', first)
+          var firstname = member.fullname.split(' ')[0]
 
           this.props.navigator.push({
             title: 'Homepage', 
@@ -76,33 +85,12 @@ class Login extends React.Component{
             passProps: { 
               user: { 
                 uid: authData.uid,
-                name: first  // user's first name
+                name: firstname  // user's first name
               }
             }
           })
-
         })
-
-        // userRef.on('value', (snapshot) => {
-        //   // snapshot.forEach((user) => console.log('A user snapshot: ', user))
-        //   console.log('snapshot: ', snapshot.val())
-        //   console.log('user snapshot: ', snapshot.val()[authData.uid])
-          
-          
-        //   // var firstname = snapshot.val()[authData.uid].fullname.split(' ')[0]  // user's first name
-        //   // console.log('Login - first name: ', firstname)
-
-        //   // this.props.navigator.push({
-        //   //   title: 'Homepage', 
-        //   //   component: Homepage, 
-        //   //   passProps: { 
-        //   //     user: { 
-        //   //       name: snapshot.val()[authData.uid].fullname.split(' ')[0]  // user's first name
-        //   //     }
-        //   //   }
-        //   // })
-        // });
-      }
+      }     // end if-else statement
     })
   }
 

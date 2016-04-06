@@ -5,7 +5,7 @@ var styles = require('./Helpers/Styles');
 var Profile = require('./Profile');
 var Login = require('./Login');
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
-var userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
+
 // var Search = require('./Search');
 // var Nav = require('./Nav');
 
@@ -20,14 +20,9 @@ var {
   ListView
 } = React;
 
-
-
+// verifies user auth state 
 function authDataCallback(authData) {
-  if (authData) {
-    console.log("User is logged in!");
-  } else {
-    console.log("User is logged out!");
-  }
+  console.log( authData ? "User is logged in!" : "User is logged out!" );
 }
 
 class Homepage extends React.Component{
@@ -42,8 +37,9 @@ class Homepage extends React.Component{
 
   // called ONCE Homepage Component is rendered
   componentWillMount(){
-    console.log('checking user auth @Homepage: ', ref.onAuth(authDataCallback));   // checks user auth state
-    console.log('passed user info from Login | Signup: ', this.props.user);
+    var user = ref.child('users/').child(this.props.user.uid);      // route to this specific user
+    user.onAuth(authDataCallback);                                  // checks user auth state - user is either logged in or out
+    console.log('passed user info from Login|Signup: ', this.props.user);
     console.log('I should be getting users apartment favorites from Firebase here');
     // this.getFavorites();
   }
@@ -72,12 +68,12 @@ class Homepage extends React.Component{
 
   // Logout & Redirect to Login Component
   handleLogout(){
-    ref.unauth();             // Destroys User Auth
-    // this.props.navigator.replace({
+    ref.unauth();                 // Destroys User Auth
+    // this.props.navigator.replace({   // can i switch btw Signup & Login without having a back button ??? 
     //   title: 'Login',
     //   component: Login
     // })
-    this.props.navigator.pop();
+    this.props.navigator.pop();   // go back to previous component - Signup
   }
 
   render(){
