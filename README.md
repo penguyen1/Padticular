@@ -1,41 +1,33 @@
-
 # Project #4: Padticular
-GA-Bowie Final Project
+###### GA-NYC-Bowie Final Project
 
-<!-- #![](http://salidarec.com/wp-content/uploads/2014/07/scavenger-hunt.gif) -->
-#### Mission Statement
-Experience the ease of apartment searching in NYC with just the swipe of a finger! 
-
----
-
-#### Introduction
-Apartment hunting has never been so easy! This mobile application provides a simplistic and interactive user experience in searching for apartments throughout New York City. This application answers all the major questions that play a crucial contributing factor in finding your ideal apartment such as: the nearest laundromat, MTA buses & trains, schools, _gyms, resturants, parks_ and **the most recent crimes in the area**.
+#### Mission Statement:
+Experience the ease of discovering beautiful rental apartments throughout NYC with just the swipe of a finger! 
 
 ---
+#### Introduction:
+Finding ravishingly stunning apartment rentals in NYC has never been so easy! Padticular is a React Native mobile application that provides a simplistic and interactive user experience in booking the ideal rental apartment in New York City. It answers (almost) all the major concerning questions that play a contributing role in the quest of finding that perfect **_Padticular_** apartment, such as -- _Is it affordable?_ Is it spacious? _Is it safe?_ What are the nearest trains and buses to me? _Where can I go to get some good grub around here?_ ~~locating the nearest laundromat, MTA transportation, schools, `fitness gyms, resturants, parks` and displaying **recent crimes in the area**~~
 
+---
 #### Technologies Used:
-* React Native
-* ~~HTML5 | CSS3~~
-* JavaScript | jQuery
-* Node.js
-* Express.js
-* PostgreSQL
-* ~~AJAX~~
-
-#### APIs Used:
-* Streeteasy API
-* ~~Zillow API~~
-* Google Places API | Yelp API ???
-* NYC Open Data Crimes
-* ~~Twilio API~~
+* Facebook React Native
+* JavaScript
+* Firebase 
+* NodeJS
+* PG-Promise
+* React Bootstrap 
+* React Semantic-UI
+* AirBnB API
+* NYC Open Data API
+* ~~Google Places API~~
 
 ---
 #### Installation Instructions (To be Added):
+
 ---
+### User Story & Components (v1.0.0):
 
-### User Story (v1.0.0):
-
-#### Authentication ( Signup & Login )
+###### Authentication ( Signup & Login )
 * When app is loaded, it will check if a token already exists
     * **Token exists** - redirect to Homepage
     * **Token does not exist** - redirect to Signup
@@ -43,25 +35,25 @@ Apartment hunting has never been so easy! This mobile application provides a sim
     * **Denied** access until guest inputs the correct and|or valid information
     * **Granted** access will redirect guest (user) to Homepage
 
-#### Homepage
+###### Nav | Menu bar
+* **Home** - redirect to Homepage
+* **Find me a home** - redirect to Search Component
+* **Log Out**
+    * destroy user token
+    * redirect to Sign Up Component
+
+###### Homepage
+* **Nav | Menu bar**
 * Greets user with "Hello, {firstname}!"
-* Display list of favorited apartments. Each iteration will have:
+* Display list of saved favorite apartments. Each list item will show:
     * Address + Unit Number _(if available)_
     * Neighborhood
     * Property type
     * Price
     * View button (tap function?) - redirect to Profile
-    * Delete button 
-          * delete from database
-          * update user's favorites list
-* **Nav | Menu bar :**
-    * **Home** - redirect to Homepage
-    * **Find me a home** - redirect to Search page
-    * **Log Out**
-        * destroy token
-        * redirect to Sign Up
+    * Delete button - delete from user's favorites list
 
-#### Search Page
+###### Search Page
 * **Nav | Menu bar**
 * Display Search form with search filter features:
     * Select desired neighborhoods _(checkbox?)_
@@ -70,39 +62,39 @@ Apartment hunting has never been so easy! This mobile application provides a sim
     * Desired number of bathrooms 
     * Select property type _(checkbox?)_
     * Search button
-        * calls Streeteasy API 
+        * calls AirBnB API & converts response into JSON
         * redirect to YesOrNo Page
 
-#### YesOrNo Page
-* Display returned results via Streeteasy API **one at a time!**
-* Toggle views when user taps on the listing
+###### YesOrNo Page
+* Display returned API response - **one at a time!**
+* Toggles between views when user taps on the listing page
 * **Front View:**
     * Images (user swipes left | right)
-    * Address + unit number (if available)
+    * Address + unit number _(if available)_
     * Property Type | Neighborhood
     * Bedrooms | Bathrooms
     * Price
 * **Back View:**
-    * MTA Transportation:
-        * Trains _(logo images?)_
-        * Buses _(logo images?)_
-    * Schools:
-        * Elementary
-        * Middle School
-        * High School
-    * Laundromat
-    * Parks
-    * Recent Crimes ( 5 most recent )
+    * Recent Crimes ( most recent first )
+    * ~~MTA Transportation:~~
+        * ~~Trains _(logo images?)_~~
+        * ~~Buses _(logo images?)_~~
+    * ~~Schools:~~
+        * ~~Elementary~~
+        * ~~Middle School~~
+        * ~~High School~~
+    * ~~Laundromat~~
+    * ~~Parks~~
 * **User can swipe:**
     * **Left** - if they're not interested
-        * Render next listing from results
+        * Render next listing in response
     * **Right** - if they want to save & look back on the listing later
         * Save listing to favorites table
-        * Render next listing from results
+        * Render next listing in response
     * **Up | Down** - if they want to discontinue search
-        * Redirect to Homepage
+        * Redirect to Homepage Component
 
-#### Profile Page
+###### Profile Page
 * **Nav | Menu bar**
 * Display all information about the listing
     * Images (user swipes left | right)
@@ -110,127 +102,88 @@ Apartment hunting has never been so easy! This mobile application provides a sim
     * Address + unit number _(if available)_ + city + state + zipcode
     * Property Type | Neighborhood
     * Sqft Size | Bedrooms | Bathrooms
-    * MTA Transportation 
-        * Trains _(logo images?)_
-        * Buses _(logo images?)_
-    * Schools
-        * Elementary
-        * Middle School
-        * High School
-    * Laundromat
-    * Parks
-    * Gyms
-    * Resturants (top 3 most reviewed)
-    * Bars (top 3 most reviewed)
     * Crimes (most recent 5)
     * Listing Description
     * Apply button - listing URL_link
+    * ~~MTA Transportation:~~
+        * ~~Trains _(logo images?)_~~
+        * ~~Buses _(logo images?)_~~
+    * ~~Schools:~~
+        * ~~Elementary~~
+        * ~~Middle School~~
+        * ~~High School~~
+    * ~~Laundromat~~
+    * ~~Parks~~
+    * ~~Gyms~~
+    * ~~Resturants (top 3 most reviewed)~~
+    * ~~Bars (top 3 most reviewed)~~
 
 ---
-#### Database Entity Relationship Diagram (ERD) v1.0.0
+###### Database Entity Relationship Diagram (ERD) v1.0.0
 #![](./images/ERD.png)
 
-#### Signup | Login Wireframe
+###### Signup | Login Wireframe
 #![](./images/authentication.png)
 
-#### Homepage Wireframe
+###### Homepage Wireframe
 #![](./images/homepage.png)
 
-#### Search Page Wireframe
+###### Search Page Wireframe
 #![](./images/search.png)
 
-#### YesOrNo Page Wireframe
+###### YesOrNo Page Wireframe
 #![](./images/YesOrNo.png)
 
-#### Profile Page Wireframe
+###### Profile Page Wireframe
 #![](./images/profile.png)
 
 ---
-### Routes
-#### HTML (front-end) Routes ####
-
-| CRUD | Route | Component |
-| --- | ------ | ---------- |
-| GET | / | Signup or Homepage |
-| GET | /login | Login |
-| GET | /signup | Signup |
-| GET | /logout | Logout |
-| GET | /home | Homepage |
-| GET | /apartments | Apartment |
+###### AirBnB Routes
+| What does it do? | API Route | Required URL Parameters |
+|:---:|:---:|:---:|
+| Searches rental listings in an area | `https://api.airbnb.com/v2/search_results?client_id=[API_KEY]&[params]` | API key + optional query parameters |
+| Gets rental listing info | `https://api.airbnb.com/v2/search_results?client_id=[API_KEY]&[params]` | API key + result format |
+| URL link to rental listing  | `https://www.airbnb.com/rooms/[id#]` | Listing ID number |
 
 ---
-#### Users JSON Routes ####
-| CRUD | Route | Auth Needed? | Description |
-| --- | ------ | ------ | --- |
-| GET | /users | NO | checks if token exists |
-| POST | /users | NO |  adds new user to db |
-| POST | /users/login | NO | logs in user & gets token | 
+###### Firebase Routes
+| What does it do? | URL Route | Query Event | Required Parameters |
+|:---:|:---:|:---:|:---:|
+| Create & verify new User | `https://dazzling-inferno-3629.firebaseio.com/` | userRef.createUser + users.child( uid ).set | unique email address |
+| Authenticate User Login | `https://dazzling-inferno-3629.firebaseio.com/users` | userRef.authWithPassword | correct email + password |
+| Get User's favorited apt listings | `https://dazzling-inferno-3629.firebaseio.com/favs` | aptRef.on( "value" ) | user uid |
+| Add apt listing to User's favorites | `https://dazzling-inferno-3629.firebaseio.com/favs` | aptRef.on( "child_added" ) | user uid + apt id | 
+| Delete apt listing from User's favorites | `https://dazzling-inferno-3629.firebaseio.com/favs` | aptRef.on("child_removed") | user uid + apt id |
+| Add image(s) to an apt listing | `https://dazzling-inferno-3629.firebaseio.com/images` | imgRef.on( "child_added" ) | apt id | 
+| Add crime(s) to an apt listing | `https://dazzling-inferno-3629.firebaseio.com/crimes` | crimeRef.on("child_added") |apt id |
 
-Request (POST /users/login)
-```
-{
-  username: String,
-  password: String
-}
-```
-
-Request (POST /users):
-```
-{
-  username: String,
-  firstname: String,
-  lastname: String,
-  password: String
-}
-```
-
-Response:
-``` 
- {
-   data: { token: String }
- }
-```
-
-Response (GET /users):
-```
-{
-  data: [{
-    user_id: Number, 
-    username: String,
-    firstname: String,
-    lastname: String
-  }]
-}
-```
 ---
-#### Apartment (Cribs) JSON Routes ####
-| CRUD | Route | Auth Needed? | Description |
-| ---- | --- | ---- | ---- |
-| GET | /apartments | YES | gets all user's favorited apartments |
-| GET | /apartments/:id | YES | display an apartment profile |
-| POST | /apartments | YES | adds apartment to Apartment & Favorite table |
-| DELETE | /apartments/:id | YES | deletes apartment |
+###### NYC Open Data Routes
+| What does it do? | API Route | Required Parameters |
+|:---:|:---:|:---:|
+| Gets recent crimes in an area | ? | ? |
 
-Request (POST /apartments):
-```
-{
-  id: Number,
-  address: String,
-  address_unit: String,
-  neighborhood: String,
-  price: Decimal,
-  beds: Number,
-  baths: Number,
-  description: Text,
-  size_sqft: Number,
-  img_url: [],
-  apt_url: String
-}
-```
 ---
-### Future Bonus Implementations (To be Added):
-* **[Nav Bar|Menu]: Invite a Friend** 
-    * User can invite a friend by entering:
-        * Friend's Name
-        * Friend's Phone Number
-    * Friend will receive a text message (Twilio API) to join this awesome app
+# Bonus Features: ( to be added - v2.0.0 )
+* ##### In Nav|Menu Bar: Invite a Friend 
+    * Users can invite friends by submitting their:
+        * Full Name
+        * Email Address
+        * Phone Number
+    * Friends will receive a text message ( via Twilio API ) to join this awesome app
+
+* ##### Additional Firebase Routes
+| What does it do? | URL Route | Query Event | Required Parameters |
+|:---:|:---:|:---:|:---:|
+| Add schools to an apt listing | `https://dazzling-inferno-3629.firebaseio.com/schools` | schoolRef.on( "child_added") | apt id | 
+| Add MTA transportation to an apt listing | `https://dazzling-inferno-3629.firebaseio.com/mta` | mtaRef.on("child_added") | apt id |
+| Add resturants to an apt listing | `https://dazzling-inferno-3629.firebaseio.com/rests` | restRef.on( "child_added" ) | apt id | 
+| Add fitness gyms to an apt listing | `https://dazzling-inferno-3629.firebaseio.com/gyms` | gymRef.on("child_added") | apt id |
+| Add laundromat to an apt listing | `https://dazzling-inferno-3629.firebaseio.com/laundry` | laundryRef.on("child_added") | apt id |
+
+* ##### Google Places Routes
+| What does it do? | API Route | Required Parameters |
+|:---:|:---:|:---:|
+| Gets list of specified establishments near an apt | ? | API key + apt latitude & longitude |
+| Gets establishment info  | ? | API key + place id |
+
