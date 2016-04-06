@@ -18,6 +18,16 @@ var {
   Navigator
 } = React;
 
+
+function authDataCallback(authData) {
+  if (authData) {
+    console.log("User is logged in!");
+  } else {
+    console.log("User is logged out!");
+  }
+}
+
+
 class Login extends React.Component{
   constructor(props) {
     super(props);
@@ -29,6 +39,10 @@ class Login extends React.Component{
     }
   }
 
+  componentDidMount(){
+    console.log('checking user auth @Login: ', userRef.onAuth(authDataCallback));   // checks user auth state
+  }
+
   handleSubmit() {
     this.setState({ isLoading: false })
     // console.log('You entered: ', this.state)
@@ -36,25 +50,27 @@ class Login extends React.Component{
       email: this.state.email,
       password: this.state.password
     }
-    // how do we reset the Login Form??
+    // how do we reset the Login Form fields??
 
     // authenticates & logs in returning user
     userRef.authWithPassword(login, (error, authData) => {
       //authData contains UID!!
-      console.log('LOGIN authData is: ', authData);    // string
+      console.log('authData @Login: ', authData);    // string
       if(error || !authData){
         alert('Oops! Invalid login credentials, please try again!');
       } else {
         userInfo.on('value', (snapshot) => {
           // console.log('userInfo snapshot! ', snapshot.val()[authData.uid])
-          console.log('LOGIN user uid: ', authData.uid);
-          console.log('LOGIN user first name: ', snapshot.val()[authData.uid].fullname.split(' ')[0])
+          // console.log('LOGIN user uid: ', authData.uid);
+          // console.log('LOGIN user first name: ', snapshot.val()[authData.uid].fullname.split(' ')[0])
+          var firstname = snapshot.val()[authData.uid].fullname.split(' ')[0]  // user's first name
+          console.log('Login - first name: ', firstname)
+
           this.props.navigator.push({
-            title: 'Login to Homepage', 
+            title: 'Homepage', 
             component: Homepage, 
             passProps: { 
               user: { 
-                uid: authData.uid,     // user UID
                 name: snapshot.val()[authData.uid].fullname.split(' ')[0]  // user's first name
               }
             }

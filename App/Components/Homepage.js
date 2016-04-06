@@ -25,7 +25,7 @@ class Homepage extends React.Component{
     this.state = {
       dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
       error: '',
-      apartment: {}, 
+      favorites: [], 
     };
   }
 
