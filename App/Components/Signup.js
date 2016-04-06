@@ -17,6 +17,10 @@ var {
   Navigator
 } = React;
 
+// verifies user auth state 
+function authDataCallback(authData) {
+  console.log( authData ? "User is logged in!" : "User is logged out!" );
+}
 
 class Signup extends React.Component{
   constructor(props) {
@@ -30,6 +34,10 @@ class Signup extends React.Component{
     }
   }
 
+  componentWillMount(){
+    userRef.onAuth(authDataCallback);   // checks user auth state
+  }
+
   handleSubmit() {
     this.setState({ isLoading: false })
 
@@ -38,15 +46,13 @@ class Signup extends React.Component{
       email: this.state.email,
       password: this.state.password
     }
-    // how do we reset the Signup Form??
+    // how do we reset the Signup Form fields??
     
-
     // creates new user
     userRef.createUser(login, (error, userData) => {
       //userData contains Firebase user UID ONLY!
-      // console.log('userData is: ', userData);
       if(error) {
-        alert('Sorry! This email and/or password is already taken!');
+        alert('Sorry, something went wrong -- Please try again!');
       } else {
         users.child(userData.uid).set({
           fullname: this.state.fullname,
@@ -57,20 +63,16 @@ class Signup extends React.Component{
           //authData contains UID & token
           console.log('authData is: ', authData.uid);    // string
           if(error){
-            alert('Oops! Invalid login credentials, please try again!');
+            alert('Invalid login credentials -- Please try again');
           } else {
-            console.log('fullname: ', this.state.fullname);
-            console.log('first name only: ', this.state.fullname.split(' ')[0])
-
             // Redirect to Homepage with user info
             this.props.navigator.push({
-              title: 'Signup to Homepage',
+              title: 'Homepage',
               component: Homepage,
               passProps: {
                 user: {
-                  uid: userData.uid,
+                  uid: authData.uid,
                   name: this.state.fullname.split(' ')[0]
-                  // need to pass user info! -- user: {}
                 }
               }
             })  

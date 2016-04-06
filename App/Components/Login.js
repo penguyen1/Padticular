@@ -5,8 +5,8 @@ var Signup = require('./Signup');
 var Homepage = require('./Homepage');
 // var Separator = require('./Helpers/Separator');
 var styles = require('./Helpers/Styles');
-var userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
-var userInfo = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
+var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
+var userRef = ref.child('users/');
 
 var {
   Text,
@@ -17,6 +17,11 @@ var {
   View,
   Navigator
 } = React;
+
+// verifies user auth state 
+function authDataCallback(authData) {
+  console.log( authData ? "User is logged in!" : "User is logged out!" );
+}
 
 class Login extends React.Component{
   constructor(props) {
@@ -29,38 +34,63 @@ class Login extends React.Component{
     }
   }
 
+  componentWillMount(){
+    // user auth exists - but WHO??
+    if(ref.getAuth()){
+      // this.props.navigator.jumpBack();
+      var user = userRef.child(ref.getAuth().uid)
+
+      user.once('value', (snapshot)=>{
+        var firstname = snapshot.val().fullname.split(' ')[0]
+        console.log('SNAPSHOT BABY: ', firstname)
+
+        // save info (firstname + uid) & redirect to Homepage         // DRY THIS LATER
+        this.props.navigator.push({     // WHY ISNT THIS WORKING!!
+          title: 'Homepage',
+          component: Homepage,
+          passProps: {
+            user: {
+              uid: ref.getAuth().uid,
+              name: firstname
+            }
+          }
+        })
+      })    // end of user.once
+
+    }
+  }
+
   handleSubmit() {
     this.setState({ isLoading: false })
-    // console.log('You entered: ', this.state)
     var login = {
       email: this.state.email,
       password: this.state.password
     }
-    // how do we reset the Login Form??
+    // how do we reset the Login Form fields??
 
     // authenticates & logs in returning user
-    userRef.authWithPassword(login, (error, authData) => {
+    ref.authWithPassword(login, (error, authData) => {
       //authData contains UID!!
-      console.log('LOGIN authData is: ', authData);    // string
+      console.log('authData.uid @Login: ', authData.uid);    // string
       if(error || !authData){
         alert('Oops! Invalid login credentials, please try again!');
       } else {
-        userInfo.on('value', (snapshot) => {
-          // console.log('userInfo snapshot! ', snapshot.val()[authData.uid])
-          console.log('LOGIN user uid: ', authData.uid);
-          console.log('LOGIN user first name: ', snapshot.val()[authData.uid].fullname.split(' ')[0])
+        userRef.once('value', (snapshot)=>{
+          var member = snapshot.val()[authData.uid];
+          var firstname = member.fullname.split(' ')[0]
+
           this.props.navigator.push({
-            title: 'Login to Homepage', 
+            title: 'Homepage', 
             component: Homepage, 
             passProps: { 
               user: { 
-                uid: authData.uid,     // user UID
-                name: snapshot.val()[authData.uid].fullname.split(' ')[0]  // user's first name
+                uid: authData.uid,
+                name: firstname  // user's first name
               }
             }
           })
-        });
-      }
+        })
+      }     // end if-else statement
     })
   }
 
