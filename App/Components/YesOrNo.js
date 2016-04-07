@@ -40,13 +40,17 @@ class YesOrNo extends React.Component{
     };
   }
 
-  // load first listing in this.props.apts
+  // load first apt from this.props.apts 
   componentWillMount(){
-    console.log('loading up the first apartment! ', this.props.apts[0])
+    var first = this.props.apts.pop()
+    console.log('loading up the first apartment! ', first)
+
   }
 
   // user wants to save this apt
   handleSaveApt(){
+    console.log('You got it Boss! Saved!')
+    
     // get apt id & check if it exists in Firebase /apts
         // if yes, get the apt_uid & add it into users/apts (indexOn??, key(), push(), set()????)
         // if no: 
@@ -54,30 +58,54 @@ class YesOrNo extends React.Component{
               // add all apt's picture_urls[max 15] into images
               // find 5 most recent crimes, check if apt_uid exists in crimes or not, add/update it with new crimes
     // go to next apt
+    this.handleNextApt()
   }
 
   handleNextApt(){
-    if(this.props.apts.length){
-      return this.props.apts.pop()
-    } else{
-      // // redirect to Homepage
-      console.log('Uh Oh! No more apartments!')
-      // this.props.navigator.push({
-      //   title: 'Homepage',
-      //   component: Homepage,
-      //   passProps: {
-      //     user: this.props.user
-      //   }
-      // })
-    }
+    console.log('Next apartment coming right up!')
+
+    // if(this.props.apts.length){
+    //   return this.props.apts.pop()
+    // } else{
+    //   // // redirect to Homepage
+    //   console.log('Uh Oh! No more apartments!')
+    //   // this.props.navigator.push({
+    //   //   title: 'Homepage',
+    //   //   component: Homepage,
+    //   //   passProps: {
+    //   //     user: this.props.user
+    //   //   }
+    //   // })
+    // }
   }
 
+  render(){
+    return(
+      <View style={styles.mainContainer}>
+        <Text style={styles.title}> Yeah or Nah? </Text>
+        <View style={styles.formContainer}>
+          <Text style={styles.listFavs}>Apts for {this.props.user.name} </Text>
 
+          {/* Temp 'YES' Button to Save Apt */}
+          <TouchableHighlight
+            style={styles.button}
+            onPress={this.handleSaveApt.bind(this)}
+            underlayColor='white' >
+            <Text style={styles.buttonText}>I WANT!</Text>
+          </TouchableHighlight>
 
+          {/* Temp 'NAHH' Button to get Next Apt */}
+          <TouchableHighlight
+            style={styles.button}
+            onPress={this.handleNextApt.bind(this)}
+            underlayColor='white' >
+            <Text style={styles.buttonText}>Nah, Pass</Text>
+          </TouchableHighlight>
 
-
-
-
+        </View>
+      </View>
+    )
+  }
 };
 
 
