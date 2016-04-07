@@ -1,4 +1,5 @@
 const api = {
+  // const google_API = 'AIzaSyAX9CAIAZVOGgj_noHfmSEUVZPpBZQPSrY';
   const AirBnB = '3092nxybyb0otqw18e8nh5nty';
   // access_token = 'afb4dyafgux8f9xvr6ec9z9f1' to be stored in header?
 
@@ -22,27 +23,19 @@ const api = {
     }); 
   },
 
-  // // Firebase - gets all apartments favorited by user
-  // getFavorites(){},
-
-  // Google Places API - Text Search (name & address) nearest to placeID
-  getLaundromats(){},
-  getSchools(){},
-  getMTA(){},
-  getRestuarants(){},
-  getGyms(){},
-  getParks(){},
-
   // Open NYC Data Crimes API - gets recent crimes around listing area
   getCrimes(){}
+
+
+
+
+  // Google Places API - Text Search (name & address) nearest to placeID
+  // getLaundromats(){},
+  // getSchools(){},
+  // getMTA(){},
+  // getRestuarants(){},
+  // getGyms(){},
+  // getParks(){}
 };
 
 module.exports = api;
-
-
-// const streeteasy = {
-//   const zillow_API = 'X1-ZWz1f7axiu73t7_10irx';
-//   const google_API = 'AIzaSyAX9CAIAZVOGgj_noHfmSEUVZPpBZQPSrY';
-//   const easy_API = '083e15a0075183da09fd113c234364f5701b8398';
-//   const base_url = 'http://streeteasy.com/nyc/api/rentals/search?criteria=[area:flatiron&limit:10&order:price_asc]&key=${StEasy_API}&format=json'
-// }

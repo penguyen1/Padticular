@@ -106,6 +106,7 @@ class Signup extends React.Component{
             placeholder="Enter your Full Name"
             autoCapitalize="words"
             autoCorrect={false}
+            clearTextOnFocus={true}
             onChangeText={(text)=>this.setState({ fullname: text })}
             value={this.state.fullname} />
 
@@ -115,6 +116,7 @@ class Signup extends React.Component{
             placeholder="Enter your Email Address"
             autoCapitalize="none"
             autoCorrect={false}
+            clearTextOnFocus={true}
             onChangeText={(text)=>this.setState({ email: text })}
             value={this.state.email} />
 
@@ -125,6 +127,7 @@ class Signup extends React.Component{
             autoCapitalize="none"
             keyboardType="default"
             autoCorrect={false}
+            clearTextOnFocus={true}
             secureTextEntry={true}
             onChangeText={(text)=>this.setState({ password: text })}
             value={this.state.password} />

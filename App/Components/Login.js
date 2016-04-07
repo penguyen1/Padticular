@@ -119,6 +119,7 @@ class Login extends React.Component{
             placeholder="Email Address"
             autoCapitalize="none"
             autoCorrect={false}
+            clearTextOnFocus={true}
             onChangeText={(text)=>this.setState({ email: text})}
             value={this.state.email} />
 
@@ -129,6 +130,7 @@ class Login extends React.Component{
             autoCapitalize="none"
             autoCorrect={false}
             secureTextEntry={true}
+            clearTextOnFocus={true}
             onChangeText={(text)=>this.setState({ password: text})}
             value={this.state.password} />
 

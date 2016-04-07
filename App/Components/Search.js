@@ -22,15 +22,14 @@ var {
 class Search extends React.Component{
   constructor(props) {
     super(props);
-    // starts with default values
     this.state = {
-      guests: 1,          
-      location: '',       
-      min_beds: 1,        
-      min_bedrooms: '',    
-      min_bathrooms: 1,   
-      price_max: 10000,
-      price_min: 0,     
+      guests: '',         // default: 1          
+      location: '',       // default: 'US'  
+      min_beds: '',       // default: 1         
+      min_bedrooms: '',   // default: 0  
+      min_bathrooms: '',  // default: 0   
+      price_max: '',      // default: 10000
+      price_min: '',      // default: 0
     };
   }
 
@@ -39,22 +38,27 @@ class Search extends React.Component{
     // ref.getAuth();   // checks user auth state
   }
 
+  convertToURL(params){
+    var url 
+  },
+
   // call AirBnB API, get response (must be array!), redirect & pass info to YesOrNo Component
   // **** how do we reset the Search Form fields?? ****
   handleSubmit(){
     // convert this.state values into a valid AirBnB URL parameter string
+    console.log('about to hit that AirBnB API!', this.state);
+
     // call getListings in api.js and show the response (hopefully as an array)
     // redirect & send (array) response to YesOrNo
 
 
-
     // adding default value ',US' to this.state.location
     // this.setState({ location: this.state.location+",US" })
-    console.log('hitting AirBnB API! ', this.state);  
-    console.log('min_bedrooms: ', this.state.min_bedrooms)
-    var min_bs = parseInt(this.state.min_bedrooms);
-    this.setState({ min_bedrooms: min_bs})
-    console.log(this.state)
+    console.log('about to hit it with this:  ', this.state);  
+    // console.log('min_bedrooms: ', typeof(this.state.min_bedrooms))
+    // var min_bs = parseInt(this.state.min_bedrooms);
+    // this.setState({ min_bedrooms: min_bs})
+    // console.log(this.state)
   }
 
   // Redirect back to Homepage Component
@@ -73,21 +77,62 @@ class Search extends React.Component{
           style={styles.textInput}
           placeholder="Enter Neighborhood, City, State or Zipcode"
           autoCapitalize="words"
+          clearTextOnFocus={true}
           onChangeText={(text)=>this.setState({ location: text })}
           value={this.state.location} />
-
-        {/* Min number of Bedrooms */}
-        <TextInput
-          style={styles.textInput}
-          placeholder="Minimum number of bedrooms (optional)"
-          onChangeText={(text)=>this.setState({ min_bedrooms: text })}
-          value={this.state.min_bedrooms} />
 
           {/* need to move setState in handleSubmit */}
           {/* will take in a str here and  parseInt it later */}
           {/* Or maybe just implement the fucking slider component DUHHHHH */}
 
+        {/* Min number of Bedrooms */}
+        <TextInput
+          style={styles.textInput}
+          placeholder="Min number bedrooms (optional)"
+          clearTextOnFocus={true}
+          onChangeText={(text)=>this.setState({ min_bedrooms: text })}
+          value={this.state.min_bedrooms} />
 
+
+        {/* Min number of Bathrooms */}
+        <TextInput
+          style={styles.textInput}
+          placeholder="Min number bathrooms (optional)"
+          clearTextOnFocus={true}
+          onChangeText={(text)=>this.setState({ min_bathrooms: text })}
+          value={this.state.min_bathrooms} />
+        {/* Min number of Beds */}
+        <TextInput
+          style={styles.textInput}
+          placeholder="Min number beds (optional)"
+          clearTextOnFocus={true}
+          onChangeText={(text)=>this.setState({ min_beds: text })}
+          value={this.state.min_beds} />
+
+
+        {/* Number of Guests */}
+        <TextInput
+          style={styles.textInput}
+          placeholder="Number of guests (optional)"
+          clearTextOnFocus={true}
+          onChangeText={(text)=>this.setState({ guests: text })}
+          value={this.state.guests} />
+
+
+        {/* Minimum Price */}
+        <TextInput
+          style={styles.textInput}
+          placeholder="Enter Min Price"
+          clearTextOnFocus={true}
+          onChangeText={(text)=>this.setState({ price_min: text })}
+          value={this.state.price_min} />
+        {/* Maximum Price */}
+        <TextInput
+          style={styles.textInput}
+          placeholder="Enter Max Price"
+          clearTextOnFocus={true}
+          onChangeText={(text)=>this.setState({ price_max: text })}
+          value={this.state.price_max} />
 
 
 
