@@ -5,7 +5,7 @@ var Login = require('./Login');
 var Homepage = require('./Homepage');
 var styles = require('./Helpers/Styles')
 var userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
-var users = userRef.child('users');
+var users = userRef.child('users/');
 
 var {
   Text,
@@ -17,6 +17,10 @@ var {
   Navigator
 } = React;
 
+// verifies user auth state 
+function authDataCallback(authData) {
+  console.log( authData ? "User is logged in!" : "User is logged out!" );
+}
 
 class Signup extends React.Component{
   constructor(props) {
@@ -30,6 +34,10 @@ class Signup extends React.Component{
     }
   }
 
+  componentWillMount(){
+    userRef.onAuth(authDataCallback);   // checks user auth state
+  }
+
   handleSubmit() {
     this.setState({ isLoading: false })
 
@@ -38,15 +46,13 @@ class Signup extends React.Component{
       email: this.state.email,
       password: this.state.password
     }
-    // how do we reset the Signup Form??
+    // how do we reset the Signup Form fields??
     
-
     // creates new user
     userRef.createUser(login, (error, userData) => {
       //userData contains Firebase user UID ONLY!
-      // console.log('userData is: ', userData);
       if(error) {
-        alert('Sorry! This email and/or password is already taken!');
+        alert('Sorry, something went wrong -- Please try again!');
       } else {
         users.child(userData.uid).set({
           fullname: this.state.fullname,
@@ -57,20 +63,16 @@ class Signup extends React.Component{
           //authData contains UID & token
           console.log('authData is: ', authData.uid);    // string
           if(error){
-            alert('Oops! Invalid login credentials, please try again!');
+            alert('Invalid login credentials -- Please try again');
           } else {
-            console.log('fullname: ', this.state.fullname);
-            console.log('first name only: ', this.state.fullname.split(' ')[0])
-
             // Redirect to Homepage with user info
             this.props.navigator.push({
-              title: 'Signup to Homepage',
+              title: 'Homepage',
               component: Homepage,
               passProps: {
                 user: {
-                  uid: userData.uid,
+                  uid: authData.uid,
                   name: this.state.fullname.split(' ')[0]
-                  // need to pass user info! -- user: {}
                 }
               }
             })  
@@ -95,27 +97,41 @@ class Signup extends React.Component{
 
     return (
       <View style={styles.mainContainer}>
-        {/*<View style={styles.nav} />*/}
         <View style={styles.formContainer}>
           <Text style={styles.title}> Signup </Text>
+
           {/* Full Name */}
           <TextInput
             style={styles.textInput}
-            placeholder="Enter your full Name"
+            placeholder="Enter your Full Name"
+            autoCapitalize="words"
+            autoCorrect={false}
+            clearTextOnFocus={true}
             onChangeText={(text)=>this.setState({ fullname: text })}
             value={this.state.fullname} />
+
           {/* Email Address */}
           <TextInput
             style={styles.textInput}
             placeholder="Enter your Email Address"
+            autoCapitalize="none"
+            autoCorrect={false}
+            clearTextOnFocus={true}
             onChangeText={(text)=>this.setState({ email: text })}
             value={this.state.email} />
+
           {/* Create Password */}
           <TextInput
             style={styles.textInput}
             placeholder="Create a Password"
+            autoCapitalize="none"
+            keyboardType="default"
+            autoCorrect={false}
+            clearTextOnFocus={true}
+            secureTextEntry={true}
             onChangeText={(text)=>this.setState({ password: text })}
             value={this.state.password} />
+
           {/* Submit Button */}
           <TouchableHighlight 
             style={styles.button}
@@ -123,13 +139,14 @@ class Signup extends React.Component{
             underlayColor="white" >
               <Text style={styles.buttonText}>Sign Me Up!</Text>
           </TouchableHighlight>
+
           {/* Loading Spinner */}
           <ActivityIndicatorIOS
             animating={this.state.isLoading}
             color="#111"
             size="large"  />
-          {/* Shows Error Message */}
-          {showError}
+            {showError}
+
           {/* Link to Login Component */}
           <View style={styles.footer}>
             <Text>Already a member?</Text>
@@ -138,6 +155,7 @@ class Signup extends React.Component{
               <Text style={styles.link}>Log In here</Text>
             </TouchableHighlight>
           </View>
+
         </View>
       </View>
     )

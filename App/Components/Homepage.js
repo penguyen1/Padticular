@@ -4,8 +4,8 @@ const Firebase = require('firebase');
 var styles = require('./Helpers/Styles');
 var Profile = require('./Profile');
 var Login = require('./Login');
-var userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
-// var Search = require('./Search');
+var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
+var Search = require('./Search');                  // for testing -- doesnt belong here
 // var Nav = require('./Nav');
 
 var {
@@ -19,19 +19,26 @@ var {
   ListView
 } = React;
 
+// verifies user auth state 
+function authDataCallback(authData) {
+  console.log( authData ? "User is logged in!" : "User is logged out!" );
+}
+
 class Homepage extends React.Component{
   constructor(props){
     super(props);
     this.state = {
       dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
       error: '',
-      apartment: {}, 
+      favorites: [], 
     };
   }
 
   // called ONCE Homepage Component is rendered
   componentWillMount(){
-    console.log('passed user info from Login | Signup: ', this.props.user);
+    var user = ref.child('users/').child(this.props.user.uid);      // route to this specific user
+    user.onAuth(authDataCallback);                                  // checks user auth state - user is either logged in or out
+    // console.log('passed user info from Login|Signup: ', this.props.user);
     console.log('I should be getting users apartment favorites from Firebase here');
     // this.getFavorites();
   }
@@ -58,14 +65,26 @@ class Homepage extends React.Component{
     })
   }
 
+  // Redirect to Search Component
+  handleGoToSearch(){
+    console.log('im bout to go to Search, but first: ', this.props.user)
+    this.props.navigator.push({
+      title: 'Search',
+      component: Search,
+      passProps: {
+        user: this.props.user
+      }
+    })
+  }
+
   // Logout & Redirect to Login Component
   handleLogout(){
-    userRef.unauth();             // Destroys User Auth
-    // this.props.navigator.replace({
+    ref.unauth();                 // Destroys User Auth
+    // this.props.navigator.replace({   // can i switch btw Signup & Login without having a back button ??? 
     //   title: 'Login',
     //   component: Login
     // })
-    this.props.navigator.pop();
+    this.props.navigator.pop();   // go back to previous component - Signup
   }
 
   render(){
@@ -84,6 +103,14 @@ class Homepage extends React.Component{
             onPress={this.handleGoToProfile.bind(this)}
             underlayColor='white' >
             <Text style={styles.buttonText}>Go to Profile</Text>
+          </TouchableHighlight>
+
+          {/* Temp 'Search' Button to Search Component */}
+          <TouchableHighlight
+            style={styles.button}
+            onPress={this.handleGoToSearch.bind(this)}
+            underlayColor='white' >
+            <Text style={styles.buttonText}>Find Apartments</Text>
           </TouchableHighlight>
 
           {/* Temp Logout Button */}
