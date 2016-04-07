@@ -5,8 +5,7 @@ var styles = require('./Helpers/Styles');
 var Profile = require('./Profile');
 var Login = require('./Login');
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
-
-// var Search = require('./Search');
+var Search = require('./Search');                  // for testing -- doesnt belong here
 // var Nav = require('./Nav');
 
 var {
@@ -66,6 +65,14 @@ class Homepage extends React.Component{
     })
   }
 
+  // Redirect to Search Component
+  handleGoToSearch(){
+    this.props.navigator.push({
+      title: 'Search',
+      component: Search
+    })
+  }
+
   // Logout & Redirect to Login Component
   handleLogout(){
     ref.unauth();                 // Destroys User Auth
@@ -92,6 +99,14 @@ class Homepage extends React.Component{
             onPress={this.handleGoToProfile.bind(this)}
             underlayColor='white' >
             <Text style={styles.buttonText}>Go to Profile</Text>
+          </TouchableHighlight>
+
+          {/* Temp 'Search' Button to Search Component */}
+          <TouchableHighlight
+            style={styles.button}
+            onPress={this.handleGoToSearch.bind(this)}
+            underlayColor='white' >
+            <Text style={styles.buttonText}>Find Apartments</Text>
           </TouchableHighlight>
 
           {/* Temp Logout Button */}
