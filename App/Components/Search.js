@@ -1,9 +1,10 @@
 'use strict'
 const React = require('react-native');
 const Firebase = require('firebase');
+var api = require('../Utils/api');
 var styles = require('./Helpers/Styles');
 var Homepage = require('./Homepage');
-// var YesOrNo = require('./YesOrNo');
+var YesOrNo = require('./YesOrNo');
 // var Nav = require('./Nav');
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
 var userRef = ref.child('users/');
@@ -26,10 +27,10 @@ class Search extends React.Component{
       guests: '',          
       location: '',       // default: US - specification to US only
       min_beds: '',       
-      min_bedrooms: '',   // default: 0  
-      min_bathrooms: '',  // default: 0   
-      price_max: '',      // default: 10000
-      price_min: '',      // default: 0
+      min_bedrooms: '',    
+      min_bathrooms: '',    
+      price_max: '',      
+      price_min: '', 
     };
   }
 
@@ -40,11 +41,11 @@ class Search extends React.Component{
 
 
 
-  // call AirBnB API, get response (must be array!), redirect & pass info to YesOrNo Component
+  // call AirBnB API, get response, redirect & pass info to YesOrNo Component
   // **** how do we reset the Search Form fields?? ****
   handleSubmit(){
     this.setState({ location: this.state.location+",US" })    // search specification to US only
-    console.log('about to hit that AirBnB API!', this.state);
+    // console.log('about to hit that AirBnB API!', this.state);
 
     // convert this.state values into a valid AirBnB URL parameter string
     var params = Object.keys(this.state).map((el)=>{
@@ -52,15 +53,25 @@ class Search extends React.Component{
     }).join('')
 
     // call getListings in api.js and show the response (hopefully as an array)
-    // redirect & send (array) response to YesOrNo
-
-
-    // this.setState({ location: this.state.location+",US" })
-    console.log('about to hit it with this:  ', params);  
-    // console.log('min_bedrooms: ', typeof(this.state.min_bedrooms))
-    // var min_bs = parseInt(this.state.min_bedrooms);
-    // this.setState({ min_bedrooms: min_bs})
-    // console.log(this.state)
+    api.getListings(params)
+      .then( (res) =>{
+        // checks if no results were returned
+        if(res.search_results.length){
+          console.log('BOOOOYYAAA: ', res.search_results)
+          // send info to YesOrNo Component
+          // this.props.navigator.push({
+          //   title: 'Swipe: Right to save, Left to skip!',
+          //   component: YesOrNo,
+          //   passProps: {
+          //     user: this.props.user,
+          //     apts: res.search_results
+          //   }
+          // })
+        } else {
+          // display 'no results found' message & REFRESH? JUMPBACKTO? Search Form
+        }
+      })
+      .catch((err)=>console.log('ERROR getting listings from Search: ',err))
   }
 
   // Redirect back to Homepage Component
