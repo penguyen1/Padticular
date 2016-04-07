@@ -5,7 +5,7 @@ const api = {
 
   // AirBnB API - gets list of apartments
   getListings(params){
-    const url = `https://api.airbnb.com/v2/search_results?client_id=${AirBnB}&locale=en-US&currency=USD&_format=for_search_results_with_minimal_pricing&_offset=0&${params}`;
+    const url = `https://api.airbnb.com/v2/search_results?client_id=${AirBnB}&locale=en-US&currency=USD&_format=for_search_results&_limit=50${params}`;
     // return fetch(url).then(res => res.json());  
     fetch(url).then({
         res => res.json()

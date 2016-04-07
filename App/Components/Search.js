@@ -23,9 +23,9 @@ class Search extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
-      guests: '',         // default: 1          
-      location: '',       // default: 'US'  
-      min_beds: '',       // default: 1         
+      guests: '',          
+      location: '',       // default: US - specification to US only
+      min_beds: '',       
       min_bedrooms: '',   // default: 0  
       min_bathrooms: '',  // default: 0   
       price_max: '',      // default: 10000
@@ -38,23 +38,25 @@ class Search extends React.Component{
     // ref.getAuth();   // checks user auth state
   }
 
-  convertToURL(params){
-    var url 
-  },
+
 
   // call AirBnB API, get response (must be array!), redirect & pass info to YesOrNo Component
   // **** how do we reset the Search Form fields?? ****
   handleSubmit(){
-    // convert this.state values into a valid AirBnB URL parameter string
+    this.setState({ location: this.state.location+",US" })    // search specification to US only
     console.log('about to hit that AirBnB API!', this.state);
+
+    // convert this.state values into a valid AirBnB URL parameter string
+    var params = Object.keys(this.state).map((el)=>{
+      return( this.state[el].length ? `&${el}=${this.state[el]}` : '' )
+    }).join('')
 
     // call getListings in api.js and show the response (hopefully as an array)
     // redirect & send (array) response to YesOrNo
 
 
-    // adding default value ',US' to this.state.location
     // this.setState({ location: this.state.location+",US" })
-    console.log('about to hit it with this:  ', this.state);  
+    console.log('about to hit it with this:  ', params);  
     // console.log('min_bedrooms: ', typeof(this.state.min_bedrooms))
     // var min_bs = parseInt(this.state.min_bedrooms);
     // this.setState({ min_bedrooms: min_bs})
@@ -83,7 +85,7 @@ class Search extends React.Component{
 
           {/* need to move setState in handleSubmit */}
           {/* will take in a str here and  parseInt it later */}
-          {/* Or maybe just implement the fucking slider component DUHHHHH */}
+          {/* Or maybe just implement the slider component, DUHHHHH */}
 
         {/* Min number of Bedrooms */}
         <TextInput
