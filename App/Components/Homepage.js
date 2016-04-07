@@ -38,7 +38,7 @@ class Homepage extends React.Component{
   componentWillMount(){
     var user = ref.child('users/').child(this.props.user.uid);      // route to this specific user
     user.onAuth(authDataCallback);                                  // checks user auth state - user is either logged in or out
-    console.log('passed user info from Login|Signup: ', this.props.user);
+    // console.log('passed user info from Login|Signup: ', this.props.user);
     console.log('I should be getting users apartment favorites from Firebase here');
     // this.getFavorites();
   }
@@ -67,9 +67,13 @@ class Homepage extends React.Component{
 
   // Redirect to Search Component
   handleGoToSearch(){
+    console.log('im bout to go to Search, but first: ', this.props.user)
     this.props.navigator.push({
       title: 'Search',
-      component: Search
+      component: Search,
+      passProps: {
+        user: this.props.user
+      }
     })
   }
 

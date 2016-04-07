@@ -97,27 +97,38 @@ class Signup extends React.Component{
 
     return (
       <View style={styles.mainContainer}>
-        {/*<View style={styles.nav} />*/}
         <View style={styles.formContainer}>
           <Text style={styles.title}> Signup </Text>
+
           {/* Full Name */}
           <TextInput
             style={styles.textInput}
-            placeholder="Enter your full Name"
+            placeholder="Enter your Full Name"
+            autoCapitalize="words"
+            autoCorrect={false}
             onChangeText={(text)=>this.setState({ fullname: text })}
             value={this.state.fullname} />
+
           {/* Email Address */}
           <TextInput
             style={styles.textInput}
             placeholder="Enter your Email Address"
+            autoCapitalize="none"
+            autoCorrect={false}
             onChangeText={(text)=>this.setState({ email: text })}
             value={this.state.email} />
+
           {/* Create Password */}
           <TextInput
             style={styles.textInput}
             placeholder="Create a Password"
+            autoCapitalize="none"
+            keyboardType="default"
+            autoCorrect={false}
+            secureTextEntry={true}
             onChangeText={(text)=>this.setState({ password: text })}
             value={this.state.password} />
+
           {/* Submit Button */}
           <TouchableHighlight 
             style={styles.button}
@@ -125,13 +136,14 @@ class Signup extends React.Component{
             underlayColor="white" >
               <Text style={styles.buttonText}>Sign Me Up!</Text>
           </TouchableHighlight>
+
           {/* Loading Spinner */}
           <ActivityIndicatorIOS
             animating={this.state.isLoading}
             color="#111"
             size="large"  />
-          {/* Shows Error Message */}
-          {showError}
+            {showError}
+
           {/* Link to Login Component */}
           <View style={styles.footer}>
             <Text>Already a member?</Text>
@@ -140,6 +152,7 @@ class Signup extends React.Component{
               <Text style={styles.link}>Log In here</Text>
             </TouchableHighlight>
           </View>
+
         </View>
       </View>
     )
