@@ -19,7 +19,7 @@ var {
 
 // verifies user auth state 
 function authDataCallback(authData) {
-  console.log( authData ? "User is logged in!" : "User is logged out!" );
+  console.log( authData ? "@Signup: User is logged in!" : "@Signup: User is logged out!" );
 }
 
 class Signup extends React.Component{
@@ -38,6 +38,7 @@ class Signup extends React.Component{
     userRef.onAuth(authDataCallback);   // checks user auth state
   }
 
+  // **** how do we reset the Signup Form fields?? **** 
   handleSubmit() {
     this.setState({ isLoading: false })
 
@@ -46,26 +47,26 @@ class Signup extends React.Component{
       email: this.state.email,
       password: this.state.password
     }
-    // how do we reset the Signup Form fields??
     
-    // creates new user
+    // creates new user & returns user's UID (userData.uid)
     userRef.createUser(login, (error, userData) => {
-      //userData contains Firebase user UID ONLY!
+
       if(error) {
         alert('Sorry, something went wrong -- Please try again!');
       } else {
+        // stores new user info to user's uid in Firebase
         users.child(userData.uid).set({
           fullname: this.state.fullname,
           email: this.state.email
         });
-        // authenticates & logs in new user (returns user.uid)
+
+        // authenticate & logs in new user
         userRef.authWithPassword(login, (error, authData) => {
           //authData contains UID & token
-          console.log('authData is: ', authData.uid);    // string
           if(error){
             alert('Invalid login credentials -- Please try again');
           } else {
-            // Redirect to Homepage with user info
+            // Redirect to user Homepage
             this.props.navigator.push({
               title: 'Homepage',
               component: Homepage,
@@ -77,21 +78,21 @@ class Signup extends React.Component{
               }
             })  
           }
-        })  // ends user authentication
-      }   
-    })  // ends createUser
+        })  
+      } // end of else statement
+    })  // end of createUser
   }
 
   // Redirect to Login Component
   handleGoToLogin() {
-    this.props.navigator.push({      // replace???
+    this.props.navigator.push({      // use replace???
       title: 'Login',
       component: Login
-    });
+    })
   }
 
   render(){
-    const showError = (       // style Text?
+    const showError = (       // add style??
       this.state.error ? <Text>{this.state.error}</Text> : <View />
     );
 

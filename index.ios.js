@@ -3,7 +3,8 @@ const Firebase = require('firebase');
 var Signup = require('./App/Components/Signup');
 var Homepage = require('./App/Components/Homepage');
 const userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
-const userInfo = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
+// const user = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
+const user = userRef.child('users'); 
 
 var {
   AppRegistry,
@@ -24,15 +25,15 @@ class Padticular extends React.Component{
     if(userRef.getAuth()){
       var currentuser = userRef.getAuth().uid;
       // gets all users from Firebase
-      userInfo.on('value', (snapshot) => {
-        console.log('userInfo snapshot! ', snapshot.val()[currentuser])
+      user.on('value', (snapshot) => {
+        console.log('user snapshot! ', snapshot.val()[currentuser])
         var goHere = {
-          title: 'index to Homepage', 
+          title: 'Homepage', 
           component: Homepage, 
           passProps: { 
             user: { 
               uid: currentuser,     // user UID
-              name: snapshot.val()[currentuser].fullname.split(' ')[0]  // user's first name
+              name: snapshot.val()[currentuser].fullname.split(' ')[0]  // first name
             }
           }
         }

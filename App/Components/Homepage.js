@@ -2,7 +2,7 @@
 const React = require('react-native');
 const Firebase = require('firebase');
 var styles = require('./Helpers/Styles');
-var Profile = require('./Profile');
+// var Profile = require('./Profile');        // WebView 
 var Login = require('./Login');
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
 var Search = require('./Search');                  // for testing -- doesnt belong here
@@ -21,14 +21,16 @@ var {
 
 // verifies user auth state 
 function authDataCallback(authData) {
-  console.log( authData ? "User is logged in!" : "User is logged out!" );
+  console.log( authData ? "@Login: User is logged in!" : "@Login: User is logged out!" );
 }
 
 class Homepage extends React.Component{
   constructor(props){
     super(props);
+    // this.ds =  new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2})
     this.state = {
       dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
+      //dataSource: [] // setState in componentWillMount()???
       error: '',
       favorites: [], 
     };
@@ -56,18 +58,23 @@ class Homepage extends React.Component{
       .done();
   }
 
-  // Redirect to Profile Component
+  // Redirect to WebView of Apt Listing
   handleGoToProfile(){      // needs to be passed apartment list id!
-    this.props.navigator.push({
-      title: 'Profile',
-      component: Profile,
-      // need to pass apartment id to get its info!
-    })
+    console.log('Takes me to the apartment listing website!')
+    // NOW A WebView!
+  }
+
+  // displays info of an apartment - id, capacity, address, pic_url, price & property_type
+  renderApt(){
+    return (
+      <View>
+        <Text> Apt Info Here </Text>
+      </View>
+    )
   }
 
   // Redirect to Search Component
   handleGoToSearch(){
-    console.log('im bout to go to Search, but first: ', this.props.user)
     this.props.navigator.push({
       title: 'Search',
       component: Search,
