@@ -83,6 +83,8 @@ class Search extends React.Component{
         }
         // this.hitAPIagain(x)
 
+        console.log('apartments array: ', apartment_ids)
+
         // pass info to YesOrNo Component
         this.props.navigator.push({
           title: 'Swipe: Right to save, Left to skip!',
