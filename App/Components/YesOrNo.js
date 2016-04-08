@@ -52,7 +52,6 @@ class YesOrNo extends React.Component{
     };
     this.aptRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/apts');
     this.userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
-    this.apt_uid = '';
   }
 
   // gets first apt from this.props.apts 
@@ -96,10 +95,7 @@ class YesOrNo extends React.Component{
 
       // get new apt uid 
       var apt_uid = newApt.key()
-      console.log('this.apt_uid: ', apt_uid)
-      this.userRef.child(this.props.user.uid).child('/apts').child(apt_uid).set(true)
-      // console.log('new apartment key: ', newApt_key)
-      // console.log('user uid: ', this.props.user.uid)
+      this.userRef.child(`${this.props.user.uid}/apts/${apt_uid}`).set(true)
     // }
     
     // 1. get apt id & check if id exists in Firebase /apts
