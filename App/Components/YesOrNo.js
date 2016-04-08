@@ -117,13 +117,8 @@ class YesOrNo extends React.Component{
     } else {    // no more apartments left!
       // console.log('Uh Oh! No more apartments!')
       // redirect to Homepage
-      this.props.navigator.push({
-        title: 'Homepage',
-        component: Homepage,
-        passProps: {
-          user: this.props.user
-        }
-      })
+      var home = this.props.homepage
+      this.props.navigator.popToRoute(home)
     }
   }
 
@@ -164,7 +159,8 @@ class YesOrNo extends React.Component{
 
 YesOrNo.propTypes = {
   user: React.PropTypes.object.isRequired,
-  apts: React.PropTypes.array.isRequired
+  apts: React.PropTypes.array.isRequired,
+  homepage: React.PropTypes.object.isRequired
 };
 
 module.exports = YesOrNo;

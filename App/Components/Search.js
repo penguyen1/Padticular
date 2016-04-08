@@ -3,7 +3,7 @@ const React = require('react-native');
 const Firebase = require('firebase');
 var api = require('../Utils/api');
 var styles = require('./Helpers/Styles');
-var Homepage = require('./Homepage');
+// var Homepage = require('./Homepage');
 var YesOrNo = require('./YesOrNo');
 // var Nav = require('./Nav');
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
@@ -89,7 +89,8 @@ class Search extends React.Component{
           component: YesOrNo,
           passProps: {
             user: this.props.user,
-            apts: apartment_ids
+            apts: apartment_ids,
+            homepage: this.props.homepage
           }
         })
       }).catch((err)=>console.log('ERROR getting listings from Search: ',err))
@@ -177,7 +178,8 @@ class Search extends React.Component{
 }
 
 Search.propTypes = {
-  user: React.PropTypes.object.isRequired
+  user: React.PropTypes.object.isRequired,
+  homepage: React.PropTypes.object.isRequired
 };
 
 module.exports = Search;

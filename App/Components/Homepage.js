@@ -3,8 +3,8 @@ const React = require('react-native');
 const Firebase = require('firebase');
 var styles = require('./Helpers/Styles');
 // var Profile = require('./Profile');        // WebView 
-var Login = require('./Login');
-var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
+// var Login = require('./Login');
+var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com');
 var Search = require('./Search');                  // for testing -- doesnt belong here
 // var Nav = require('./Nav');
 
@@ -34,28 +34,24 @@ class Homepage extends React.Component{
       error: '',
       favorites: [], 
     };
+    this.userAptRef = ref.child(`/users/${this.props.user.uid}/apts`)
   }
 
   // called ONCE Homepage Component is rendered
   componentWillMount(){
-    var user = ref.child('users/').child(this.props.user.uid);      // route to this specific user
-    user.onAuth(authDataCallback);                                  // checks user auth state - user is either logged in or out
-    // console.log('passed user info from Login|Signup: ', this.props.user);
-    console.log('I should be getting users apartment favorites from Firebase here');
-    // this.getFavorites();
+    // var user = ref.child('users/').child(this.props.user.uid); 
+    ref.child(`/users/${this.props.user.uid}`).onAuth(authDataCallback);          // checks auth state 
+    this.getFavorites();
   }
 
-  // Queries & setState of apartment favorites from Firebase  // apartment favorites: [apt_ids]? or [{apt_info}]?
+  // Queries & setState of apartment favorites from Firebase
   getFavorites(){
-    fetch( FIREBASE_FAVORITE_APARTMENT_QUERY )
-      .then( (res)=>res.json() )      // turns response into JSON first
-      .then( (resData)=>{
-        console.log('resData is: ', resData)
-        // this.setState({
-        //   dataSource: this.state.dataSource.cloneWithRows(resData)
-        // })
-      })
-      .done();
+    // get all user's apts
+    console.log('getting favorites')
+    this.userAptRef.on("value", (snap)=>{
+      console.log('my saved apts? ', snap.val())
+    })
+
   }
 
   // Redirect to WebView of Apt Listing
@@ -79,7 +75,8 @@ class Homepage extends React.Component{
       title: 'Search',
       component: Search,
       passProps: {
-        user: this.props.user
+        user: this.props.user,
+        homepage: this.props.navigator.navigationContext._currentRoute
       }
     })
   }
