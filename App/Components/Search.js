@@ -77,7 +77,7 @@ class Search extends React.Component{
         // checks if results were returned
         if(res.search_results.length){
           // console.log('BOOOOYYAAA: ', res.search_results)
-          var x = Object.keys(res.search_results).map((el)=>res.search_results[el].listing.id)
+          var apartment_ids = Object.keys(res.search_results).map((el)=>res.search_results[el].listing.id)
         } else {
           console.log('No Results Found!')
         }
@@ -89,7 +89,7 @@ class Search extends React.Component{
           component: YesOrNo,
           passProps: {
             user: this.props.user,
-            apts: x
+            apts: apartment_ids
           }
         })
       }).catch((err)=>console.log('ERROR getting listings from Search: ',err))

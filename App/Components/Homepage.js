@@ -21,7 +21,7 @@ var {
 
 // verifies user auth state 
 function authDataCallback(authData) {
-  console.log( authData ? "@Login: User is logged in!" : "@Login: User is logged out!" );
+  console.log( authData ? "@Home: User is logged in!" : "@Home: User is logged out!" );
 }
 
 class Homepage extends React.Component{
