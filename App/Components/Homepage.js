@@ -34,23 +34,42 @@ class Homepage extends React.Component{
       error: '',
       favorites: [], 
     };
-    this.userAptRef = ref.child(`/users/${this.props.user.uid}/apts`)
+    this.userAptRef = ref.child(`/users/${this.props.user.uid}/apts`);
   }
 
   // called ONCE Homepage Component is rendered
   componentWillMount(){
     // var user = ref.child('users/').child(this.props.user.uid); 
     ref.child(`/users/${this.props.user.uid}`).onAuth(authDataCallback);          // checks auth state 
-    this.getFavorites();
+    // this.getFavorites();
+    console.log('homepage componentWillMount')
+    this.getFavorites();        // getting favorites (in case of new additions)
   }
+
+  // componentDidMount(){
+  //   console.log('homepage componentDidMount')
+  //   this.getFavorites();        // getting favorites (in case of new additions)
+  // }
 
   // Queries & setState of apartment favorites from Firebase
   getFavorites(){
     // get all user's apts
     console.log('getting favorites')
     this.userAptRef.on("value", (snap)=>{
-      console.log('my saved apts? ', snap.val())
+      // var m = this.aptRef.child(snap.key())
+
+      snap.forEach((key)=>{
+        var apt_uid = key.key()
+        // console.log('apt_uid: ', apt_uid)
+
+        ref.child(`/apts/${apt_uid}`).once('value', (snapshot)=>{
+          // console.log('apartment info: ', snapshot.val())
+          this.state.favorites.push(snapshot.val())
+        })
+
+      })
     })
+    console.log('all my saved apts: ', this.state.favorites)
 
   }
 
@@ -92,6 +111,7 @@ class Homepage extends React.Component{
   }
 
   render(){
+
     return(
       <View style={styles.mainContainer}>
         {/* Homepage Greeting Header */}
@@ -132,7 +152,8 @@ class Homepage extends React.Component{
 }
 
 Homepage.propTypes = {
-  user: React.PropTypes.object.isRequired
+  user: React.PropTypes.object.isRequired,
 };
 
+  // apts: React.PropTypes.object
 module.exports = Homepage;

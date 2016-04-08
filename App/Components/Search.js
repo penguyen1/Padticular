@@ -3,11 +3,9 @@ const React = require('react-native');
 const Firebase = require('firebase');
 var api = require('../Utils/api');
 var styles = require('./Helpers/Styles');
-// var Homepage = require('./Homepage');
 var YesOrNo = require('./YesOrNo');
 // var Nav = require('./Nav');
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
-var userRef = ref.child('users/');
 
 var {
   Text,
@@ -36,30 +34,7 @@ class Search extends React.Component{
 
   componentWillMount(){
     console.log('checking user auth @Search: ', ref.getAuth());
-    // ref.getAuth();   // checks user auth state
   }
-
-  // gets list of AirBnB ids -> getApartmentInfo for each id
-  hitAPIagain(ids){
-    console.log('gotttem! ', ids)
-    // var apts = ids.map((el)=>console.log(el))
-    // if it works, send to API and get back the CORRECT format for each apt
-  }
-
-
-  // store this in hitAPIagain??
-  handleYesOrNo(){
-  // // pass info to YesOrNo Component
-  // this.props.navigator.push({
-  //   title: 'Swipe: Right to save, Left to skip!',
-  //   component: YesOrNo,
-  //   passProps: {
-  //     user: this.props.user,
-  //     apts: res.search_results
-  //   }
-  // })
-  }
-
 
   // call AirBnB API, get response, redirect & pass info to YesOrNo Component
   // **** how do we reset the Search Form fields?? ****

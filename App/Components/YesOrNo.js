@@ -115,7 +115,6 @@ class YesOrNo extends React.Component{
         }).catch((err)=>console.log('ERROR getting Apartment Info: ',err))
 
     } else {    // no more apartments left!
-      // console.log('Uh Oh! No more apartments!')
       // redirect to Homepage
       var home = this.props.homepage
       this.props.navigator.popToRoute(home)
