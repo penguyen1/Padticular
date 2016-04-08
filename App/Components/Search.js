@@ -52,28 +52,28 @@ class Search extends React.Component{
       return( this.state[el].length ? `&${el}=${this.state[el]}` : '' )
     }).join('')
 
-    // call getListings in api.js and show the response (hopefully as an array)
-    api.getListings(params)
-      .then( (res) =>{
-        // checks if no results were returned
-        if(res.search_results.length){
-          // console.log('BOOOOYYAAA: ', res.search_results)
+    // call getApartments in api.js & get back a response
+    api.getApartments(params)
+      // .then((res) =>{
+      //   // checks if results were returned
+      //   if(res.search_results.length){
+      //     // console.log('BOOOOYYAAA: ', res.search_results)
 
-          // pass info to YesOrNo Component
-          this.props.navigator.push({
-            title: 'Swipe: Right to save, Left to skip!',
-            component: YesOrNo,
-            passProps: {
-              user: this.props.user,
-              apts: res.search_results
-            }
-          })
-        } else {
-          // display 'no results found' message & REFRESH? JUMPBACKTO? Search Form
-          console.log('No Results Found!')
-        }
-      })
-      .catch((err)=>console.log('ERROR getting listings from Search: ',err))
+      //     // pass info to YesOrNo Component
+      //     this.props.navigator.push({
+      //       title: 'Swipe: Right to save, Left to skip!',
+      //       component: YesOrNo,
+      //       passProps: {
+      //         user: this.props.user,
+      //         apts: res.search_results
+      //       }
+      //     })
+      //   } else {
+      //     // display 'no results found' message & REFRESH? JUMPBACKTO? Search Form
+      //     console.log('No Results Found!')
+      //   }
+      // })
+      // .catch((err)=>console.log('ERROR getting listings from Search: ',err))
   }
 
   // Redirect back to Homepage Component
@@ -96,9 +96,10 @@ class Search extends React.Component{
           onChangeText={(text)=>this.setState({ location: text })}
           value={this.state.location} />
 
-          {/* need to move setState in handleSubmit */}
-          {/* will take in a str here and  parseInt it later */}
-          {/* Or maybe just implement the slider component, DUHHHHH */}
+
+          {/* need to move setState in handleSubmit to refresh text fields?? */}
+          {/* validate text inputs?? */}
+
 
         {/* Min number of Bedrooms */}
         <TextInput
@@ -107,8 +108,6 @@ class Search extends React.Component{
           clearTextOnFocus={true}
           onChangeText={(text)=>this.setState({ min_bedrooms: text })}
           value={this.state.min_bedrooms} />
-
-
         {/* Min number of Bathrooms */}
         <TextInput
           style={styles.textInput}
@@ -123,8 +122,6 @@ class Search extends React.Component{
           clearTextOnFocus={true}
           onChangeText={(text)=>this.setState({ min_beds: text })}
           value={this.state.min_beds} />
-
-
         {/* Number of Guests */}
         <TextInput
           style={styles.textInput}
@@ -132,8 +129,6 @@ class Search extends React.Component{
           clearTextOnFocus={true}
           onChangeText={(text)=>this.setState({ guests: text })}
           value={this.state.guests} />
-
-
         {/* Minimum Price */}
         <TextInput
           style={styles.textInput}
@@ -149,15 +144,12 @@ class Search extends React.Component{
           onChangeText={(text)=>this.setState({ price_max: text })}
           value={this.state.price_max} />
 
-
-
-
         {/* Submit Button */}
         <TouchableHighlight 
           style={styles.button}
           onPress={this.handleSubmit.bind(this)}
           underlayColor="white" >
-            <Text style={styles.buttonText}>Search Apt</Text>
+          <Text style={styles.buttonText}>Search Apt</Text>
         </TouchableHighlight>
       </View>
     </View>

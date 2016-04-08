@@ -31,13 +31,16 @@ class YesOrNo extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
-      id: '',
-      capacity: '',
-      public_address: '',       // split(',') and get[0,1,2] only and turn to string
-      property_type: '',
-      pic_url: '',
-      price: ''  
-    };
+      temp: {
+        id: '',
+        capacity: '',
+        public_address: '',       // split(',') and get[0,1,2] only and turn to string
+        property_type: '',
+        pic_url: '',
+        price: '' 
+      },
+      apartment: false, 
+    }
   }
 
   // load first apt from this.props.apts 
@@ -48,8 +51,9 @@ class YesOrNo extends React.Component{
   }
 
   // user wants to save this apt
-  handleSaveApt(){
+  handleSaveApt(){    // accept AirBnB id
     console.log('You got it Boss! Saved!')
+    // calls api.get
     
     // get apt id & check if it exists in Firebase /apts
         // if yes, get the apt_uid & add it into users/apts (indexOn??, key(), push(), set()????)

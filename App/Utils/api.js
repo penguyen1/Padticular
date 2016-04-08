@@ -4,22 +4,26 @@ const AirBnB = '3092nxybyb0otqw18e8nh5nty';
 var api = {
 
   // AirBnB API - gets list of apartments
-  getListings(params){
+  getApartments(params){
     // console.log('COOL, got it: ', params)
     var url = `https://api.airbnb.com/v2/search_results?client_id=${AirBnB}&locale=en-US&currency=USD&_format=for_search_results&_limit=50${params}`;
     // console.log('AirBnB URL: ', url)
-    return fetch(url).then((res)=>res.json())
+    fetch(url)
+      .then((res)=>res.json())
+      .then((data)=>{
+        data.search_results.forEach((apt)=>{
+          console.log('listing ID? ', apt.listing.id)
+        })
+      });
   },
 
   // AirBnB API - gets apartment info
-  // getListingInfo(id){
-  //   const url = `https://api.airbnb.com/v2/listings/${id}?client_id=${AirBnB}&locale=en-US&currency=USD&_format=v1_legacy_for_p3`;
-  //   // return fetch(url).then(res => res.json());  
-  //   fetch(url).then({
-  //       res => res.json()
-  //       console.log('AirBnB - Listing Info: ', res.json())
-  //   }); 
-  // },
+  getApartmentInfo(id){
+    console.log('More info for AirBnB id#', id)
+    var url = `https://api.airbnb.com/v2/listings/${id}?client_id=${AirBnB}&locale=en-US&currency=USD&_format=v1_legacy_for_p3`;
+    console.log('AirBnB listing info URL: ', url)
+    // return fetch(url).then(res => res.json());  
+  },
 
   // Open NYC Data Crimes API - gets recent crimes around listing area (lat, lng)
   getCrimes(){}
