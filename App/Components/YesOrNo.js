@@ -52,15 +52,15 @@ class YesOrNo extends React.Component{
     }
   }
 
-  // load first apt from this.props.apts 
+  // gets first apt from this.props.apts 
   componentWillMount(){
-    console.log('Initial Apartment count: ', this.props.apts.length)
     this.handleNextApt()
   }
 
   // user wants to save this apt
   handleSaveApt(){    // accept AirBnB id
-    console.log('You got it Boss! Saved!')
+    
+    console.log('You got it Boss! Saving Apt')
     // calls api.get
     
     // get apt id & check if it exists in Firebase /apts
@@ -75,7 +75,7 @@ class YesOrNo extends React.Component{
 
   // gets next apartment
   handleNextApt(){
-
+    console.log('Apartments left: ', this.props.apts.length)
     // are there any apartments left in this.props.apts?
     if(this.props.apts.length){
 
@@ -85,26 +85,27 @@ class YesOrNo extends React.Component{
       // call getApartmentInfo in api.js & get back a response
       api.getApartmentInfo(next)
         .then((res) => {
-          // console.log('res is.... ', res.listing)
           // saves specific info in res to this.state.apt keys
           Object.keys(this.state.apt).forEach((key)=>{
             // console.log('Key is: ', key)
             this.state.apt[key] = res.listing[key]
           })
-          console.log('current YesOrNo state: ', this.state.apt)
+          this.setState({ apt: this.state.apt })
+          console.log('current YesOrNo setState: ', this.state.apt)
+          // render it
 
         }).catch((err)=>console.log('ERROR getting Apartment Info: ',err))
 
     } else {    // no more apartments left!
       // // redirect to Homepage
       console.log('Uh Oh! No more apartments!')
-      // this.props.navigator.push({
-      //   title: 'Homepage',
-      //   component: Homepage,
-      //   passProps: {
-      //     user: this.props.user
-      //   }
-      // })
+      this.props.navigator.push({
+        title: 'Homepage',
+        component: Homepage,
+        passProps: {
+          user: this.props.user
+        }
+      })
     }
   }
 

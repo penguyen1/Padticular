@@ -6,7 +6,7 @@ var api = {
 
   // AirBnB API - gets list of apartments
   getApartments(params){
-    var url = `https://api.airbnb.com/v2/search_results?client_id=${AirBnB}&locale=en-US&currency=USD&_format=for_search_results&_limit=50${params}`;
+    var url = `https://api.airbnb.com/v2/search_results?client_id=${AirBnB}&locale=en-US&currency=USD&_format=for_search_results&_limit=5${params}`;
     
     // calls AirBnB API
     return fetch(url)
