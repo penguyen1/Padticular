@@ -5,22 +5,35 @@ const AirBnB = '3092nxybyb0otqw18e8nh5nty';
 // AirBnB API - gets apartment info
 function getApartmentInfo(id){
   var url = `https://api.airbnb.com/v2/listings/${id}?client_id=${AirBnB}&locale=en-US&currency=USD&_format=v1_legacy_for_p3`;
-  
+  var nigga = []
   var aptInfo = {}
   var categories = ['id','bedrooms','bathrooms','beds','lat','lng','person_capacity',
                     'picture_urls','property_type','address','price_formatted',
                     'smart_location','min_nights','map_image_url','summary'];
 
-  console.log('AirBnB listing info URL: ', url)
-  // return fetch(url).then(res => res.json());  
+  // console.log('AirBnB listing info URL: ', url)
+  // // return fetch(url).then(res => res.json());  
 
-  // gets listing info from AirBnB API
-  fetch(url)
+  // // gets listing info from AirBnB API
+  return fetch(url)
     .then(res => res.json())        // converts response to JSON
-    .then(data => console.log('WAHOOOOOOO: ', data))
+    // .then(data => console.log('WAHOOOOOOO: ', data))
+    .then(data => {
+      // var x = Object.keys(data.listing).map((el)=>{})
+      categories.forEach((el)=>{
+        aptInfo[el] = data.listing[el]
+      })
+      console.log('aptInfo', aptInfo)
+      // return aptInfo
+    })
     .catch(err => console.log('ERROR in Step 2!'))
-
+      
 }
+
+// categories.forEach(function(el){
+//   info[el] = listing[el]
+// })
+
 
 
 var api = {
@@ -28,49 +41,20 @@ var api = {
   // AirBnB API - gets list of apartments
   getApartments(params){
     var url = `https://api.airbnb.com/v2/search_results?client_id=${AirBnB}&locale=en-US&currency=USD&_format=for_search_results&_limit=50${params}`;
-    var apartments = []     // array to be returned to Search Component
+    
+    // var categories = ['id','bedrooms','bathrooms','beds','lat','lng','person_capacity','picture_urls','property_type',
+    //                   'address','price_formatted','smart_location','min_nights','map_image_url','summary'];
+    // var apartments = []     // array to be returned to Search Component
+    // var aptInfo = {}
 
-    // calls AirBnB API -- PART 1
-    fetch(url)
+    // calls AirBnB API
+    return fetch(url)
       .then((res)=>res.json())       // converts response to JSON
-      .then((data)=>{
-
-        // iterates through each apartment
-        data.search_results.forEach((apt)=>{
-          var getInfo = `https://api.airbnb.com/v2/listings/${apt.listing.id}?client_id=${AirBnB}&locale=en-US&currency=USD&_format=v1_legacy_for_p3`;
-
-          // calls AirBnB API -- PART 2
-          fetch(getInfo)
-            .then(res => res.json())
-            .then(data => console.log('EUUUREKAAAA: ', data))
-            .catch(err => console.log('ERROR in PHASE 2!'))
-
-          // gets & pushes returned data from getApartmentInfo into an array
-          // apartments.push(getApartmentInfo(apt.listing.id))
-          // getApartmentInfo(apt.listing.id)
-        })
-
-      })
-      // .then((resData)=>{
-      //   apartments.push()
-      // })
       .catch(err => console.log('ERROR in Step 1!'))
-
-    console.log('apartments is: ', apartments.length)
-    // console.log('How many pieces of the Masterpiece are there? ', apartments.length)
-    // console.log('The Masterpiece: ', apartments)
-    // return apartments
+    
   },
 
-  // AirBnB API - gets apartment info
-  // getApartmentInfo(id){
-  //   var url = `https://api.airbnb.com/v2/listings/${id}?client_id=${AirBnB}&locale=en-US&currency=USD&_format=v1_legacy_for_p3`;
-    
-  //   // var aptInfo = {}
-  //   console.log('AirBnB listing info URL: ', url)
-  //   console.log('--------------------------------------')
-  //   // return fetch(url).then(res => res.json());  
-  // },
+
 
   // Open NYC Data Crimes API - gets recent crimes around listing area (lat, lng)
   getCrimes(){}
@@ -80,8 +64,45 @@ var api = {
 module.exports = api;
 
 
+        // return data.search_results.map((el)=>{
+        //   apartments.push(el.listing.id)
+        // })
+        // console.log('apartments?? ', apartments)
 
-//  ******* BONUS for version 2.0.0: *******
+
+
+// .then((data)=>{
+    
+//         // iterates through each apartment
+//         data.search_results.forEach((apt)=>{
+//           var getInfo = `https://api.airbnb.com/v2/listings/${apt.listing.id}?client_id=${AirBnB}&locale=en-US&currency=USD&_format=v1_legacy_for_p3`;
+//           var aptInfo = {}      // empty object 
+
+//           // calls AirBnB API -- PART 2
+//           fetch(getInfo)
+//             .then(res => res.json())
+//             .then(data => {
+//               // Object.keys(data.listing).map((key)=>{})
+
+//               for(var x in categories){
+//                 var i = categories[x]
+//                 aptInfo[i] = data.listing[i]
+//               }
+//               // apartments.push(aptInfo)
+//               console.log('aptInfo is --- ', aptInfo)
+//             })
+//             // .then(resData => console.log('resData: ', resData))
+//             .catch(err => console.log('ERROR in PHASE 2!'))
+//         })
+        
+//       })
+
+// for(var x in categories){
+//   var i = categories[x]
+//   info[i] = listing[i]
+// }
+
+// //  ******* BONUS for version 2.0.0: *******
 
   // Google Places API - Text Search (name & address) nearest to placeID
   // var google_API = 'AIzaSyAX9CAIAZVOGgj_noHfmSEUVZPpBZQPSrY';

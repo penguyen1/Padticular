@@ -39,13 +39,32 @@ class Search extends React.Component{
     // ref.getAuth();   // checks user auth state
   }
 
+  // gets list of AirBnB ids -> getApartmentInfo for each id
+  hitAPIagain(ids){
+    console.log('gotttem! ', ids)
+    // var apts = ids.map((el)=>console.log(el))
+    // if it works, send to API and get back the CORRECT format for each apt
+  }
+
+
+  // store this in hitAPIagain??
+  handleYesOrNo(){
+  // // pass info to YesOrNo Component
+  // this.props.navigator.push({
+  //   title: 'Swipe: Right to save, Left to skip!',
+  //   component: YesOrNo,
+  //   passProps: {
+  //     user: this.props.user,
+  //     apts: res.search_results
+  //   }
+  // })
+  }
 
 
   // call AirBnB API, get response, redirect & pass info to YesOrNo Component
   // **** how do we reset the Search Form fields?? ****
   handleSubmit(){
     this.setState({ location: this.state.location+",US" })    // search specification to US only
-    // console.log('about to hit that AirBnB API!', this.state);
 
     // convert this.state values into a valid AirBnB URL parameter string
     var params = Object.keys(this.state).map((el)=>{
@@ -54,26 +73,16 @@ class Search extends React.Component{
 
     // call getApartments in api.js & get back a response
     api.getApartments(params)
-      // .then((res) =>{
-      //   // checks if results were returned
-      //   if(res.search_results.length){
-      //     // console.log('BOOOOYYAAA: ', res.search_results)
-
-      //     // pass info to YesOrNo Component
-      //     this.props.navigator.push({
-      //       title: 'Swipe: Right to save, Left to skip!',
-      //       component: YesOrNo,
-      //       passProps: {
-      //         user: this.props.user,
-      //         apts: res.search_results
-      //       }
-      //     })
-      //   } else {
-      //     // display 'no results found' message & REFRESH? JUMPBACKTO? Search Form
-      //     console.log('No Results Found!')
-      //   }
-      // })
-      // .catch((err)=>console.log('ERROR getting listings from Search: ',err))
+      .then((res) =>{
+        // checks if results were returned
+        if(res.search_results.length){
+          console.log('BOOOOYYAAA: ', res.search_results)
+          var x = Object.keys(res.search_results).map((el)=>res.search_results[el].listing.id)
+        } else {
+          console.log('No Results Found!')
+        }
+        this.hitAPIagain(x)
+      }).catch((err)=>console.log('ERROR getting listings from Search: ',err))
   }
 
   // Redirect back to Homepage Component
