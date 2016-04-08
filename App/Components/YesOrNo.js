@@ -59,52 +59,40 @@ class YesOrNo extends React.Component{
     this.handleNextApt()
   }
 
-  // user wants to save this apt
-  handleSaveApt(){    // accept AirBnB id
+  // user wants to save apt -- this.state.apt
+  handleSaveApt(){
     console.log('You got it Boss! Saving Apt: ', this.state.apt)
+    // TODO: check if this.state.apt.id exists in Firebase /apts -- orderByChild('id').equalTo(id) ???
+    // TODO: if yes, get the apt_uid & add it into users/apts (indexOn??, key(), push(), set()????)
     
+    // add apt into apts
+    var newApt = this.aptRef.push({ 
+      id: this.state.apt.id,
+      bedrooms: this.state.apt.bedrooms,
+      bathrooms: this.state.apt.bathrooms,
+      beds: this.state.apt.beds,
+      lat: this.state.apt.lat,
+      lng: this.state.apt.lng,
+      person_capacity: this.state.apt.person_capacity,
+      picture_urls: this.state.apt.picture_urls,   
+      property_type: this.state.apt.property_type,  
+      address: this.state.apt.address,
+      price_formatted: this.state.apt.price_formatted,
+      smart_location: this.state.apt.smart_location, 
+      min_nights: this.state.apt.min_nights,
+      map_image_url: this.state.apt.map_image_url,
+      summary: this.state.apt.summary
+    })
 
-    // testing #1
-    // if(this.aptRef.exists()){
-    //   // if(aptRef.has)
-    //   console.log('apartment exists!')
-    //   // aptRef.orderByChild('id').equalTo(this.state.apt.id).on('child_added', (snap)=>{
-    //   //   console.log(snap.key())
-    //   // })
-    // } else {
-      // apt does not yet exist 
-      // console.log('apartment does not exist!')
-      console.log('pushing apt to users')
-      var newApt = this.aptRef.push({ 
-        id: this.state.apt.id,
-        bedrooms: this.state.apt.bedrooms,
-        bathrooms: this.state.apt.bathrooms,
-        beds: this.state.apt.beds,
-        lat: this.state.apt.lat,
-        lng: this.state.apt.lng,
-        person_capacity: this.state.apt.person_capacity,
-        picture_urls: this.state.apt.picture_urls,   
-        property_type: this.state.apt.property_type,  
-        address: this.state.apt.address,
-        price_formatted: this.state.apt.price_formatted,
-        smart_location: this.state.apt.smart_location, 
-        min_nights: this.state.apt.min_nights,
-        map_image_url: this.state.apt.map_image_url,
-        summary: this.state.apt.summary
-      })
+    // get new apt uid 
+    // var apt_uid = newApt.key()
 
-      // get new apt uid 
-      var apt_uid = newApt.key()
-      this.userRef.child(`${this.props.user.uid}/apts/${apt_uid}`).set(true)
-    // }
-    
-    // 1. get apt id & check if id exists in Firebase /apts
-        // a. if yes, get the apt_uid & add it into users/apts (indexOn??, key(), push(), set()????)
-        // b. if no: 
-              // i - add apt into apts and get its apt_uid
-              // ii - add all apt's picture_urls[max 15] into images
-              // iii - find 5 most recent crimes, check if apt_uid exists in crimes or not, add/update it with new crimes
-    // 2. go to next apt
+    // adds apt_uid to '.../users/user_uid/apts'
+    this.userRef.child(`${this.props.user.uid}/apts/${newApt.key()}`).set(true)
+
+    // BONUS: add all apt's picture_urls[] into images
+    // TOTO: find 5 most recent crimes, check if apt_uid exists in crimes, push/update with new crimes
+
     this.handleNextApt()
   }
 
@@ -115,25 +103,20 @@ class YesOrNo extends React.Component{
     if(this.props.apts.length){
 
       var next = this.props.apts.pop()
-      console.log('NEXT Apartment ID: ', next)
-
       // call getApartmentInfo in api.js & get back a response
       api.getApartmentInfo(next)
         .then((res) => {
           // saves specific info in res to this.state.apt keys
           Object.keys(this.state.apt).forEach((key)=>{
-            // console.log('Key is: ', key)
             this.state.apt[key] = res.listing[key]
           })
           this.setState({ apt: this.state.apt })
-          console.log('current YesOrNo setState: ', this.state.apt)
-          // render it
-
+          // now render it!
         }).catch((err)=>console.log('ERROR getting Apartment Info: ',err))
 
     } else {    // no more apartments left!
-      // // redirect to Homepage
-      console.log('Uh Oh! No more apartments!')
+      // console.log('Uh Oh! No more apartments!')
+      // redirect to Homepage
       this.props.navigator.push({
         title: 'Homepage',
         component: Homepage,
