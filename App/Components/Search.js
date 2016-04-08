@@ -76,12 +76,22 @@ class Search extends React.Component{
       .then((res) =>{
         // checks if results were returned
         if(res.search_results.length){
-          console.log('BOOOOYYAAA: ', res.search_results)
+          // console.log('BOOOOYYAAA: ', res.search_results)
           var x = Object.keys(res.search_results).map((el)=>res.search_results[el].listing.id)
         } else {
           console.log('No Results Found!')
         }
-        this.hitAPIagain(x)
+        // this.hitAPIagain(x)
+
+        // pass info to YesOrNo Component
+        this.props.navigator.push({
+          title: 'Swipe: Right to save, Left to skip!',
+          component: YesOrNo,
+          passProps: {
+            user: this.props.user,
+            apts: x
+          }
+        })
       }).catch((err)=>console.log('ERROR getting listings from Search: ',err))
   }
 

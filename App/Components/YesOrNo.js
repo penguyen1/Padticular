@@ -1,6 +1,7 @@
 'use strict'
 const React = require('react-native');
 const Firebase = require('firebase');
+var api = require('../Utils/api');
 var styles = require('./Helpers/Styles');
 var Homepage = require('./Homepage');
 var Search = require('./Search');
@@ -31,23 +32,30 @@ class YesOrNo extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
-      temp: {
+      apt: {
         id: '',
-        capacity: '',
-        public_address: '',       // split(',') and get[0,1,2] only and turn to string
+        bedrooms: '',
+        bathrooms: '',
+        beds: '',
+        lat: '',
+        lng: '',
+        person_capacity: '',
+        picture_urls: [],
         property_type: '',
-        pic_url: '',
-        price: '' 
+        address: '',
+        price_formatted: '',
+        smart_location: '',
+        min_nights: '',
+        map_image_url: '',
+        summary: '',
       },
-      apartment: false, 
     }
   }
 
   // load first apt from this.props.apts 
   componentWillMount(){
-    var first = this.props.apts.pop()
-    console.log('loading up the first apartment! ', first)
-
+    console.log('Initial Apartment count: ', this.props.apts.length)
+    this.handleNextApt()
   }
 
   // user wants to save this apt
@@ -65,22 +73,39 @@ class YesOrNo extends React.Component{
     this.handleNextApt()
   }
 
+  // gets next apartment
   handleNextApt(){
-    console.log('Next apartment coming right up!')
 
-    // if(this.props.apts.length){
-    //   return this.props.apts.pop()
-    // } else{
-    //   // // redirect to Homepage
-    //   console.log('Uh Oh! No more apartments!')
-    //   // this.props.navigator.push({
-    //   //   title: 'Homepage',
-    //   //   component: Homepage,
-    //   //   passProps: {
-    //   //     user: this.props.user
-    //   //   }
-    //   // })
-    // }
+    // are there any apartments left in this.props.apts?
+    if(this.props.apts.length){
+
+      var next = this.props.apts.pop()
+      console.log('NEXT Apartment ID: ', next)
+
+      // call getApartmentInfo in api.js & get back a response
+      api.getApartmentInfo(next)
+        .then((res) => {
+          // console.log('res is.... ', res.listing)
+          // saves specific info in res to this.state.apt keys
+          Object.keys(this.state.apt).forEach((key)=>{
+            // console.log('Key is: ', key)
+            this.state.apt[key] = res.listing[key]
+          })
+          console.log('current YesOrNo state: ', this.state.apt)
+
+        }).catch((err)=>console.log('ERROR getting Apartment Info: ',err))
+
+    } else {    // no more apartments left!
+      // // redirect to Homepage
+      console.log('Uh Oh! No more apartments!')
+      // this.props.navigator.push({
+      //   title: 'Homepage',
+      //   component: Homepage,
+      //   passProps: {
+      //     user: this.props.user
+      //   }
+      // })
+    }
   }
 
   render(){

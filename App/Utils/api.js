@@ -2,62 +2,44 @@
 const AirBnB = '3092nxybyb0otqw18e8nh5nty';
 
 
-// AirBnB API - gets apartment info
-function getApartmentInfo(id){
-  var url = `https://api.airbnb.com/v2/listings/${id}?client_id=${AirBnB}&locale=en-US&currency=USD&_format=v1_legacy_for_p3`;
-  var nigga = []
-  var aptInfo = {}
-  var categories = ['id','bedrooms','bathrooms','beds','lat','lng','person_capacity',
-                    'picture_urls','property_type','address','price_formatted',
-                    'smart_location','min_nights','map_image_url','summary'];
-
-  // console.log('AirBnB listing info URL: ', url)
-  // // return fetch(url).then(res => res.json());  
-
-  // // gets listing info from AirBnB API
-  return fetch(url)
-    .then(res => res.json())        // converts response to JSON
-    // .then(data => console.log('WAHOOOOOOO: ', data))
-    .then(data => {
-      // var x = Object.keys(data.listing).map((el)=>{})
-      categories.forEach((el)=>{
-        aptInfo[el] = data.listing[el]
-      })
-      console.log('aptInfo', aptInfo)
-      // return aptInfo
-    })
-    .catch(err => console.log('ERROR in Step 2!'))
-      
-}
-
-// categories.forEach(function(el){
-//   info[el] = listing[el]
-// })
-
-
-
 var api = {
 
   // AirBnB API - gets list of apartments
   getApartments(params){
     var url = `https://api.airbnb.com/v2/search_results?client_id=${AirBnB}&locale=en-US&currency=USD&_format=for_search_results&_limit=50${params}`;
     
-    // var categories = ['id','bedrooms','bathrooms','beds','lat','lng','person_capacity','picture_urls','property_type',
-    //                   'address','price_formatted','smart_location','min_nights','map_image_url','summary'];
-    // var apartments = []     // array to be returned to Search Component
-    // var aptInfo = {}
-
     // calls AirBnB API
     return fetch(url)
-      .then((res)=>res.json())       // converts response to JSON
-      .catch(err => console.log('ERROR in Step 1!'))
-    
+      .then((res)=>res.json())       // converts & returns response in JSON
+      .catch(err => console.log('ERROR in getting Apartments!'))  
   },
 
+  getApartmentInfo(id){
+    var url = `https://api.airbnb.com/v2/listings/${id}?client_id=${AirBnB}&locale=en-US&currency=USD&_format=v1_legacy_for_p3`;
+    // var aptInfo = {}
+    // var categories = ['id','bedrooms','bathrooms','beds','lat','lng','person_capacity',
+    //                   'picture_urls','property_type','address','price_formatted',
+    //                   'smart_location','min_nights','map_image_url','summary'];
 
+    // gets listing info from AirBnB API
+    return fetch(url)
+      .then((res)=>res.json())       // converts & returns response in JSON
+      .catch(err => console.log('ERROR in getting Apartment INFO!'))  
+
+    // return fetch(url)
+    //   .then(res => res.json())        // converts response to JSON
+    //   .then(data => {
+    //     categories.forEach((el)=>{
+    //       aptInfo[el] = data.listing[el]
+    //     })
+    //     console.log('aptInfo', aptInfo)
+    //     // return aptInfo
+    //   })
+    //   .catch(err => console.log('ERROR in Step 2!'))
+  },
 
   // Open NYC Data Crimes API - gets recent crimes around listing area (lat, lng)
-  getCrimes(){}
+  // getCrimes(){}
 
 };
 
