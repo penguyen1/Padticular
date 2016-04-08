@@ -52,6 +52,7 @@ class YesOrNo extends React.Component{
     };
     this.aptRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/apts');
     this.userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
+    this.apt_uid = '';
   }
 
   // gets first apt from this.props.apts 
@@ -62,7 +63,7 @@ class YesOrNo extends React.Component{
   // user wants to save this apt
   handleSaveApt(){    // accept AirBnB id
     console.log('You got it Boss! Saving Apt: ', this.state.apt)
-    var apt_uid 
+    
 
     // testing #1
     // if(this.aptRef.exists()){
@@ -75,7 +76,7 @@ class YesOrNo extends React.Component{
       // apt does not yet exist 
       // console.log('apartment does not exist!')
       console.log('pushing apt to users')
-      this.aptRef.push({ 
+      var newApt = this.aptRef.push({ 
         id: this.state.apt.id,
         bedrooms: this.state.apt.bedrooms,
         bathrooms: this.state.apt.bathrooms,
@@ -92,6 +93,13 @@ class YesOrNo extends React.Component{
         map_image_url: this.state.apt.map_image_url,
         summary: this.state.apt.summary
       })
+
+      // get new apt uid 
+      var apt_uid = newApt.key()
+      console.log('this.apt_uid: ', apt_uid)
+      this.userRef.child(this.props.user.uid).child('/apts').child(apt_uid).set(true)
+      // console.log('new apartment key: ', newApt_key)
+      // console.log('user uid: ', this.props.user.uid)
     // }
     
     // 1. get apt id & check if id exists in Firebase /apts
