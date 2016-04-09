@@ -51,23 +51,22 @@ class Homepage extends React.Component{
   // called ONCE BEFORE Homepage Component is rendered
   componentWillMount(){
     this.getFavorites();        // getting favorites (in case of new additions)
-
-    // returns values? --- YES
-    // console.log('Dimensions IMAGE_WIDTH: ', IMAGE_WIDTH)
-    // console.log('Dimensions IMAGE_HEIGHT: ', IMAGE_HEIGHT)
-    // console.log('Dimensions PIXEL_RATIO: ', PIXEL_RATIO)
   }
 
-  // called ONCE AFTER Homepage Component is rendered
-  // componentDidMount(){
-  //   console.log('AFTERWARDS')
-  //   this.getFavorites();        // getting favorites (in case of new additions)
-  // }
+  // called ONCE Homepage Component is unmounted
+  componentWillUnmount(){
+    // this.state.favorites = []
+
+    // removes all Firebase callbacks (no repeatitive issues)
+    userAptRef.off()
+    console.log('Leaving homepage: ', this.state.favorites)
+  }
 
 
   // Queries & setState of apartment favorites from Firebase
   getFavorites(){
     var finished = false
+    this.state.favorites = []
     // get all user's apts
     console.log('getting favorites')
     this.userAptRef.orderByKey().on("child_added", (snap)=>{
