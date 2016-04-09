@@ -64,11 +64,6 @@ class Homepage extends React.Component{
   //   this.getFavorites();        // getting favorites (in case of new additions)
   // }
 
-  // solution to reupdating new additions to favorites list???
-  _onRefresh() {
-    this.setState({refreshing: true});
-  }
-
 
   // Queries & setState of apartment favorites from Firebase
   getFavorites(){
@@ -79,7 +74,7 @@ class Homepage extends React.Component{
       var apt_uid = snap.key()
       console.log('user apts snapshot: ', apt_uid)
 
-      ref.child(`/apts/${apt_uid}`).on('value', (snapshot)=>{
+      ref.child(`/apts/${apt_uid}`).once('value', (snapshot)=>{
         console.log('apartment info: ', snapshot.val())
         this.state.favorites.push(snapshot.val())
       })
@@ -96,7 +91,7 @@ class Homepage extends React.Component{
       console.log('refreshing still? ', this.state.refreshing)
       console.log('apt update? ', this.state.favorites)
       console.log('finished', finished)
-    },1000)
+    },500)
     // console.log('all my saved apts: ', this.state.favorites)
   }
 
@@ -136,21 +131,32 @@ class Homepage extends React.Component{
     this.props.navigator.pop();   // go back to previous component - Signup
   }
 
+  // solution to reupdating new additions to favorites list???
+  _onRefresh() {
+    console.log('refreshing - updating for new favorites!')
+    this.setState({refreshing: true});
+    this.getFavorites();
+  }
+
   render(){
     // how will this be received from YesOrNo???
     // keeps getting route/stack error using (push/popToRoute/resetTo)
-    if(this.props.reset){
-      console.log('new additions!')
-      this.getFavorites();
-    }
+    // if(this.props.reset){
+    //   console.log('new additions!')
+    //   this.getFavorites();
+    // }
 
     return(
-      <ScrollView style={styles.scrollView}>
-
-        {/* ListView of User's Favorited Apartments */}
+      <ScrollView 
+          style={styles.scrollView}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)} />}
+      >
+        {/* lists EACH user's favorites */}
         <View style={styles.overlay}>
           <Text style={styles.title}>Favorites List</Text>
-
         </View>
 
         {/* Temp 'Search' Button to Search Component */}
