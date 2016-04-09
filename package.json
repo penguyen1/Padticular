@@ -10,6 +10,11 @@
     "flow": "^0.2.3",
     "react": "^0.14.8",
     "react-native": "^0.22.2",
+    "react-native-parallax": "^0.2.2",
+    "react-native-swipe-cards": "0.0.7",
+    "react-native-video": "^0.7.1",
+    "react-numeric-input": "^2.0.3",
+    "react-timer-mixin": "^0.13.3",
     "watchman": "^0.1.8"
   }
 }

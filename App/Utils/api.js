@@ -1,48 +1,38 @@
-const api = {
-  const AirBnB = '3092nxybyb0otqw18e8nh5nty';
-  // access_token = 'afb4dyafgux8f9xvr6ec9z9f1' to be stored in header?
+// var access_token = 'afb4dyafgux8f9xvr6ec9z9f1'  // stored in header?
+const AirBnB = '3092nxybyb0otqw18e8nh5nty';
 
+var api = {
   // AirBnB API - gets list of apartments
-  getListings(params){
-    const url = `https://api.airbnb.com/v2/search_results?client_id=${AirBnB}&locale=en-US&currency=USD&_format=for_search_results_with_minimal_pricing&_offset=0&${params}`;
-    // return fetch(url).then(res => res.json());  
-    fetch(url).then({
-        res => res.json()
-        console.log('AirBnB - Search Listings: ', res.json())
-    });
+  getApartments(params){
+    var url = `https://api.airbnb.com/v2/search_results?client_id=${AirBnB}&locale=en-US&currency=USD&_format=for_search_results&_limit=5${params}`;
+    
+    return fetch(url)
+      .then((res)=>res.json())       // converts & returns response in JSON
+      .catch(err => console.log('ERROR in getting Apartments!'))  
   },
 
-  // AirBnB API - gets apartment info
-  getListingInfo(id){
-    const url = `https://api.airbnb.com/v2/listings/${id}?client_id=${AirBnB}&locale=en-US&currency=USD&_format=v1_legacy_for_p3`;
-    // return fetch(url).then(res => res.json());  
-    fetch(url).then({
-        res => res.json()
-        console.log('AirBnB - Listing Info: ', res.json())
-    }); 
+  getApartmentInfo(id){
+    var url = `https://api.airbnb.com/v2/listings/${id}?client_id=${AirBnB}&locale=en-US&currency=USD&_format=v1_legacy_for_p3`;
+
+    return fetch(url)
+      .then((res)=>res.json())       // converts & returns response in JSON
+      .catch(err => console.log('ERROR in getting Apartment INFO!'))  
   },
 
-  // // Firebase - gets all apartments favorited by user
-  // getFavorites(){},
+  // Open NYC Data Crimes API - gets recent crimes around listing area (lat, lng)
+  // getCrimes(){}
 
-  // Google Places API - Text Search (name & address) nearest to placeID
-  getLaundromats(){},
-  getSchools(){},
-  getMTA(){},
-  getRestuarants(){},
-  getGyms(){},
-  getParks(){},
-
-  // Open NYC Data Crimes API - gets recent crimes around listing area
-  getCrimes(){}
 };
 
 module.exports = api;
 
+// //  ******* BONUS for version 2.0.0: *******
 
-// const streeteasy = {
-//   const zillow_API = 'X1-ZWz1f7axiu73t7_10irx';
-//   const google_API = 'AIzaSyAX9CAIAZVOGgj_noHfmSEUVZPpBZQPSrY';
-//   const easy_API = '083e15a0075183da09fd113c234364f5701b8398';
-//   const base_url = 'http://streeteasy.com/nyc/api/rentals/search?criteria=[area:flatiron&limit:10&order:price_asc]&key=${StEasy_API}&format=json'
-// }
+  // Google Places API - Text Search (name & address) nearest to placeID
+  // var google_API = 'AIzaSyAX9CAIAZVOGgj_noHfmSEUVZPpBZQPSrY';
+  // getLaundromats(){},
+  // getSchools(){},
+  // getMTA(){},
+  // getRestuarants(){},
+  // getGyms(){},
+  // getParks(){}

@@ -1,115 +1,244 @@
 'use strict'
 const React = require('react-native');
 const Firebase = require('firebase');
-var styles = require('./Helpers/Styles');
-var Profile = require('./Profile');
-var Login = require('./Login');
-var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
-
-// var Search = require('./Search');
+var TimerMixin = require('react-timer-mixin');
+// var styles = require('./Helpers/Styles');
+var ViewSite = require('./Helpers/Web');        // WebView     
+var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com');
+var Search = require('./Search');               // for testing -- belongs in Nav
 // var Nav = require('./Nav');
 
 var {
-  Text,
-  TextInput,
-  TouchableHighlight,
-  ActivityIndicatorIOS,
-  StyleSheet,
-  View,
+  Dimensions,
   Navigator,
-  ListView
+  PixelRatio,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableHighlight,
+  TouchableWithoutFeedback,
+  View
 } = React;
+
+
+// Scrollable Parallax View
+var Parallax = require('react-native-parallax');
+var IMAGE_WIDTH = Dimensions.get('window').width;
+var IMAGE_HEIGHT = IMAGE_WIDTH / 2;
+var PIXEL_RATIO = PixelRatio.get();
+var PARALLAX_FACTOR = 0.3;
+
 
 // verifies user auth state 
 function authDataCallback(authData) {
-  console.log( authData ? "User is logged in!" : "User is logged out!" );
+  console.log( authData ? "@Home: User is logged in!" : "@Home: User is logged out!" );
 }
 
 class Homepage extends React.Component{
   constructor(props){
     super(props);
+    // this.ds =  new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2})
     this.state = {
-      dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
-      error: '',
-      favorites: [], 
+      // dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
+      //dataSource: [] // setState in componentWillMount()???
+      refreshing: false,
+      favorites: [],
     };
+    this.userAptRef = ref.child(`/users/${this.props.user.uid}/apts`);
   }
 
-  // called ONCE Homepage Component is rendered
+  // called ONCE BEFORE Homepage Component is rendered
   componentWillMount(){
-    var user = ref.child('users/').child(this.props.user.uid);      // route to this specific user
-    user.onAuth(authDataCallback);                                  // checks user auth state - user is either logged in or out
-    console.log('passed user info from Login|Signup: ', this.props.user);
-    console.log('I should be getting users apartment favorites from Firebase here');
-    // this.getFavorites();
+    this.getFavorites();        // getting favorites (in case of new additions)
   }
 
-  // Queries & setState of apartment favorites from Firebase  // apartment favorites: [apt_ids]? or [{apt_info}]?
+  // called ONCE Homepage Component is unmounted
+  componentWillUnmount(){
+    // this.state.favorites = []
+
+    // removes all Firebase callbacks (no repeatitive issues)
+    userAptRef.off()
+    console.log('Leaving homepage: ', this.state.favorites)
+  }
+
+
+  // Queries & setState of apartment favorites from Firebase
   getFavorites(){
-    fetch( FIREBASE_FAVORITE_APARTMENT_QUERY )
-      .then( (res)=>res.json() )      // turns response into JSON first
-      .then( (resData)=>{
-        console.log('resData is: ', resData)
-        // this.setState({
-        //   dataSource: this.state.dataSource.cloneWithRows(resData)
-        // })
+    var finished = false
+    this.state.favorites = []
+    // get all user's apts
+    console.log('getting favorites')
+    this.userAptRef.orderByKey().on("child_added", (snap)=>{
+      var apt_uid = snap.key()
+      console.log('user apts snapshot: ', apt_uid)
+
+      ref.child(`/apts/${apt_uid}`).once('value', (snapshot)=>{
+        console.log('apartment info: ', snapshot.val())
+        this.state.favorites.push(snapshot.val())
       })
-      .done();
+      finished = true
+    })
+
+    // delays asynchronous issue 
+    TimerMixin.setTimeout(()=>{
+      finished = false
+      this.setState({
+        refreshing: false,
+        favorites: this.state.favorites
+      })
+      console.log('refreshing still? ', this.state.refreshing)
+      console.log('apt update? ', this.state.favorites)
+      console.log('finished', finished)
+    },500)
+    // console.log('all my saved apts: ', this.state.favorites)
   }
 
-  // Redirect to Profile Component
-  handleGoToProfile(){      // needs to be passed apartment list id!
+  // displays info of an apartment - id, capacity, address, pic_url, price & property_type
+  renderApt(){
+    return (
+      <View>
+        <Text> Apt Info Here </Text>
+      </View>
+    )
+  }
+
+  // Redirect to Search Component
+  handleGoToSearch(){
     this.props.navigator.push({
-      title: 'Profile',
-      component: Profile,
-      // need to pass apartment id to get its info!
+      title: 'Search',
+      component: Search,
+      passProps: {
+        user: this.props.user,
+        homepage: this.props.navigator.navigationContext._currentRoute,
+      }
+    })
+  }
+
+  // Redirects to Apartment Listing Website 
+  handleGoToSite(url){
+    this.props.navigator.push({
+      title: 'Web View',
+      component: Web,
+      passProps: {url}
     })
   }
 
   // Logout & Redirect to Login Component
   handleLogout(){
     ref.unauth();                 // Destroys User Auth
-    // this.props.navigator.replace({   // can i switch btw Signup & Login without having a back button ??? 
-    //   title: 'Login',
-    //   component: Login
-    // })
     this.props.navigator.pop();   // go back to previous component - Signup
   }
 
+  // solution to reupdating new additions to favorites list???
+  _onRefresh() {
+    console.log('refreshing - updating for new favorites!')
+    this.setState({refreshing: true});
+    this.getFavorites();
+  }
+
   render(){
+    // how will this be received from YesOrNo???
+    // keeps getting route/stack error using (push/popToRoute/resetTo)
+    // if(this.props.reset){
+    //   console.log('new additions!')
+    //   this.getFavorites();
+    // }
+
     return(
-      <View style={styles.mainContainer}>
-        {/* Homepage Greeting Header */}
-        <Text style={styles.header}>Hello, {this.props.user.name}!</Text>
-        {/* ListView of User's Favorited Apartments */}
-        <View style={styles.favorites}>
-          <Text style={styles.listTitle}>Favorites List</Text>
-          <Text style={styles.listFavs}>List of Favorite Apartments here</Text>
-
-          {/* Temp 'View' Button to Profile Component */}
-          <TouchableHighlight
-            style={styles.button}
-            onPress={this.handleGoToProfile.bind(this)}
-            underlayColor='white' >
-            <Text style={styles.buttonText}>Go to Profile</Text>
-          </TouchableHighlight>
-
-          {/* Temp Logout Button */}
-          <TouchableHighlight
-            style={styles.button}
-            onPress={this.handleLogout.bind(this)}
-            underlayColor='white' >
-            <Text style={styles.buttonText}>Logout</Text>
-          </TouchableHighlight>
-
+      <ScrollView 
+          style={styles.scrollView}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)} />}
+      >
+        {/* lists EACH user's favorites */}
+        <View style={styles.overlay}>
+          <Text style={styles.title}>Favorites List</Text>
         </View>
-      </View>
+
+        {/* Temp 'Search' Button to Search Component */}
+        <TouchableHighlight
+          style={styles.button}
+          onPress={this.handleGoToSearch.bind(this)}
+          underlayColor='white' >
+          <Text style={styles.buttonText}>Find Apartments</Text>
+        </TouchableHighlight>
+
+        {/* Temp Logout Button */}
+        <TouchableHighlight
+          style={styles.button}
+          onPress={this.handleLogout.bind(this)}
+          underlayColor='white' >
+          <Text style={styles.buttonText}>Logout</Text>
+        </TouchableHighlight>
+      </ScrollView>
     )
   }
 }
 
+
+// Homepage StyleSheet
+var styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    padding: 30,
+    marginTop: 65,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    backgroundColor: '#48BBEC'
+  },
+  image: {
+    height: IMAGE_HEIGHT,
+  },
+  overlay: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.3)',
+  },
+  title: {
+    fontSize: 20,
+    textAlign: 'center',
+    lineHeight: 25,
+    fontWeight: 'bold',
+    color: 'white',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowRadius: 1,
+    shadowColor: 'black',
+    shadowOpacity: 0.8,
+  },
+  url: {
+    opacity: 0.5,
+    fontSize: 10,
+    position: 'absolute',
+    color: 'white',
+    left: 5,
+    bottom: 5,
+  },
+  row: {
+    borderColor: 'grey',
+    borderWidth: 1,
+    padding: 20,
+    backgroundColor: '#3a5795',
+    margin: 5,
+  },
+  text: {
+    alignSelf: 'center',
+    color: '#fff',
+  },
+  scrollview: {
+    flex: 1,
+  },
+});
+
 Homepage.propTypes = {
-  user: React.PropTypes.object.isRequired
+  user: React.PropTypes.object.isRequired,
+  apts: React.PropTypes.object,
+  reset: React.PropTypes.bool
 };
 
 module.exports = Homepage;

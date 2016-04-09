@@ -18,11 +18,6 @@ var {
   Navigator
 } = React;
 
-// verifies user auth state 
-function authDataCallback(authData) {
-  console.log( authData ? "User is logged in!" : "User is logged out!" );
-}
-
 class Login extends React.Component{
   constructor(props) {
     super(props);
@@ -42,10 +37,9 @@ class Login extends React.Component{
 
       user.once('value', (snapshot)=>{
         var firstname = snapshot.val().fullname.split(' ')[0]
-        console.log('SNAPSHOT BABY: ', firstname)
 
         // save info (firstname + uid) & redirect to Homepage         // DRY THIS LATER
-        this.props.navigator.push({     // WHY ISNT THIS WORKING!!
+        this.props.navigator.push({ 
           title: 'Homepage',
           component: Homepage,
           passProps: {
@@ -56,22 +50,19 @@ class Login extends React.Component{
           }
         })
       })    // end of user.once
-
     }
   }
 
+  // how do we reset the Login Form fields??
   handleSubmit() {
     this.setState({ isLoading: false })
     var login = {
       email: this.state.email,
       password: this.state.password
     }
-    // how do we reset the Login Form fields??
 
-    // authenticates & logs in returning user
+    // authenticate & logs in returning user -- authData contains UID!!
     ref.authWithPassword(login, (error, authData) => {
-      //authData contains UID!!
-      console.log('authData.uid @Login: ', authData.uid);    // string
       if(error || !authData){
         alert('Oops! Invalid login credentials, please try again!');
       } else {
@@ -112,29 +103,44 @@ class Login extends React.Component{
       <View style={styles.mainContainer}>
         <View style={styles.formContainer}>
           <Text style={styles.title}> Login </Text>
-          {/* <Separator /> */}
+
+          {/* Email Address */}
           <TextInput
             style={styles.textInput}
             placeholder="Email Address"
+            autoCapitalize="none"
+            autoCorrect={false}
+            clearTextOnFocus={true}
             onChangeText={(text)=>this.setState({ email: text})}
             value={this.state.email} />
+
+          {/* Password */}
           <TextInput
             style={styles.textInput}
             placeholder="Password"
+            autoCapitalize="none"
+            autoCorrect={false}
+            secureTextEntry={true}
+            clearTextOnFocus={true}
             onChangeText={(text)=>this.setState({ password: text})}
             value={this.state.password} />
 
+          {/* Login Button */}
           <TouchableHighlight 
             style={styles.button}
             onPress={this.handleSubmit.bind(this)}
             underlayColor="white" >
               <Text style={styles.buttonText}>Login</Text>
           </TouchableHighlight>
+
+          {/* Spinning Status */}
           <ActivityIndicatorIOS
             animating={this.state.isLoading}
             color="#111"
             size="large"  />
           {showError}
+
+          {/* Link to Signup Component */}
           <View style={styles.footer}>
             <Text>Not a member?</Text>
             <TouchableHighlight 
@@ -150,6 +156,7 @@ class Login extends React.Component{
 
 
 module.exports = Login;
+
 
 
 
