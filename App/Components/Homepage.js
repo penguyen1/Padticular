@@ -86,12 +86,16 @@ class Homepage extends React.Component{
       finished = true
     })
 
-    this.setTimeout(()=>{
-      console.log('finished', finished)
+    // delays asynchronous issue 
+    TimerMixin.setTimeout(()=>{
+      finished = false
       this.setState({
         refreshing: false,
         favorites: this.state.favorites
       })
+      console.log('refreshing still? ', this.state.refreshing)
+      console.log('apt update? ', this.state.favorites)
+      console.log('finished', finished)
     },1000)
     // console.log('all my saved apts: ', this.state.favorites)
   }
