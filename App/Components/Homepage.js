@@ -2,17 +2,14 @@
 const React = require('react-native');
 const Firebase = require('firebase');
 var styles = require('./Helpers/Styles');
-// var Profile = require('./Profile');        // WebView 
-// var Login = require('./Login');
+var ViewSite = require('./Helpers/Web');        // WebView     
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com');
-var Search = require('./Search');                  // for testing -- doesnt belong here
+var Search = require('./Search');               // for testing -- belongs in Nav
 // var Nav = require('./Nav');
 
 var {
   Text,
-  TextInput,
   TouchableHighlight,
-  ActivityIndicatorIOS,
   StyleSheet,
   View,
   Navigator,
@@ -65,12 +62,6 @@ class Homepage extends React.Component{
     console.log('all my saved apts: ', this.state.favorites)
   }
 
-  // Redirect to WebView of Apt Listing
-  handleGoToProfile(){      // needs to be passed apartment list id!
-    console.log('Takes me to the apartment listing website!')
-    // NOW A WebView!
-  }
-
   // displays info of an apartment - id, capacity, address, pic_url, price & property_type
   renderApt(){
     return (
@@ -92,22 +83,29 @@ class Homepage extends React.Component{
     })
   }
 
+  // Redirects to Apartment Listing Website 
+  handleGoToSite(url){
+    this.props.navigator.push({
+      title: 'Web View',
+      component: Web,
+      passProps: {url}
+    })
+  }
+
   // Logout & Redirect to Login Component
   handleLogout(){
     ref.unauth();                 // Destroys User Auth
-    // this.props.navigator.replace({   // can i switch btw Signup & Login without having a back button ??? 
-    //   title: 'Login',
-    //   component: Login
-    // })
     this.props.navigator.pop();   // go back to previous component - Signup
   }
 
   render(){
+    // how will this be received from YesOrNo???
+    // keeps getting route/stack error using (push/popToRoute/resetTo)
     if(this.props.reset){
       console.log('new additions!')
       this.getFavorites();
     }
-    
+
     return(
       <View style={styles.mainContainer}>
         {/* Homepage Greeting Header */}
@@ -116,14 +114,6 @@ class Homepage extends React.Component{
         <View style={styles.favorites}>
           <Text style={styles.listTitle}>Favorites List</Text>
           <Text style={styles.listFavs}>List of Favorite Apartments here</Text>
-
-          {/* Temp 'View' Button to Profile Component */}
-          <TouchableHighlight
-            style={styles.button}
-            onPress={this.handleGoToProfile.bind(this)}
-            underlayColor='white' >
-            <Text style={styles.buttonText}>Go to Profile</Text>
-          </TouchableHighlight>
 
           {/* Temp 'Search' Button to Search Component */}
           <TouchableHighlight
