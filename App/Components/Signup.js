@@ -3,19 +3,24 @@ const React = require('react-native');
 const Firebase = require('firebase');
 var Login = require('./Login');
 var Homepage = require('./Homepage');
-var styles = require('./Helpers/Styles')
+var styles = require('./Helpers/Styles');
+// var vidStyles = require('./Helpers/VideoStyles');
 var userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
 var users = userRef.child('users/');
+// var Video = require('react-native-video').default;
 
 var {
   Text,
   TextInput,
   TouchableHighlight,
+  TouchableOpacity,
   ActivityIndicatorIOS,
   StyleSheet,
   View,
+  Component,
   Navigator
 } = React;
+
 
 // verifies user auth state 
 function authDataCallback(authData) {
