@@ -29,27 +29,18 @@ class Homepage extends React.Component{
     super(props);
     // this.ds =  new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2})
     this.state = {
-      dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
+      // dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
       //dataSource: [] // setState in componentWillMount()???
       error: '',
-      favorites: [], 
+      favorites: [],
     };
     this.userAptRef = ref.child(`/users/${this.props.user.uid}/apts`);
   }
 
-  // called ONCE Homepage Component is rendered
+  // called ONCE BEFORE Homepage Component is rendered
   componentWillMount(){
-    // var user = ref.child('users/').child(this.props.user.uid); 
-    ref.child(`/users/${this.props.user.uid}`).onAuth(authDataCallback);          // checks auth state 
-    // this.getFavorites();
-    console.log('homepage componentWillMount')
     this.getFavorites();        // getting favorites (in case of new additions)
   }
-
-  // componentDidMount(){
-  //   console.log('homepage componentDidMount')
-  //   this.getFavorites();        // getting favorites (in case of new additions)
-  // }
 
   // Queries & setState of apartment favorites from Firebase
   getFavorites(){
@@ -57,20 +48,21 @@ class Homepage extends React.Component{
     console.log('getting favorites')
     this.userAptRef.on("value", (snap)=>{
       // var m = this.aptRef.child(snap.key())
+      // console.log('user apts snapshot: ', snap.val())
 
       snap.forEach((key)=>{
         var apt_uid = key.key()
         // console.log('apt_uid: ', apt_uid)
 
-        ref.child(`/apts/${apt_uid}`).once('value', (snapshot)=>{
+        ref.child(`/apts/${apt_uid}`).on('value', (snapshot)=>{
+          // this.state.favorites[apt_uid] = snapshot.val()
           // console.log('apartment info: ', snapshot.val())
           this.state.favorites.push(snapshot.val())
         })
-
       })
+
     })
     console.log('all my saved apts: ', this.state.favorites)
-
   }
 
   // Redirect to WebView of Apt Listing
@@ -95,7 +87,7 @@ class Homepage extends React.Component{
       component: Search,
       passProps: {
         user: this.props.user,
-        homepage: this.props.navigator.navigationContext._currentRoute
+        homepage: this.props.navigator.navigationContext._currentRoute,
       }
     })
   }
@@ -111,7 +103,11 @@ class Homepage extends React.Component{
   }
 
   render(){
-
+    if(this.props.reset){
+      console.log('new additions!')
+      this.getFavorites();
+    }
+    
     return(
       <View style={styles.mainContainer}>
         {/* Homepage Greeting Header */}
@@ -153,7 +149,8 @@ class Homepage extends React.Component{
 
 Homepage.propTypes = {
   user: React.PropTypes.object.isRequired,
+  apts: React.PropTypes.object,
+  reset: React.PropTypes.bool
 };
 
-  // apts: React.PropTypes.object
 module.exports = Homepage;

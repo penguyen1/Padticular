@@ -9,7 +9,8 @@ const user = userRef.child('users');
 var {
   AppRegistry,
   StyleSheet,
-  NavigatorIOS
+  NavigatorIOS,
+  Navigator
 } = React;
 
 var styles = StyleSheet.create({
@@ -22,12 +23,13 @@ var styles = StyleSheet.create({
 class Padticular extends React.Component{
   render() {
     // console.log('userRef.getAuth() is: ', userRef.getAuth())
+    var goHere
     if(userRef.getAuth()){
       var currentuser = userRef.getAuth().uid;
       // gets all users from Firebase
       user.on('value', (snapshot) => {
         console.log('user snapshot! ', snapshot.val()[currentuser])
-        var goHere = {
+        goHere = {
           title: 'Homepage', 
           component: Homepage, 
           passProps: { 
@@ -40,7 +42,7 @@ class Padticular extends React.Component{
       });
     } else {
       console.log('Whoops! No user currently available.')
-      var goHere = {title: 'index to Signup', component: Signup}
+      goHere = {title: 'index to Signup', component: Signup}
     }
 
     return (

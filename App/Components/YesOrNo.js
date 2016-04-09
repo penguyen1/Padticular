@@ -48,7 +48,8 @@ class YesOrNo extends React.Component{
         min_nights: '',
         map_image_url: '',
         summary: '',
-      }
+      },
+      reset: false,
     };
     this.aptRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/apts');
     this.userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
@@ -84,8 +85,8 @@ class YesOrNo extends React.Component{
       summary: this.state.apt.summary
     })
 
-    // get new apt uid 
-    // var apt_uid = newApt.key()
+    // sets reset to true -- to be reset state in Homepage
+    this.state.reset = true
 
     // adds apt_uid to '.../users/user_uid/apts'
     this.userRef.child(`${this.props.user.uid}/apts/${newApt.key()}`).set(true)
@@ -117,9 +118,20 @@ class YesOrNo extends React.Component{
     } else {    // no more apartments left!
       // redirect to Homepage
       var home = this.props.homepage
+      // this.props.navigator.popToRoute({
+      //   title: 'Homepage',
+      //   component: home,
+      //   reset: this.state.reset
+      // })
       this.props.navigator.popToRoute(home)
     }
   }
+
+  // componentWillUnmount(){
+    
+  //   this.props.reset()
+  //   this.props.navigator.popToRoute(home)
+  // }
 
   render(){
     return(
@@ -159,7 +171,7 @@ class YesOrNo extends React.Component{
 YesOrNo.propTypes = {
   user: React.PropTypes.object.isRequired,
   apts: React.PropTypes.array.isRequired,
-  homepage: React.PropTypes.object.isRequired
+  homepage: React.PropTypes.object.isRequired,
 };
 
 module.exports = YesOrNo;

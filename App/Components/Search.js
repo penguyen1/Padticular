@@ -33,7 +33,8 @@ class Search extends React.Component{
   }
 
   componentWillMount(){
-    console.log('checking user auth @Search: ', ref.getAuth());
+    var status = ref.getAuth() ? true : false
+    console.log('checking user auth @Search: ', status);
   }
 
   // call AirBnB API, get response, redirect & pass info to YesOrNo Component
@@ -67,7 +68,7 @@ class Search extends React.Component{
           passProps: {
             user: this.props.user,
             apts: apartment_ids,
-            homepage: this.props.homepage
+            homepage: this.props.homepage,
           }
         })
       }).catch((err)=>console.log('ERROR getting listings from Search: ',err))
@@ -156,7 +157,7 @@ class Search extends React.Component{
 
 Search.propTypes = {
   user: React.PropTypes.object.isRequired,
-  homepage: React.PropTypes.object.isRequired
+  homepage: React.PropTypes.object.isRequired,
 };
 
 module.exports = Search;
