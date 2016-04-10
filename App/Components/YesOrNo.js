@@ -47,10 +47,10 @@ class Card extends Component {
           <Animated.View style={[styles.card, this.props.animatedCardStyles]} {...this.props.panResponder}>
             <Image source={{uri: this.props.picture_urls[0]}} style={styles.cardImage}>
               <Animated.View style={[styles.cardImageTextContainer, styles.cardImageYupContainer, this.props.animatedYupStyles]}>
-                <Text style={[styles.cardImageText, styles.cardImageYupText]}>LOVE</Text>
+                <Text style={[styles.cardImageText, styles.cardImageYupText]}>SAVE IT!</Text>
               </Animated.View>
               <Animated.View style={[styles.cardImageTextContainer, styles.cardImageNopeContainer, this.props.animatedNopeStyles]}>
-                <Text style={[styles.cardImageText, styles.cardImageNopeText]}>NEIN</Text>
+                <Text style={[styles.cardImageText, styles.cardImageNopeText]}>PASS</Text>
               </Animated.View>
             </Image>
             <View style={styles.cardLabelContainer}>
@@ -87,7 +87,6 @@ class YesOrNo extends React.Component {
       },
       pan: new Animated.ValueXY(),
       enter: new Animated.Value(0.5),
-      currentPosition: 0,
     };
     this.aptRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/apts');
     this.userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
@@ -131,7 +130,7 @@ class YesOrNo extends React.Component {
         }
       }
     })
-    // this.handleNextApt()
+    this.handleNextApt()
     // this.resetState()
   }
 
@@ -195,11 +194,12 @@ class YesOrNo extends React.Component {
   }
   // gets next apartment
   handleNextApt(){
+    console.log('rendering next apt')
     console.log('Apartments left: ', this.props.apts.length)
-    let nextPosition = (this.state.currentPosition + 1) % this.props.apts.length
+    // let nextPosition = (this.state.currentPosition + 1) % this.props.apts.length
     // are there any apartments left in this.props.apts?
     if(this.props.apts.length){
-      var pending = this.props.apts[this.state.currentPosition]
+      var pending = this.props.apts.pop()
       // call getApartmentInfo in api.js & get back a response
       api.getApartmentInfo(pending)
         .then((res) => {
@@ -207,7 +207,7 @@ class YesOrNo extends React.Component {
           Object.keys(this.state.apt).forEach((key)=>{
             this.state.apt[key] = res.listing[key]
           })
-          this.setState({ apt: this.state.apt, currentPosition: nextPosition })
+          this.setState({ apt: this.state.apt })
           // now render it!
         }).catch((err)=>console.log('ERROR getting Apartment Info: ',err))
 
@@ -246,7 +246,7 @@ class YesOrNo extends React.Component {
   }
 
   render(){
-    let { pan, enter, apt, currentPosition } = this.state;
+    let { pan, enter, apt } = this.state;
     let [translateX, translateY] = [pan.x, pan.y];
 
     // card 0 animation
@@ -268,9 +268,11 @@ class YesOrNo extends React.Component {
     let rotate = pan.x.interpolate({inputRange: [-240, 0, 240], outputRange: ["-30deg", "0deg", "30deg"]});
     let animatedCardStyles = {transform: [{translateX}, {translateY}, {rotate}]};
 
-    let yupOpacity = pan.x.interpolate({inputRange: [0, SWIPE_THRESHOLD], outputRange: [0, 1], extrapolate: 'clamp'});
+    let yupOpacity = pan.x.interpolate({inputRange: [0, SWIPE_THRESHOLD], outputRange: [0, 1], extrapolate: 'clamp'});      // save apt??
+    // console.log('yupOpacity: ', yupOpacity)
     let animatedYupStyles = {opacity: yupOpacity}
     let nopeOpacity = pan.x.interpolate({inputRange: [-SWIPE_THRESHOLD, 0], outputRange: [1, 0], extrapolate: 'clamp'});
+    // console.log('NopeOpacity: ', NopeOpacity)
     let animatedNopeStyles = {opacity: nopeOpacity}
 
     let card0AnimatedStyles = {
@@ -309,7 +311,7 @@ class YesOrNo extends React.Component {
               </TouchableHighlight>
             </View>
             <View style={styles.buttonContainer}>
-              <TouchableHighlight style={[styles.button, styles.buttonYup]} underlayColor='#EEE' onPress={() => {this.handleYupPress()}}>
+              <TouchableHighlight style={[styles.button, styles.buttonYup]} underlayColor='#EEE' onPress={() => {this.handleYupPress(); this.handleSaveApt()}}>
                   <Text style={styles.yupText}>Love!</Text>
               </TouchableHighlight>
             </View>
