@@ -29,12 +29,6 @@ var IMAGE_HEIGHT = IMAGE_WIDTH / 2;
 var PIXEL_RATIO = PixelRatio.get();
 var PARALLAX_FACTOR = 0.3;
 
-
-// verifies user auth state 
-function authDataCallback(authData) {
-  console.log( authData ? "@Home: User is logged in!" : "@Home: User is logged out!" );
-}
-
 class Homepage extends React.Component{
   constructor(props){
     super(props);
@@ -56,7 +50,7 @@ class Homepage extends React.Component{
   // called when Homepage Component is unmounting
   componentWillUnmount(){
     // removes all Firebase callbacks (no repeatitive issues)
-    ref.child(`/users/${this.props.user.uid}/apts`).off()
+    ref.off()
     console.log('Leaving homepage: ', this.state.favorites)
   }
 
@@ -67,7 +61,7 @@ class Homepage extends React.Component{
 
     // get all user's apts
     console.log('getting favorites')
-    this.userAptRef.orderByKey().on("child_added", (snap)=>{
+    this.userAptRef.on("child_added", (snap)=>{
       var apt_uid = snap.key()
       ref.child(`/apts/${apt_uid}`).once('value', (snapshot)=>{
         this.state.favorites.push(snapshot.val())
@@ -76,11 +70,12 @@ class Homepage extends React.Component{
 
     // delays asynchronous issue 
     TimerMixin.setTimeout(()=>{
+      console.log('PART 1 - checking favorites state: ', this.state.favorites)
       this.setState({
         refreshing: false,
         favorites: this.state.favorites
       })
-      console.log('apt update? ', this.state.favorites)
+      console.log('PART 2 - apt update: ', this.state.favorites)
     },500)
   }
 
@@ -110,6 +105,7 @@ class Homepage extends React.Component{
     this.props.navigator.push({
       title: 'Web View',
       component: Web,
+      key: {i},
       passProps: {url}
     })
   }
@@ -131,7 +127,7 @@ class Homepage extends React.Component{
   renderEmptyMsg() {
     return ( 
       <Parallax.Image
-        style={{ height: IMAGE_HEIGHT }}
+        style={{ height: Dimensions.get('window').height,  }}
         overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.4)'}}
         source={{ uri: 'http://loremflickr.com/640/480' }} >
           <Text style={styles.title}>You dont got no favorites!</Text>
@@ -146,10 +142,11 @@ class Homepage extends React.Component{
       <Parallax.Image
         key={i}
         style={{ height: IMAGE_HEIGHT }}
-        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.4)'}}
+        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.5)'}}
         source={{ uri: pic_url }} 
         onPress={this.handleGoToSite.bind(this, i)} >
-        <Text style={styles.title}> {apt.address} </Text>
+          <Text style={styles.title} key={i}> {apt.price_formatted}/night</Text>
+          <Text style={styles.subtitle}> {apt.property_type} | {apt.smart_location}</Text>
       </Parallax.Image>
     )
     // .state.favorites[i]
@@ -168,14 +165,13 @@ class Homepage extends React.Component{
             onRefresh={this._onRefresh.bind(this)} />}
       >
       {/* Temp 'Search' Button to Search Component */}
-      <View style={styles.footer}>
-        <TouchableHighlight
-          style={styles.button}
-          onPress={this.handleGoToSearch.bind(this)}
-          underlayColor='white' >
-          <Text style={styles.buttonText}>Find More Apartments</Text>
-        </TouchableHighlight>
-      </View>
+      <Parallax.Image
+        style={{ height: IMAGE_HEIGHT }}
+        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.45)'}}
+        source={{ uri: 'http://clarityonfire.com/wp-content/uploads/2014/04/2.jpg' }} 
+        onPress={this.handleGoToSearch.bind(this)} >
+          <Text style={styles.search}>Search Apartments</Text>
+      </Parallax.Image>
 
       {/* lists EACH user's favorites */}
       {check}
@@ -193,11 +189,41 @@ var styles = StyleSheet.create({
     flexDirection: 'column',
   },
   title: {
+    fontSize: 40,
+    textAlign: 'center',
+    lineHeight: 55,
+    fontWeight: 'bold',
+    color: 'white',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowRadius: 1,
+    shadowColor: 'black',
+    shadowOpacity: 0.8,
+    marginTop: 40,
+  },
+  subtitle: {
     fontSize: 20,
     textAlign: 'center',
     lineHeight: 25,
-    fontWeight: 'bold',
     color: 'white',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowRadius: 1,
+    shadowColor: 'black',
+    shadowOpacity: 0.8,
+    marginTop: 0,
+  },
+  search: {
+    fontSize: 35,
+    textAlign: 'center',
+    paddingBottom: 10,
+    lineHeight: 50,
+    fontWeight: 'bold',
+    color: '#99ff99',
     shadowOffset: {
       width: 0,
       height: 0,
@@ -250,12 +276,12 @@ var styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 8,
     marginBottom: 10,
-    marginTop: 10,
-    marginLeft: 15,
+    marginTop: 50,
+    marginLeft: 115,
     justifyContent: 'center'
   },
   footer: {
-    marginTop: 70,
+    marginTop: 7,
     marginLeft: 95,
     flexDirection: 'row',
   },
