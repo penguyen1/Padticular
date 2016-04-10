@@ -1,5 +1,6 @@
 'use strict'
 const React = require('react-native');
+const Parallax = require('react-native-parallax');
 const Firebase = require('firebase');
 var TimerMixin = require('react-timer-mixin');
 // var styles = require('./Helpers/Styles');
@@ -22,7 +23,6 @@ var {
 } = React;
 
 // Scrollable Parallax View
-var Parallax = require('react-native-parallax');
 var IMAGE_WIDTH = Dimensions.get('window').width;
 var IMAGE_HEIGHT = IMAGE_WIDTH / 2;
 var PIXEL_RATIO = PixelRatio.get();
@@ -126,52 +126,73 @@ class Homepage extends React.Component{
     this.getFavorites();
   }
 
+  // called if user has no favorites
+  renderEmptyMsg() {
+    return ( 
+      <Parallax.Image
+        style={{ height: IMAGE_HEIGHT }}
+        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.3)'}}
+        source={{ uri: 'http://loremflickr.com/640/480' }} >
+          <Text style={styles.title}>You dont got no favorites!</Text>
+      </Parallax.Image>
+    )
+  }
+
   // displays info of an apartment - id, capacity, address, pic_url, price & property_type
   renderApt(apt, i){
-    console.log('rendering apt: ', apt)
-    console.log('rendering key: ', i)
+    console.log('rendering apt: ', i, apt)
     var pic_url = apt.picture_urls[0].toString()
     
     // need to include the Parallax Factor???? (dimensions)
+    // return (
+    //   <Image key={i}
+    //     style={styles.image}
+    //     overlayStyle={styles.overlay}
+    //     source={{ uri: pic_url }}>
+    //       <Text style={styles.title}> {apt.address} </Text>
+    //   </Image>
+    // )
+
     return (
-      <Image key={i}
-        style={styles.image}
-        overlayStyle={styles.overlay}
-        source={{ uri: pic_url }}>
-          <Text style={styles.title}> {apt.address} </Text>
-      </Image>
+      <Parallax.Image
+        key={i}
+        style={{ height: 200 }}
+        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.3)'}}
+        source={{ uri: pic_url }} >
+        <Text style={styles.title}> {apt.address} </Text>
+      </Parallax.Image>
     )
   }
 
-  render(){
-    var check = this.state.favorites.length ? (this.state.favorites.map((apt, i)=>this.renderApt(apt, i))) : (<Text style={styles.empty}>You dont got no apartment favorites!</Text>)
-
-    return(
-      <ScrollView 
-          style={styles.scrollView}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)} />}
+  render() {
+    var check = this.state.favorites.length 
+                  ? (this.state.favorites.map((apt, i)=>this.renderApt(apt, i))) 
+                  : (this.renderEmptyMsg()) 
+    return (
+      <Parallax.ScrollView
+        style={styles.scrollView}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh.bind(this)} />}
       >
-        {/* Temp 'Search' Button to Search Component */}
-        <View style={styles.footer}>
-          <TouchableHighlight
-            style={styles.button}
-            onPress={this.handleGoToSearch.bind(this)}
-            underlayColor='white' >
-            <Text style={styles.buttonText}>Find More Apartments</Text>
-          </TouchableHighlight>
-        </View>
+      {/* Temp 'Search' Button to Search Component */}
+      <View style={styles.footer}>
+        <TouchableHighlight
+          style={styles.button}
+          onPress={this.handleGoToSearch.bind(this)}
+          underlayColor='white' >
+          <Text style={styles.buttonText}>Find More Apartments</Text>
+        </TouchableHighlight>
+      </View>
 
-        {/* lists EACH user's favorites */}
-        {check}
+      {/* lists EACH user's favorites */}
+      {check}
 
-      </ScrollView>
+      </Parallax.ScrollView>
     )
   }
 }
-
 
 // Homepage StyleSheet
 var styles = StyleSheet.create({
@@ -185,18 +206,20 @@ var styles = StyleSheet.create({
   },
   image: {
     height: IMAGE_HEIGHT,
+    opacity: 0.8,
+
   },
   overlay: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   title: {
-    fontSize: 15,
+    fontSize: 20,
     textAlign: 'center',
     lineHeight: 25,
     fontWeight: 'bold',
-    color: 'black',
+    color: 'white',
     shadowOffset: {
       width: 0,
       height: 0,
@@ -204,6 +227,7 @@ var styles = StyleSheet.create({
     shadowRadius: 1,
     shadowColor: 'black',
     shadowOpacity: 0.8,
+    marginTop: 60,
   },
   empty: {
     fontSize: 24,
@@ -253,16 +277,14 @@ var styles = StyleSheet.create({
     justifyContent: 'center'
   },
   footer: {
-    marginTop: 10,
+    marginTop: 70,
     marginLeft: 95,
     flexDirection: 'row',
   },
 });
 
 Homepage.propTypes = {
-  user: React.PropTypes.object.isRequired,
-  apts: React.PropTypes.object,
-  reset: React.PropTypes.bool
+  user: React.PropTypes.object.isRequired
 };
 
 module.exports = Homepage;
