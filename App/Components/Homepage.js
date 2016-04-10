@@ -1,8 +1,9 @@
 'use strict'
 const React = require('react-native');
+const Parallax = require('react-native-parallax');
 const Firebase = require('firebase');
 var TimerMixin = require('react-timer-mixin');
-// var styles = require('./Helpers/Styles');
+var Web = require('./Helpers/Web');
 var ViewSite = require('./Helpers/Web');        // WebView     
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com');
 var Search = require('./Search');               // for testing -- belongs in Nav
@@ -10,6 +11,7 @@ var Search = require('./Search');               // for testing -- belongs in Nav
 
 var {
   Dimensions,
+  Image,
   Navigator,
   PixelRatio,
   RefreshControl,
@@ -17,13 +19,11 @@ var {
   StyleSheet,
   Text,
   TouchableHighlight,
-  TouchableWithoutFeedback,
+  WebView,
   View
 } = React;
 
-
 // Scrollable Parallax View
-var Parallax = require('react-native-parallax');
 var IMAGE_WIDTH = Dimensions.get('window').width;
 var IMAGE_HEIGHT = IMAGE_WIDTH / 2;
 var PIXEL_RATIO = PixelRatio.get();
@@ -41,11 +41,11 @@ class Homepage extends React.Component{
     // this.ds =  new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2})
     this.state = {
       // dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
-      //dataSource: [] // setState in componentWillMount()???
       refreshing: false,
       favorites: [],
     };
     this.userAptRef = ref.child(`/users/${this.props.user.uid}/apts`);
+    this.homeRoute = this.props.navigator.navigationContext._currentRoute;
   }
 
   // called ONCE BEFORE Homepage Component is rendered
@@ -53,54 +53,35 @@ class Homepage extends React.Component{
     this.getFavorites();        // getting favorites (in case of new additions)
   }
 
-  // called ONCE Homepage Component is unmounted
+  // called when Homepage Component is unmounting
   componentWillUnmount(){
-    // this.state.favorites = []
-
     // removes all Firebase callbacks (no repeatitive issues)
-    userAptRef.off()
+    ref.child(`/users/${this.props.user.uid}/apts`).off()
     console.log('Leaving homepage: ', this.state.favorites)
   }
 
 
   // Queries & setState of apartment favorites from Firebase
   getFavorites(){
-    var finished = false
-    this.state.favorites = []
+    this.state.favorites = []     // reset favorites
+
     // get all user's apts
     console.log('getting favorites')
     this.userAptRef.orderByKey().on("child_added", (snap)=>{
       var apt_uid = snap.key()
-      console.log('user apts snapshot: ', apt_uid)
-
       ref.child(`/apts/${apt_uid}`).once('value', (snapshot)=>{
-        console.log('apartment info: ', snapshot.val())
         this.state.favorites.push(snapshot.val())
       })
-      finished = true
     })
 
     // delays asynchronous issue 
     TimerMixin.setTimeout(()=>{
-      finished = false
       this.setState({
         refreshing: false,
         favorites: this.state.favorites
       })
-      console.log('refreshing still? ', this.state.refreshing)
       console.log('apt update? ', this.state.favorites)
-      console.log('finished', finished)
     },500)
-    // console.log('all my saved apts: ', this.state.favorites)
-  }
-
-  // displays info of an apartment - id, capacity, address, pic_url, price & property_type
-  renderApt(){
-    return (
-      <View>
-        <Text> Apt Info Here </Text>
-      </View>
-    )
   }
 
   // Redirect to Search Component
@@ -108,15 +89,24 @@ class Homepage extends React.Component{
     this.props.navigator.push({
       title: 'Search',
       component: Search,
+      leftButtonTitle: 'Back',
+      onLeftButtonPress: () => { this.props.navigator.pop() },
+      rightButtonTitle: 'Logout',
+      onRightButtonPress: () => {
+        ref.unauth();                 // Destroys User Auth
+        this.props.navigator.popToTop();
+      },
       passProps: {
         user: this.props.user,
-        homepage: this.props.navigator.navigationContext._currentRoute,
-      }
+        homepage: this.homeRoute,
+      },
     })
   }
 
   // Redirects to Apartment Listing Website 
-  handleGoToSite(url){
+  handleGoToSite(i){
+    var url = `https://www.airbnb.com/rooms/${this.state.favorites[i].id}`
+    console.log('id: ', this.state.favorites[i].id)
     this.props.navigator.push({
       title: 'Web View',
       component: Web,
@@ -124,7 +114,7 @@ class Homepage extends React.Component{
     })
   }
 
-  // Logout & Redirect to Login Component
+  // Logout & Redirect to Login Component --- belongs in Nav Bar!
   handleLogout(){
     ref.unauth();                 // Destroys User Auth
     this.props.navigator.pop();   // go back to previous component - Signup
@@ -137,65 +127,70 @@ class Homepage extends React.Component{
     this.getFavorites();
   }
 
-  render(){
-    // how will this be received from YesOrNo???
-    // keeps getting route/stack error using (push/popToRoute/resetTo)
-    // if(this.props.reset){
-    //   console.log('new additions!')
-    //   this.getFavorites();
-    // }
+  // called if user has no favorites
+  renderEmptyMsg() {
+    return ( 
+      <Parallax.Image
+        style={{ height: IMAGE_HEIGHT }}
+        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.4)'}}
+        source={{ uri: 'http://loremflickr.com/640/480' }} >
+          <Text style={styles.title}>You dont got no favorites!</Text>
+      </Parallax.Image>
+    )
+  }
 
-    return(
-      <ScrollView 
-          style={styles.scrollView}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)} />}
+  // displays info of an apartment - id, capacity, address, pic_url, price & property_type
+  renderApt(apt, i){
+    var pic_url = apt.picture_urls[0].toString()
+    return (
+      <Parallax.Image
+        key={i}
+        style={{ height: IMAGE_HEIGHT }}
+        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.4)'}}
+        source={{ uri: pic_url }} 
+        onPress={this.handleGoToSite.bind(this, i)} >
+        <Text style={styles.title}> {apt.address} </Text>
+      </Parallax.Image>
+    )
+    // .state.favorites[i]
+  }
+
+  render() {
+    var check = this.state.favorites.length 
+                  ? (this.state.favorites.map((apt, i)=>this.renderApt(apt, i))) 
+                  : (this.renderEmptyMsg()) 
+    return (
+      <Parallax.ScrollView
+        style={styles.scrollView}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh.bind(this)} />}
       >
-        {/* lists EACH user's favorites */}
-        <View style={styles.overlay}>
-          <Text style={styles.title}>Favorites List</Text>
-        </View>
-
-        {/* Temp 'Search' Button to Search Component */}
+      {/* Temp 'Search' Button to Search Component */}
+      <View style={styles.footer}>
         <TouchableHighlight
           style={styles.button}
           onPress={this.handleGoToSearch.bind(this)}
           underlayColor='white' >
-          <Text style={styles.buttonText}>Find Apartments</Text>
+          <Text style={styles.buttonText}>Find More Apartments</Text>
         </TouchableHighlight>
+      </View>
 
-        {/* Temp Logout Button */}
-        <TouchableHighlight
-          style={styles.button}
-          onPress={this.handleLogout.bind(this)}
-          underlayColor='white' >
-          <Text style={styles.buttonText}>Logout</Text>
-        </TouchableHighlight>
-      </ScrollView>
+      {/* lists EACH user's favorites */}
+      {check}
+
+      </Parallax.ScrollView>
     )
   }
 }
 
-
 // Homepage StyleSheet
 var styles = StyleSheet.create({
-  mainContainer: {
+  container: {
     flex: 1,
-    padding: 30,
-    marginTop: 65,
+    backgroundColor: '#F6F6EF',
     flexDirection: 'column',
-    justifyContent: 'center',
-    backgroundColor: '#48BBEC'
-  },
-  image: {
-    height: IMAGE_HEIGHT,
-  },
-  overlay: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.3)',
   },
   title: {
     fontSize: 20,
@@ -210,6 +205,14 @@ var styles = StyleSheet.create({
     shadowRadius: 1,
     shadowColor: 'black',
     shadowOpacity: 0.8,
+    marginTop: 60,
+  },
+  empty: {
+    fontSize: 24,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: 'black',
+    lineHeight: 40,
   },
   url: {
     opacity: 0.5,
@@ -233,12 +236,33 @@ var styles = StyleSheet.create({
   scrollview: {
     flex: 1,
   },
+  buttonText: {
+    fontSize: 18,
+    color: '#111',
+    alignSelf: 'center',
+    textAlign: 'center',
+  },
+  button: {
+    height: 50,
+    width: 140,
+    backgroundColor: '#00b8ff',
+    borderColor: '#233fc7',
+    borderWidth: 2,
+    borderRadius: 8,
+    marginBottom: 10,
+    marginTop: 10,
+    marginLeft: 15,
+    justifyContent: 'center'
+  },
+  footer: {
+    marginTop: 70,
+    marginLeft: 95,
+    flexDirection: 'row',
+  },
 });
 
 Homepage.propTypes = {
-  user: React.PropTypes.object.isRequired,
-  apts: React.PropTypes.object,
-  reset: React.PropTypes.bool
+  user: React.PropTypes.object.isRequired
 };
 
 module.exports = Homepage;

@@ -171,7 +171,7 @@ class YesOrNo extends React.Component{
 YesOrNo.propTypes = {
   user: React.PropTypes.object.isRequired,
   apts: React.PropTypes.array.isRequired,
-  homepage: React.PropTypes.object.isRequired,
+  homepage: React.PropTypes.object,
 };
 
 module.exports = YesOrNo;
