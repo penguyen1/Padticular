@@ -75,6 +75,8 @@ class Signup extends React.Component{
             this.props.navigator.push({
               title: 'Homepage',
               component: Homepage,
+              leftButtonTitle: '',
+              onLeftButtonPress: () => { console.log('cant ever go back!') },
               passProps: {
                 user: {
                   uid: authData.uid,

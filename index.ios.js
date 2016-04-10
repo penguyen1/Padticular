@@ -42,12 +42,16 @@ class Padticular extends React.Component{
       });
     } else {
       console.log('Whoops! No user currently available.')
-      goHere = {title: 'index to Signup', component: Signup}
+      goHere = {
+        title: 'Signup', 
+        component: Signup,
+      }
     }
 
     return (
       <NavigatorIOS
         style={styles.container}
+        translucent={true}
         initialRoute={goHere} />
     )
   }

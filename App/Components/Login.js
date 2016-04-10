@@ -42,6 +42,8 @@ class Login extends React.Component{
         this.props.navigator.push({ 
           title: 'Homepage',
           component: Homepage,
+          backButtonTitle: '',
+          onBackButtonPress: () => { console.log('cant ever go back!') },
           passProps: {
             user: {
               uid: ref.getAuth().uid,
@@ -73,6 +75,8 @@ class Login extends React.Component{
           this.props.navigator.push({
             title: 'Homepage', 
             component: Homepage, 
+            leftButtonTitle: ' ',
+            onLeftButtonPress: () => { console.log('cant ever go back!') },
             passProps: { 
               user: { 
                 uid: authData.uid,
@@ -87,10 +91,6 @@ class Login extends React.Component{
 
   // Redirect to Signup Component
   handleGoToSignup() {
-    // this.props.navigator.replace({
-    //   title: 'Signup',
-    //   component: Signup
-    // });
     this.props.navigator.pop()
   }
 
