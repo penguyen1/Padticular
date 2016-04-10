@@ -123,17 +123,6 @@ class Homepage extends React.Component{
     this.getFavorites();
   }
 
-  renderSearchBtn(){
-    return (
-      <TouchableHighlight
-        style={styles.button}
-        onPress={this.handleGoToSearch.bind(this)}
-        underlayColor='white' >
-        <Text style={styles.buttonText}>Find More Apartments</Text>
-      </TouchableHighlight>
-    )
-  }
-
   // called if user has no favorites
   renderEmptyMsg() {
     return ( 
@@ -154,11 +143,11 @@ class Homepage extends React.Component{
       <Parallax.Image
         key={i}
         style={{ height: IMAGE_HEIGHT }}
-        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.4)'}}
+        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.5)'}}
         source={{ uri: pic_url }} 
         onPress={this.handleGoToSite.bind(this, i)} >
-        <Text style={styles.title} key={i}> {apt.address} </Text>
-        {this.renderSearchBtn()}
+          <Text style={styles.title} key={i}> {apt.price_formatted}/night</Text>
+          <Text style={styles.subtitle}> {apt.property_type} | {apt.smart_location}</Text>
       </Parallax.Image>
     )
     // .state.favorites[i]
@@ -177,8 +166,12 @@ class Homepage extends React.Component{
             onRefresh={this._onRefresh.bind(this)} />}
       >
       {/* Temp 'Search' Button to Search Component */}
-      <Parallax.Image>
-        {this.renderSearchBtn()}
+      <Parallax.Image
+        style={{ height: IMAGE_HEIGHT }}
+        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.45)'}}
+        source={{ uri: 'http://clarityonfire.com/wp-content/uploads/2014/04/2.jpg' }} 
+        onPress={this.handleGoToSearch.bind(this)} >
+          <Text style={styles.search}>Search Apartments</Text>
       </Parallax.Image>
 
       {/* lists EACH user's favorites */}
@@ -197,11 +190,41 @@ var styles = StyleSheet.create({
     flexDirection: 'column',
   },
   title: {
+    fontSize: 40,
+    textAlign: 'center',
+    lineHeight: 55,
+    fontWeight: 'bold',
+    color: 'white',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowRadius: 1,
+    shadowColor: 'black',
+    shadowOpacity: 0.8,
+    marginTop: 40,
+  },
+  subtitle: {
     fontSize: 20,
     textAlign: 'center',
     lineHeight: 25,
-    fontWeight: 'bold',
     color: 'white',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowRadius: 1,
+    shadowColor: 'black',
+    shadowOpacity: 0.8,
+    marginTop: 0,
+  },
+  search: {
+    fontSize: 35,
+    textAlign: 'center',
+    paddingBottom: 10,
+    lineHeight: 50,
+    fontWeight: 'bold',
+    color: '#99ff99',
     shadowOffset: {
       width: 0,
       height: 0,

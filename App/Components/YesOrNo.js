@@ -37,8 +37,6 @@ var {
   View,
 } = React;
 
-
-
 class Card extends Component {
   render() {
     return (
@@ -131,7 +129,6 @@ class YesOrNo extends React.Component {
       }
     })
     this.handleNextApt()
-    // this.resetState()
   }
 
   // performs before rendering to Homepage
@@ -183,15 +180,6 @@ class YesOrNo extends React.Component {
     // this.handleNextApt()
   }
 
-  // shows the current apartment ------ renderApt() - n/A
-  renderApt(){
-    return (
-      <View style={styles.card}>
-        <Image style={styles.thumbnail} source={{ uri: this.state.apt.picture_urls[0] }} />
-        <Text style={styles.text}>{this.state.apt.price_formatted} per night</Text>
-      </View>
-    )
-  }
   // gets next apartment
   handleNextApt(){
     console.log('rendering next apt')
@@ -307,12 +295,12 @@ class YesOrNo extends React.Component {
           <View style={styles.buttonsContainer}>
             <View style={styles.buttonContainer}>
               <TouchableHighlight style={[styles.button, styles.buttonNope]} underlayColor='#EEE' onPress={() => {this.handleNopePress()}}>
-                  <Text style={styles.nopeText}>Nein!</Text>
+                  <Text style={styles.nopeText}>Ew, Pass</Text>
               </TouchableHighlight>
             </View>
             <View style={styles.buttonContainer}>
               <TouchableHighlight style={[styles.button, styles.buttonYup]} underlayColor='#EEE' onPress={() => {this.handleYupPress(); this.handleSaveApt()}}>
-                  <Text style={styles.yupText}>Love!</Text>
+                  <Text style={styles.yupText}>Save it!</Text>
               </TouchableHighlight>
             </View>
           </View>
@@ -350,7 +338,7 @@ var styles = StyleSheet.create({
   cardResizeContainer: {
     flex: 1,
     position: 'absolute',
-    top: 40,
+    top: 70,
     left: 40,
     bottom: 40, 
     right: 40,
