@@ -111,6 +111,7 @@ class Homepage extends React.Component{
     this.props.navigator.push({
       title: 'Web View',
       component: Web,
+      key: {i},
       passProps: {url}
     })
   }

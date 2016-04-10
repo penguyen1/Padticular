@@ -1,21 +1,27 @@
 'use strict'
 const React = require('react-native');
 const Firebase = require('firebase');
+const SwipeCards = require('react-native-swipe-cards');
 var api = require('../Utils/api');
-var styles = require('./Helpers/Styles');
+// var styles = require('./Helpers/Styles');
 var Homepage = require('./Homepage');
+var Defaults = require('./Helpers/Defaults');
 // var Nav = require('./Nav');
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
 
 var {
+  ActivityIndicatorIOS,
+  Animated,
+  Component,
+  Image,
+  ListView,
+  Navigator,
+  PanResponder,
   Text,
   TextInput,
   TouchableHighlight,
-  ActivityIndicatorIOS,
   StyleSheet,
   View,
-  Navigator,
-  ListView
 } = React;
 
 // verifies user auth state 
@@ -44,7 +50,6 @@ class YesOrNo extends React.Component{
         map_image_url: '',
         summary: '',
       },
-      reset: false,
     };
     this.aptRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/apts');
     this.userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
@@ -54,7 +59,6 @@ class YesOrNo extends React.Component{
   componentWillMount(){
     this.handleNextApt()
   }
-
   // performs before rendering to Homepage
   componentWillUnmount(){
     console.log('unmounting YesOrNo')
@@ -88,10 +92,7 @@ class YesOrNo extends React.Component{
 
     // adds apt_uid to '.../users/user_uid/apts'
     this.userRef.child(`${this.props.user.uid}/apts/${newApt.key()}`).set(true)
-
-    // BONUS: add all apt's picture_urls[] into images
     // TOTO: find 5 most recent crimes, check if apt_uid exists in crimes, push/update with new crimes
-
     this.handleNextApt()
   }
 
@@ -119,6 +120,41 @@ class YesOrNo extends React.Component{
       this.props.navigator.popToRoute(home)
     }
   }
+
+  // shows the next apartment from search results
+  showNextApt(){
+
+    // <Text style={styles.listFavs}>Apts for {this.props.user.name} </Text>
+    // <Text style={styles.listFavs}>Images: {this.state.apt.picture_urls[0]} </Text>
+    // <Text style={styles.listFavs}>{this.state.apt.price_formatted} per night</Text>
+    // <Text style={styles.listFavs}>{this.state.apt.property_type} | </Text>
+    // <Text style={styles.listFavs}>{this.state.apt.smart_location}</Text>
+    // <Text style={styles.listFavs}>Fits: {this.state.apt.person_capacity} </Text>
+    // <Text style={styles.listFavs}>Min nights: {this.state.apt.min_nights} </Text>
+
+      return (
+        <View style={styles.card}>
+          <Image style={styles.thumbnail} source={{uri: this.props.image}} />
+          <Text style={styles.text}>This is card {this.props.name}</Text>
+        </View>
+      )
+    
+  }
+
+  // no more apartments left
+  endOfApts(){
+    // just redirect this to Homepage
+
+
+      return (
+        <View style={styles.noMoreCards}>
+          <Text>No more cards</Text>
+        </View>
+      )
+  }
+
+
+
 
   render(){
     return(
@@ -153,6 +189,34 @@ class YesOrNo extends React.Component{
     )
   }
 };
+
+// YesOrNo StyleSheet
+var styles = StyleSheet.create({
+  card: {
+    alignItems: 'center',
+    borderRadius: 5,
+    overflow: 'hidden',
+    borderColor: 'grey',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    elevation: 1,
+  },
+  thumbnail: {
+    flex: 1,
+    width: 300,
+    height: 300,
+  },
+  text: {
+    fontSize: 20,
+    paddingTop: 10,
+    paddingBottom: 10
+  },
+  noMoreCards: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
+})
 
 
 YesOrNo.propTypes = {
