@@ -75,7 +75,7 @@ class Signup extends React.Component{
             this.props.navigator.push({
               title: 'Homepage',
               component: Homepage,
-              leftButtonTitle: '',
+              leftButtonTitle: ' ',
               onLeftButtonPress: () => { console.log('cant ever go back!') },
               passProps: {
                 user: {
@@ -94,7 +94,8 @@ class Signup extends React.Component{
   handleGoToLogin() {
     this.props.navigator.push({      // use replace???
       title: 'Login',
-      component: Login
+      component: Login,
+      leftButtonTitle: 'Back to Signup'
     })
   }
 

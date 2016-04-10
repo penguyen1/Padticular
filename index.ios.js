@@ -32,6 +32,8 @@ class Padticular extends React.Component{
         goHere = {
           title: 'Homepage', 
           component: Homepage, 
+          leftButtonTitle: ' ',
+          onLeftButtonPress: () => { console.log('cant ever go back!') },
           passProps: { 
             user: { 
               uid: currentuser,     // user UID

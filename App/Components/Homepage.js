@@ -21,7 +21,6 @@ var {
   View
 } = React;
 
-
 // Scrollable Parallax View
 var Parallax = require('react-native-parallax');
 var IMAGE_WIDTH = Dimensions.get('window').width;
@@ -41,7 +40,6 @@ class Homepage extends React.Component{
     // this.ds =  new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2})
     this.state = {
       // dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
-      //dataSource: [] // setState in componentWillMount()???
       refreshing: false,
       favorites: [],
     };
@@ -53,10 +51,8 @@ class Homepage extends React.Component{
     this.getFavorites();        // getting favorites (in case of new additions)
   }
 
-  // called ONCE Homepage Component is unmounted
+  // called when Homepage Component is unmounting
   componentWillUnmount(){
-    // this.state.favorites = []
-
     // removes all Firebase callbacks (no repeatitive issues)
     userAptRef.off()
     console.log('Leaving homepage: ', this.state.favorites)
@@ -65,42 +61,25 @@ class Homepage extends React.Component{
 
   // Queries & setState of apartment favorites from Firebase
   getFavorites(){
-    var finished = false
-    this.state.favorites = []
+    this.state.favorites = []     // reset favorites
+
     // get all user's apts
     console.log('getting favorites')
     this.userAptRef.orderByKey().on("child_added", (snap)=>{
       var apt_uid = snap.key()
-      console.log('user apts snapshot: ', apt_uid)
-
       ref.child(`/apts/${apt_uid}`).once('value', (snapshot)=>{
-        console.log('apartment info: ', snapshot.val())
         this.state.favorites.push(snapshot.val())
       })
-      finished = true
     })
 
     // delays asynchronous issue 
     TimerMixin.setTimeout(()=>{
-      finished = false
       this.setState({
         refreshing: false,
         favorites: this.state.favorites
       })
-      console.log('refreshing still? ', this.state.refreshing)
       console.log('apt update? ', this.state.favorites)
-      console.log('finished', finished)
     },500)
-    // console.log('all my saved apts: ', this.state.favorites)
-  }
-
-  // displays info of an apartment - id, capacity, address, pic_url, price & property_type
-  renderApt(){
-    return (
-      <View>
-        <Text> Apt Info Here </Text>
-      </View>
-    )
   }
 
   // Redirect to Search Component
@@ -124,7 +103,7 @@ class Homepage extends React.Component{
     })
   }
 
-  // Logout & Redirect to Login Component
+  // Logout & Redirect to Login Component --- belongs in Nav Bar!
   handleLogout(){
     ref.unauth();                 // Destroys User Auth
     this.props.navigator.pop();   // go back to previous component - Signup
@@ -137,13 +116,19 @@ class Homepage extends React.Component{
     this.getFavorites();
   }
 
+  // displays info of an apartment - id, capacity, address, pic_url, price & property_type
+  renderApt(apt, i){
+    console.log('rendering apt: ', apt)
+    console.log('rendering key: ', i)
+    // return (
+    //   <View>
+    //     <Text> Apt Info Here </Text>
+    //   </View>
+    // )
+  }
+
   render(){
-    // how will this be received from YesOrNo???
-    // keeps getting route/stack error using (push/popToRoute/resetTo)
-    // if(this.props.reset){
-    //   console.log('new additions!')
-    //   this.getFavorites();
-    // }
+    var check = this.state.favorites.length ? (this.state.favorites.map((apt, i)=>this.renderApt(apt, i))) : (<Text style={styles.empty}>You dont got no apartment favorites!</Text>)
 
     return(
       <ScrollView 
@@ -154,9 +139,8 @@ class Homepage extends React.Component{
               onRefresh={this._onRefresh.bind(this)} />}
       >
         {/* lists EACH user's favorites */}
-        <View style={styles.overlay}>
-          <Text style={styles.title}>Favorites List</Text>
-        </View>
+        {check}
+        
 
         {/* Temp 'Search' Button to Search Component */}
         <TouchableHighlight
@@ -210,6 +194,13 @@ var styles = StyleSheet.create({
     shadowRadius: 1,
     shadowColor: 'black',
     shadowOpacity: 0.8,
+  },
+  empty: {
+    fontSize: 24,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: 'black',
+    lineHeight: 40,
   },
   url: {
     opacity: 0.5,
