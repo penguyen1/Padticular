@@ -3,7 +3,7 @@ const React = require('react-native');
 const Parallax = require('react-native-parallax');
 const Firebase = require('firebase');
 var TimerMixin = require('react-timer-mixin');
-// var styles = require('./Helpers/Styles');
+var Web = require('./Helpers/Web');
 var ViewSite = require('./Helpers/Web');        // WebView     
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com');
 var Search = require('./Search');               // for testing -- belongs in Nav
@@ -19,6 +19,7 @@ var {
   StyleSheet,
   Text,
   TouchableHighlight,
+  WebView,
   View
 } = React;
 
@@ -44,6 +45,7 @@ class Homepage extends React.Component{
       favorites: [],
     };
     this.userAptRef = ref.child(`/users/${this.props.user.uid}/apts`);
+    this.homeRoute = this.props.navigator.navigationContext._currentRoute;
   }
 
   // called ONCE BEFORE Homepage Component is rendered
@@ -96,21 +98,20 @@ class Homepage extends React.Component{
       },
       passProps: {
         user: this.props.user,
-        homepage: this.props.navigator.navigationContext._currentRoute,
+        homepage: this.homeRoute,
       },
     })
   }
 
   // Redirects to Apartment Listing Website 
-  handleGoToSite(id){
-    console.log('going to listing site for AirBnB id: ', id)
-    // this.props.navigator.push({
-    //   title: 'Web View',
-    //   component: Web,
-    //   leftButtonTitle: 'Back',
-    //   onLeftButtonPress: () => { this.props.navigator.pop() },
-    //   passProps: {url},
-    // })
+  handleGoToSite(i){
+    var url = `https://www.airbnb.com/rooms/${this.state.favorites[i].id}`
+    console.log('id: ', this.state.favorites[i].id)
+    this.props.navigator.push({
+      title: 'Web View',
+      component: Web,
+      passProps: {url}
+    })
   }
 
   // Logout & Redirect to Login Component --- belongs in Nav Bar!
@@ -131,7 +132,7 @@ class Homepage extends React.Component{
     return ( 
       <Parallax.Image
         style={{ height: IMAGE_HEIGHT }}
-        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.3)'}}
+        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.4)'}}
         source={{ uri: 'http://loremflickr.com/640/480' }} >
           <Text style={styles.title}>You dont got no favorites!</Text>
       </Parallax.Image>
@@ -140,28 +141,18 @@ class Homepage extends React.Component{
 
   // displays info of an apartment - id, capacity, address, pic_url, price & property_type
   renderApt(apt, i){
-    console.log('rendering apt: ', i, apt)
     var pic_url = apt.picture_urls[0].toString()
-    
-    // need to include the Parallax Factor???? (dimensions)
-    // return (
-    //   <Image key={i}
-    //     style={styles.image}
-    //     overlayStyle={styles.overlay}
-    //     source={{ uri: pic_url }}>
-    //       <Text style={styles.title}> {apt.address} </Text>
-    //   </Image>
-    // )
-
     return (
       <Parallax.Image
         key={i}
-        style={{ height: 200 }}
-        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.3)'}}
-        source={{ uri: pic_url }} >
+        style={{ height: IMAGE_HEIGHT }}
+        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.4)'}}
+        source={{ uri: pic_url }} 
+        onPress={this.handleGoToSite.bind(this, i)} >
         <Text style={styles.title}> {apt.address} </Text>
       </Parallax.Image>
     )
+    // .state.favorites[i]
   }
 
   render() {
@@ -196,23 +187,10 @@ class Homepage extends React.Component{
 
 // Homepage StyleSheet
 var styles = StyleSheet.create({
-  mainContainer: {
+  container: {
     flex: 1,
-    padding: 30,
-    marginTop: 65,
+    backgroundColor: '#F6F6EF',
     flexDirection: 'column',
-    justifyContent: 'center',
-    backgroundColor: '#48BBEC'
-  },
-  image: {
-    height: IMAGE_HEIGHT,
-    opacity: 0.8,
-
-  },
-  overlay: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   title: {
     fontSize: 20,
