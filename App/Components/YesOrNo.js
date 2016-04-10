@@ -36,6 +36,8 @@ var {
   StyleSheet,
   View,
 } = React;
+var IMAGE_WIDTH = Dimensions.get('window').width;
+var IMAGE_HEIGHT = Dimensions.get('window').height;
 
 class Card extends Component {
   render() {
@@ -47,14 +49,12 @@ class Card extends Component {
               <Animated.View style={[styles.cardImageTextContainer, styles.cardImageYupContainer, this.props.animatedYupStyles]}>
                 <Text style={[styles.cardImageText, styles.cardImageYupText]}>SAVE IT!</Text>
               </Animated.View>
+              <Text style={styles.title}>{this.props.price_formatted}/night</Text>
+              <Text style={styles.subtitle}>{this.props.property_type} | {this.props.smart_location}</Text>
               <Animated.View style={[styles.cardImageTextContainer, styles.cardImageNopeContainer, this.props.animatedNopeStyles]}>
                 <Text style={[styles.cardImageText, styles.cardImageNopeText]}>PASS</Text>
               </Animated.View>
             </Image>
-            <View style={styles.cardLabelContainer}>
-              <Text style={styles.name}>{this.props.smart_location}</Text>
-              <Text style={styles.value}>{this.props.price_formatted}</Text>
-            </View>
           </Animated.View>   
         </Animated.View>
       </View>
@@ -333,15 +333,17 @@ var styles = StyleSheet.create({
   // cards
   cardsContainer: {
     flex: 1,
+    width: IMAGE_WIDTH
   },
 
   cardResizeContainer: {
     flex: 1,
     position: 'absolute',
-    top: 70,
-    left: 40,
-    bottom: 40, 
-    right: 40,
+    top: 60,
+    left: 0,
+    bottom: 0, 
+    right: 0,
+
   },
 
   cardContainer: {
@@ -351,6 +353,7 @@ var styles = StyleSheet.create({
     bottom: 0, 
     right: 0,
     justifyContent: 'flex-end',
+    width: IMAGE_WIDTH,
   },
 
   card: {   
@@ -372,6 +375,7 @@ var styles = StyleSheet.create({
   cardImage: {
     flex: 1,
     borderRadius: 8,
+    backgroundColor: 'rgba(0,0,0,0.8)',
   },
 
   cardImageTextContainer: {
@@ -389,7 +393,6 @@ var styles = StyleSheet.create({
     left: 40,
     transform:[{rotate: '-20deg'}],
     borderColor: 'green',
-    
   },
   cardImageNopeContainer : {
     top: 40,
@@ -407,18 +410,39 @@ var styles = StyleSheet.create({
   },
   cardImageYupText: {
     color: 'green',
-    backgroundColor: 'rgba(0,0,0,0)',
+    backgroundColor: 'rgba(0,0,0,0)', 
   },
-
-  cardLabelContainer: {
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    height: 40,
-    alignItems: 'center',
-    //borderColor: "#999",
-    borderRadius: 8,
-    //borderBottomWidth: 2,
-    padding: 8,
+  title: {
+    fontSize: 40,
+    textAlign: 'center',
+    lineHeight: 55,
+    fontWeight: 'bold',
+    color: 'white',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowRadius: 1,
+    shadowColor: 'black',
+    shadowOpacity: 0.8,
+    marginTop: 160,
+    opacity: 1,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+  },
+  subtitle: {
+    fontSize: 20,
+    textAlign: 'center',
+    lineHeight: 25,
+    color: 'white',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowRadius: 1,
+    shadowColor: 'black',
+    shadowOpacity: 0.8,
+    marginTop: 0,
+    backgroundColor: 'rgba(0,0,0,0.2)',
   },
   name: {
     fontWeight: 'bold',

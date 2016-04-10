@@ -131,7 +131,6 @@ class Homepage extends React.Component{
         overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.4)'}}
         source={{ uri: 'http://loremflickr.com/640/480' }} >
           <Text style={styles.title}>You dont got no favorites!</Text>
-          {this.renderSearchBtn()}
       </Parallax.Image>
     )
   }
