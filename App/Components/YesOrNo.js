@@ -63,7 +63,6 @@ class YesOrNo extends React.Component{
 
   // gets first apt from this.props.apts ???
   componentWillMount() {
-    // this.handleNextApt()
     this._panResponder = PanResponder.create({
       onMoveShouldSetResponderCapture: () => true,
       onMoveShouldSetPanResponderCapture: () => true,
@@ -100,6 +99,7 @@ class YesOrNo extends React.Component{
         }
       }
     })
+    this.handleNextApt()
   }
 
   // performs before rendering to Homepage
@@ -191,6 +191,7 @@ class YesOrNo extends React.Component{
       var home = this.props.homepage
       this.props.navigator.popToRoute(home)
     }
+    console.log('I PRESENT TO YOU --- ', this.state.apt)
   }
 
 
