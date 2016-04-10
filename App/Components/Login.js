@@ -1,13 +1,23 @@
 'use strict'
 const React = require('react-native');
 const Firebase = require('firebase');
+const t = require('tcomb-form-native');
 
 var Signup = require('./Signup');
 var Homepage = require('./Homepage');
 var Search = require('./Search');
-var styles = require('./Helpers/Styles');
+// var styles = require('./Helpers/Styles');
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
 var userRef = ref.child('users/');
+
+// tcomb-form-native -- source: https://github.com/gcanti/tcomb-form-native
+var Form = t.form.Form;
+
+// To create forms -- Source: https://github.com/FaridSafi/react-native-gifted-form
+// var {
+//   GiftedForm, 
+//   GiftedFormManager
+// } = require('react-native-gifted-form');
 
 var {
   Text,
@@ -18,6 +28,17 @@ var {
   View,
   Navigator
 } = React;
+
+
+
+
+// defining the domain model
+var Login = t.struct({
+  email: t.String,        // required string
+  password: t.String,     // required string
+});
+var options = {};   // optional rendering options (see documentation)
+
 
 class Login extends React.Component{
   constructor(props) {
@@ -105,70 +126,130 @@ class Login extends React.Component{
     })
   }
 
-  render(){
+
+  onPress() {
+    // call getValue() to get the values of the form
+    var value = this.refs.form.getValue();
+    if (value) { // if validation fails, value will be null
+      console.log('Testing Login Values: ', value); // value here is an instance of Login
+    } else {
+      console.log('NO LOGIN MET')
+    }
+  },
+
+  render() {
     const showError = (
       this.state.error ? <Text>{this.state.error}</Text> : <View />
     );
 
     return (
-      <View style={styles.mainContainer}>
-        <View style={styles.formContainer}>
-          <Text style={styles.title}> Login </Text>
+      <View style={styles.container}>
+        {/* display */}
+        <Form
+          ref="form"
+          type={Login}
+          options={options} />
 
-          {/* Email Address */}
-          <TextInput
-            style={styles.textInput}
-            placeholder="Email Address"
-            autoCapitalize="none"
-            autoCorrect={false}
-            clearTextOnFocus={true}
-            onChangeText={(text)=>this.setState({ email: text})}
-            value={this.state.email} />
-
-          {/* Password */}
-          <TextInput
-            style={styles.textInput}
-            placeholder="Password"
-            autoCapitalize="none"
-            autoCorrect={false}
-            secureTextEntry={true}
-            clearTextOnFocus={true}
-            onChangeText={(text)=>this.setState({ password: text})}
-            value={this.state.password} />
-
-          {/* Login Button */}
-          <TouchableHighlight 
-            style={styles.button}
-            onPress={this.handleSubmit.bind(this)}
-            underlayColor="white" >
-              <Text style={styles.buttonText}>Login</Text>
-          </TouchableHighlight>
-
-          {/* Spinning Status */}
-          <ActivityIndicatorIOS
-            animating={this.state.isLoading}
-            color="#111"
-            size="large"  />
-          {showError}
-
-          {/* Link to Signup Component */}
-          <View style={styles.footer}>
-            <Text>Not a member?</Text>
-            <TouchableHighlight 
-              onPress={this.handleGoToSignup.bind(this)}>
-              <Text style={styles.link}>Sign up here</Text>
-            </TouchableHighlight>
-          </View>
-        </View>
+        <TouchableHighlight style={styles.button} onPress={this.onPress} underlayColor='#99d9f4'>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableHighlight>
       </View>
-    )
+    );
   }
-}
+
+} // end of Login Component
+
+
+// tcomb StyleSheet
+var styles = StyleSheet.create({
+  container: {
+    justifyContent: 'center',
+    marginTop: 50,
+    padding: 20,
+    backgroundColor: '#ffffff',
+  },
+  title: {
+    fontSize: 30,
+    alignSelf: 'center',
+    marginBottom: 30
+  },
+  buttonText: {
+    fontSize: 18,
+    color: 'white',
+    alignSelf: 'center'
+  },
+  button: {
+    height: 36,
+    backgroundColor: '#48BBEC',
+    borderColor: '#48BBEC',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 10,
+    alignSelf: 'stretch',
+    justifyContent: 'center'
+  }
+});
+
+
 
 
 module.exports = Login;
 
 
+//  ORIGINAL LOGIN LAYOUT -- ugly 
+
+// return (
+//       <View style={styles.mainContainer}>
+//         <View style={styles.formContainer}>
+//           <Text style={styles.title}> Login </Text>
+
+//           {/* Email Address */}
+//           <TextInput
+//             style={styles.textInput}
+//             placeholder="Email Address"
+//             autoCapitalize="none"
+//             autoCorrect={false}
+//             clearTextOnFocus={true}
+//             onChangeText={(text)=>this.setState({ email: text})}
+//             value={this.state.email} />
+
+//           {/* Password */}
+//           <TextInput
+//             style={styles.textInput}
+//             placeholder="Password"
+//             autoCapitalize="none"
+//             autoCorrect={false}
+//             secureTextEntry={true}
+//             clearTextOnFocus={true}
+//             onChangeText={(text)=>this.setState({ password: text})}
+//             value={this.state.password} />
+
+//           {/* Login Button */}
+//           <TouchableHighlight 
+//             style={styles.button}
+//             onPress={this.handleSubmit.bind(this)}
+//             underlayColor="white" >
+//               <Text style={styles.buttonText}>Login</Text>
+//           </TouchableHighlight>
+
+//           {/* Spinning Status */}
+//           <ActivityIndicatorIOS
+//             animating={this.state.isLoading}
+//             color="#111"
+//             size="large"  />
+//           {showError}
+
+//           {/* Link to Signup Component */}
+//           <View style={styles.footer}>
+//             <Text>Not a member?</Text>
+//             <TouchableHighlight 
+//               onPress={this.handleGoToSignup.bind(this)}>
+//               <Text style={styles.link}>Sign up here</Text>
+//             </TouchableHighlight>
+//           </View>
+//         </View>
+//       </View>
+//     )
 
 
 
