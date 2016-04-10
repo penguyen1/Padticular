@@ -19,6 +19,8 @@ var Homepage = require('./Homepage');
 // var styles = require('./Helpers/Styles');
 // var Nav = require('./Nav');
 var SWIPE_THRESHOLD = 120;
+var NEXT_CARD_POSITION_OFFSET = 4;
+var NEXT_CARD_SIZE_OFFSET = 8;
 
 var {
   ActivityIndicatorIOS,
@@ -34,6 +36,33 @@ var {
   StyleSheet,
   View,
 } = React;
+
+
+
+class Card extends Component {
+  render() {
+    return (
+      <View style={styles.cardResizeContainer}>
+        <Animated.View style={[styles.cardContainer, this.props.animatedCardContainerStyles]}>
+          <Animated.View style={[styles.card, this.props.animatedCardStyles]} {...this.props.panResponder}>
+            <Image source={{uri: this.props.picture_urls[0]}} style={styles.cardImage}>
+              <Animated.View style={[styles.cardImageTextContainer, styles.cardImageYupContainer, this.props.animatedYupStyles]}>
+                <Text style={[styles.cardImageText, styles.cardImageYupText]}>LOVE</Text>
+              </Animated.View>
+              <Animated.View style={[styles.cardImageTextContainer, styles.cardImageNopeContainer, this.props.animatedNopeStyles]}>
+                <Text style={[styles.cardImageText, styles.cardImageNopeText]}>NEIN</Text>
+              </Animated.View>
+            </Image>
+            <View style={styles.cardLabelContainer}>
+              <Text style={styles.name}>{this.props.smart_location}</Text>
+              <Text style={styles.value}>{this.props.price_formatted}</Text>
+            </View>
+          </Animated.View>   
+        </Animated.View>
+      </View>
+    );
+  }
+}
 
 class YesOrNo extends React.Component {
   constructor(props) {
@@ -58,6 +87,7 @@ class YesOrNo extends React.Component {
       },
       pan: new Animated.ValueXY(),
       enter: new Animated.Value(0.5),
+      currentPosition: 0,
     };
     this.aptRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/apts');
     this.userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
@@ -92,7 +122,7 @@ class YesOrNo extends React.Component {
           Animated.decay(this.state.pan, {
             velocity: {x: velocity, y: vy},
             deceleration: 0.98
-          }).start(this._resetState)
+          }).start(this._resetState.bind(this))
         } else {
           Animated.spring(this.state.pan, {
             toValue: {x: 0, y: 0},
@@ -101,7 +131,7 @@ class YesOrNo extends React.Component {
         }
       }
     })
-    this.handleNextApt()
+    // this.handleNextApt()
     // this.resetState()
   }
 
@@ -150,7 +180,7 @@ class YesOrNo extends React.Component {
     // adds apt_uid to '.../users/user_uid/apts'
     this.userRef.child(`${this.props.user.uid}/apts/${newApt.key()}`).set(true)
     // TOTO: find 5 most recent crimes, check if apt_uid exists in crimes, push/update with new crimes
-    this.resetState()
+    this._resetState()
     // this.handleNextApt()
   }
 
@@ -166,17 +196,18 @@ class YesOrNo extends React.Component {
   // gets next apartment
   handleNextApt(){
     console.log('Apartments left: ', this.props.apts.length)
+    let nextPosition = (this.state.currentPosition + 1) % this.props.apts.length
     // are there any apartments left in this.props.apts?
     if(this.props.apts.length){
-      var next = this.props.apts.pop()
+      var pending = this.props.apts[this.state.currentPosition]
       // call getApartmentInfo in api.js & get back a response
-      api.getApartmentInfo(next)
+      api.getApartmentInfo(pending)
         .then((res) => {
           // saves specific info in res to this.state.apt keys
           Object.keys(this.state.apt).forEach((key)=>{
             this.state.apt[key] = res.listing[key]
           })
-          this.setState({ apt: this.state.apt })
+          this.setState({ apt: this.state.apt, currentPosition: nextPosition })
           // now render it!
         }).catch((err)=>console.log('ERROR getting Apartment Info: ',err))
 
@@ -186,108 +217,322 @@ class YesOrNo extends React.Component {
       this.props.navigator.popToRoute(home)
     }
     console.log('I PRESENT TO YOU --- ', this.state.apt);
+    // this._animateEntrance();
   }
 
-  resetState() {
-    this.state.pan = new Animated.ValueXY();
+  _resetState() {
+    // this.state.pan = new Animated.ValueXY();
     this.state.pan.setValue({x: 0, y: 0});
     this.state.enter.setValue(0);
     this.handleNextApt();
-    this._animateEntrance();
+  }
+
+  handleNopePress() {
+    let screenwidth = Dimensions.get('window').width;
+    let panlength = screenwidth + 100
+
+    Animated.timing(this.state.pan, {
+          toValue: {x: -panlength, y: 0}
+    }).start(this._resetState.bind(this))
+  }
+
+  handleYupPress() {
+    let screenwidth = Dimensions.get('window').width;
+    let panlength = screenwidth + 100
+
+    Animated.timing(this.state.pan, {
+          toValue: {x: panlength, y: 0}
+    }).start(this._resetState.bind(this))
   }
 
   render(){
-    let { pan, enter } = this.state;
+    let { pan, enter, apt, currentPosition } = this.state;
     let [translateX, translateY] = [pan.x, pan.y];
 
-    let rotate = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-30deg", "0deg", "30deg"]});
-    let opacity = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.5, 1, 0.5]})
-    let scale = enter;
+    // card 0 animation
+    // let rotate = pan.x.interpolate({inputRange: [-240, 0, 240], outputRange: ["-30deg", "0deg", "30deg"]});
+    // let opacity = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.5, 1, 0.5]})   // opt out
+    // let scale = enter;  // opt out
 
-    let animatedCardStyles = {transform: [{translateX}, {translateY}, {rotate}, {scale}], opacity};
+    // let animatedCardStyles = {transform: [{translateX}, {translateY}, {rotate}, {scale}], opacity};  // cut off end
 
-    let yupOpacity = pan.x.interpolate({inputRange: [0, 150], outputRange: [0, 1]});
-    let yupScale = pan.x.interpolate({inputRange: [0, 150], outputRange: [0.5, 1], extrapolate: 'clamp'});
-    let animatedYupStyles = {transform: [{scale: yupScale}], opacity: yupOpacity}
+    // let yupOpacity = pan.x.interpolate({inputRange: [0, 150], outputRange: [0, 1]});
+    // let yupScale = pan.x.interpolate({inputRange: [0, 150], outputRange: [0.5, 1], extrapolate: 'clamp'});
+    // let animatedYupStyles = {transform: [{scale: yupScale}], opacity: yupOpacity}
 
-    let nopeOpacity = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0]});
-    let nopeScale = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0.5], extrapolate: 'clamp'});
-    let animatedNopeStyles = {transform: [{scale: nopeScale}], opacity: nopeOpacity}
+    // let nopeOpacity = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0]});
+    // let nopeScale = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0.5], extrapolate: 'clamp'});
+    // let animatedNopeStyles = {transform: [{scale: nopeScale}], opacity: nopeOpacity}
 
-    return (
-      <View style={styles.container}>
-        <Animated.View 
-          style={[styles.card, animatedCardStyles, {backgroundColor: 'red'}]} 
-          {...this._panResponder.panHandlers}>
-        </Animated.View>
+    // card 0 animation
+    let rotate = pan.x.interpolate({inputRange: [-240, 0, 240], outputRange: ["-30deg", "0deg", "30deg"]});
+    let animatedCardStyles = {transform: [{translateX}, {translateY}, {rotate}]};
 
-        <Animated.View style={[styles.nope, animatedNopeStyles]}>
-          <Text style={styles.nopeText}>Nope!</Text>
-        </Animated.View>
+    let yupOpacity = pan.x.interpolate({inputRange: [0, SWIPE_THRESHOLD], outputRange: [0, 1], extrapolate: 'clamp'});
+    let animatedYupStyles = {opacity: yupOpacity}
+    let nopeOpacity = pan.x.interpolate({inputRange: [-SWIPE_THRESHOLD, 0], outputRange: [1, 0], extrapolate: 'clamp'});
+    let animatedNopeStyles = {opacity: nopeOpacity}
 
-        <Animated.View style={[styles.yup, animatedYupStyles]}>
-          <Text style={styles.yupText}>Yup!</Text>
-        </Animated.View>
+    let card0AnimatedStyles = {
+      animatedCardStyles: animatedCardStyles, 
+      animatedNopeStyles: animatedNopeStyles,
+      animatedYupStyles: animatedYupStyles
+    }
+
+    let person0 = this.state.apt
+
+    // return (
+    //   <View style={styles.container}>
+    //     <Animated.View 
+    //       style={[styles.card, animatedCardStyles, {backgroundColor: 'red'}]} 
+    //       {...this._panResponder.panHandlers}>
+    //     </Animated.View>
+
+    //     <Animated.View style={[styles.nope, animatedNopeStyles]}>
+    //       <Text style={styles.nopeText}>Nope!</Text>
+    //     </Animated.View>
+
+    //     <Animated.View style={[styles.yup, animatedYupStyles]}>
+    //       <Text style={styles.yupText}>Yup!</Text>
+    //     </Animated.View>
+    //   </View>
+    // )
+
+    return(
+      <View style={styles.bodyContainer}>
+        <View style={styles.responsiveContainer}>
+
+          <View style={styles.buttonsContainer}>
+            <View style={styles.buttonContainer}>
+              <TouchableHighlight style={[styles.button, styles.buttonNope]} underlayColor='#EEE' onPress={() => {this.handleNopePress()}}>
+                  <Text style={styles.nopeText}>Nein!</Text>
+              </TouchableHighlight>
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableHighlight style={[styles.button, styles.buttonYup]} underlayColor='#EEE' onPress={() => {this.handleYupPress()}}>
+                  <Text style={styles.yupText}>Love!</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+
+          <View style={styles.cardsContainer}>
+            <Card key={person0.name} {...person0} {...card0AnimatedStyles} panResponder={this._panResponder.panHandlers}/>
+          </View>
+
+        </View>   
       </View>
     )
   }
 };
 
-// YesOrNo StyleSheet
 var styles = StyleSheet.create({
-  container: {
+  // main container
+  bodyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    //margin: 10,
     backgroundColor: '#F5FCFF',
   },
-  card: {
-    width: 200,
-    height: 200,
-    backgroundColor: 'red',
+
+  // we keep the bottom button sections at height 100
+  // the card expands to take up all the rest of the space
+  responsiveContainer: {
+    flex: 1,
+    paddingBottom: 100,
   },
-  yup: {
+
+  // cards
+  cardsContainer: {
+    flex: 1,
+  },
+
+  cardResizeContainer: {
+    flex: 1,
+    position: 'absolute',
+    top: 40,
+    left: 40,
+    bottom: 40, 
+    right: 40,
+  },
+
+  cardContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0, 
+    right: 0,
+    justifyContent: 'flex-end',
+  },
+
+  card: {   
+    position: 'relative',
+    borderColor: '#AAA',
+    borderWidth: 1,
+    borderRadius: 8,  
+    flex: 1,
+    //overflow: 'hidden',
+    shadowRadius: 2,
+    shadowColor: '#BBB',
+    shadowOpacity: 0.8,
+    shadowOffset: {
+      height: 1,
+      width: 0,
+    }
+  },
+
+  cardImage: {
+    flex: 1,
+    borderRadius: 8,
+  },
+
+  cardImageTextContainer: {
+    position: 'absolute',
+    borderWidth: 3,
+    paddingTop: 2,
+    paddingBottom: 2,
+    paddingLeft: 6,
+    paddingRight: 6,
+    borderRadius: 4,
+    opacity: 0,
+  },
+  cardImageYupContainer : {
+    top: 40,
+    left: 40,
+    transform:[{rotate: '-20deg'}],
     borderColor: 'green',
-    borderWidth: 2,
-    position: 'absolute',
-    padding: 20,
-    bottom: 20,
-    borderRadius: 5,
-    right: 20,
+    
   },
-  yupText: {
-    fontSize: 16,
-    color: 'green',
-  },
-  nope: {
+  cardImageNopeContainer : {
+    top: 40,
+    right: 40,
+    transform:[{rotate: '20deg'}],
     borderColor: 'red',
-    borderWidth: 2,
-    position: 'absolute',
-    bottom: 20,
-    padding: 20,
-    borderRadius: 5,
-    left: 20,
   },
-  nopeText: {
-    fontSize: 16,
+  cardImageText: {
+    fontSize: 40,
+    fontWeight: 'bold',
+  },
+  cardImageNopeText: {
     color: 'red',
+    backgroundColor: 'rgba(0,0,0,0)', 
   },
-  thumbnail: {
+  cardImageYupText: {
+    color: 'green',
+    backgroundColor: 'rgba(0,0,0,0)',
+  },
+
+  cardLabelContainer: {
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    height: 40,
+    alignItems: 'center',
+    //borderColor: "#999",
+    borderRadius: 8,
+    //borderBottomWidth: 2,
+    padding: 8,
+  },
+  name: {
+    fontWeight: 'bold',
+    color: '#999',
+  },
+  value: {
     flex: 1,
-    width: 300,
-    height: 300,
+    textAlign: 'right',
+    fontWeight: 'bold',
+    color: '#999',
   },
-  text: {
-    fontSize: 20,
-    paddingTop: 10,
-    paddingBottom: 10
-  },
-  noMoreCards: {
-    flex: 1,
-    justifyContent: 'center',
+  
+  // buttons
+
+  buttonsContainer: {
+    height:100,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
     alignItems: 'center',
   },
-})
+  buttonContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  button: {
+    borderWidth: 2,
+    padding: 8,
+    borderRadius: 5,
+  },
+  buttonNope: {
+    borderColor: 'red',
+  },
+  buttonYup: {
+    borderColor: 'green',
+  },
+  yupText: {
+    fontSize: 20,
+    color: 'green',
+  },
+  nopeText: {
+    fontSize: 20,
+    color: 'red',
+  },
+
+});
+
+// // YesOrNo StyleSheet
+// var styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     backgroundColor: '#F5FCFF',
+//   },
+//   card: {
+//     width: 200,
+//     height: 200,
+//     backgroundColor: 'red',
+//   },
+//   yup: {
+//     borderColor: 'green',
+//     borderWidth: 2,
+//     position: 'absolute',
+//     padding: 20,
+//     bottom: 20,
+//     borderRadius: 5,
+//     right: 20,
+//   },
+//   yupText: {
+//     fontSize: 16,
+//     color: 'green',
+//   },
+//   nope: {
+//     borderColor: 'red',
+//     borderWidth: 2,
+//     position: 'absolute',
+//     bottom: 20,
+//     padding: 20,
+//     borderRadius: 5,
+//     left: 20,
+//   },
+//   nopeText: {
+//     fontSize: 16,
+//     color: 'red',
+//   },
+//   thumbnail: {
+//     flex: 1,
+//     width: 300,
+//     height: 300,
+//   },
+//   text: {
+//     fontSize: 20,
+//     paddingTop: 10,
+//     paddingBottom: 10
+//   },
+//   noMoreCards: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+// })
 
 
 YesOrNo.propTypes = {
