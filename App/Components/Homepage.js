@@ -128,14 +128,26 @@ class Homepage extends React.Component{
     this.getFavorites();
   }
 
+  renderSearchBtn(){
+    return (
+      <TouchableHighlight
+        style={styles.button}
+        onPress={this.handleGoToSearch.bind(this)}
+        underlayColor='white' >
+        <Text style={styles.buttonText}>Find More Apartments</Text>
+      </TouchableHighlight>
+    )
+  }
+
   // called if user has no favorites
   renderEmptyMsg() {
     return ( 
       <Parallax.Image
-        style={{ height: IMAGE_HEIGHT }}
+        style={{ height: Dimensions.get('window').height,  }}
         overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.4)'}}
         source={{ uri: 'http://loremflickr.com/640/480' }} >
           <Text style={styles.title}>You dont got no favorites!</Text>
+          {this.renderSearchBtn()}
       </Parallax.Image>
     )
   }
@@ -151,6 +163,7 @@ class Homepage extends React.Component{
         source={{ uri: pic_url }} 
         onPress={this.handleGoToSite.bind(this, i)} >
         <Text style={styles.title} key={i}> {apt.address} </Text>
+        {this.renderSearchBtn()}
       </Parallax.Image>
     )
     // .state.favorites[i]
@@ -169,14 +182,9 @@ class Homepage extends React.Component{
             onRefresh={this._onRefresh.bind(this)} />}
       >
       {/* Temp 'Search' Button to Search Component */}
-      <View style={styles.footer}>
-        <TouchableHighlight
-          style={styles.button}
-          onPress={this.handleGoToSearch.bind(this)}
-          underlayColor='white' >
-          <Text style={styles.buttonText}>Find More Apartments</Text>
-        </TouchableHighlight>
-      </View>
+      <Parallax.Image>
+        {this.renderSearchBtn()}
+      </Parallax.Image>
 
       {/* lists EACH user's favorites */}
       {check}
@@ -251,8 +259,8 @@ var styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 8,
     marginBottom: 10,
-    marginTop: 10,
-    marginLeft: 15,
+    marginTop: 50,
+    marginLeft: 115,
     justifyContent: 'center'
   },
   footer: {
