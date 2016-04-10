@@ -56,7 +56,7 @@ class Homepage extends React.Component{
   // called when Homepage Component is unmounting
   componentWillUnmount(){
     // removes all Firebase callbacks (no repeatitive issues)
-    ref.child(`/users/${this.props.user.uid}/apts`).off()
+    ref.off()
     console.log('Leaving homepage: ', this.state.favorites)
   }
 
@@ -67,7 +67,7 @@ class Homepage extends React.Component{
 
     // get all user's apts
     console.log('getting favorites')
-    this.userAptRef.orderByKey().on("child_added", (snap)=>{
+    this.userAptRef.once("child_added", (snap)=>{
       var apt_uid = snap.key()
       ref.child(`/apts/${apt_uid}`).once('value', (snapshot)=>{
         this.state.favorites.push(snapshot.val())
@@ -76,11 +76,12 @@ class Homepage extends React.Component{
 
     // delays asynchronous issue 
     TimerMixin.setTimeout(()=>{
+      console.log('PART 1 - checking favorites state: ', this.state.favorites)
       this.setState({
         refreshing: false,
         favorites: this.state.favorites
       })
-      console.log('apt update? ', this.state.favorites)
+      console.log('PART 2 - apt update: ', this.state.favorites)
     },500)
   }
 
@@ -149,7 +150,7 @@ class Homepage extends React.Component{
         overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.4)'}}
         source={{ uri: pic_url }} 
         onPress={this.handleGoToSite.bind(this, i)} >
-        <Text style={styles.title}> {apt.address} </Text>
+        <Text style={styles.title} key={i}> {apt.address} </Text>
       </Parallax.Image>
     )
     // .state.favorites[i]
@@ -255,7 +256,7 @@ var styles = StyleSheet.create({
     justifyContent: 'center'
   },
   footer: {
-    marginTop: 70,
+    marginTop: 7,
     marginLeft: 95,
     flexDirection: 'row',
   },

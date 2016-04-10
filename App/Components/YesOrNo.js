@@ -4,13 +4,8 @@ const Firebase = require('firebase');
 var api = require('../Utils/api');
 var styles = require('./Helpers/Styles');
 var Homepage = require('./Homepage');
-var Search = require('./Search');
 // var Nav = require('./Nav');
-
-// hits Firebase
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
-var userRef = ref.child('users/');
-var aptRef = userRef.child('apts/');
 
 var {
   Text,
@@ -60,6 +55,12 @@ class YesOrNo extends React.Component{
     this.handleNextApt()
   }
 
+  // performs before rendering to Homepage
+  componentWillUnmount(){
+    console.log('unmounting YesOrNo')
+    ref.off()
+  }
+
   // user wants to save apt -- this.state.apt
   handleSaveApt(){
     console.log('You got it Boss! Saving Apt: ', this.state.apt)
@@ -84,9 +85,6 @@ class YesOrNo extends React.Component{
       map_image_url: this.state.apt.map_image_url,
       summary: this.state.apt.summary
     })
-
-    // sets reset to true -- to be reset state in Homepage
-    this.state.reset = true
 
     // adds apt_uid to '.../users/user_uid/apts'
     this.userRef.child(`${this.props.user.uid}/apts/${newApt.key()}`).set(true)
@@ -118,20 +116,9 @@ class YesOrNo extends React.Component{
     } else {    // no more apartments left!
       // redirect to Homepage
       var home = this.props.homepage
-      // this.props.navigator.popToRoute({
-      //   title: 'Homepage',
-      //   component: home,
-      //   reset: this.state.reset
-      // })
       this.props.navigator.popToRoute(home)
     }
   }
-
-  // componentWillUnmount(){
-    
-  //   this.props.reset()
-  //   this.props.navigator.popToRoute(home)
-  // }
 
   render(){
     return(

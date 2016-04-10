@@ -8,14 +8,15 @@ var YesOrNo = require('./YesOrNo');
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
 
 var {
+  ActivityIndicatorIOS,
+  Alert,
+  ListView,
+  Navigator,
   Text,
   TextInput,
-  TouchableHighlight,
-  ActivityIndicatorIOS,
   StyleSheet,
+  TouchableHighlight,
   View,
-  Navigator,
-  ListView
 } = React;
 
 class Search extends React.Component{
@@ -54,31 +55,31 @@ class Search extends React.Component{
         if(res.search_results.length){
           // console.log('BOOOOYYAAA: ', res.search_results)
           var apartment_ids = Object.keys(res.search_results).map((el)=>res.search_results[el].listing.id)
+          console.log('apartments array: ', apartment_ids)
+
+          // pass info to YesOrNo Component
+          this.props.navigator.push({
+            title: 'Here\'s what we found!',
+            component: YesOrNo,
+            passProps: {
+              user: this.props.user,
+              apts: apartment_ids,
+              homepage: this.props.homepage,
+            },
+            leftButtonTitle: 'Back',
+            onLeftButtonPress: () => { this.props.navigator.pop() },
+            rightButtonTitle: 'Logout',
+            onRightButtonPress: () => {
+              ref.unauth();                 // Destroys User Auth
+              this.props.navigator.popToTop();
+            },
+          })
         } else {
-          console.log('No Results Found!')
+          alert('No Results Found! Please try again.')
+          // reset text input fields
         }
-        // this.hitAPIagain(x)
-
-        console.log('apartments array: ', apartment_ids)
-
-        // pass info to YesOrNo Component
-        this.props.navigator.push({
-          title: 'Here\'s what we found!',
-          component: YesOrNo,
-          passProps: {
-            user: this.props.user,
-            apts: apartment_ids,
-            homepage: this.props.homepage,
-          },
-          leftButtonTitle: 'Back',
-          onLeftButtonPress: () => { this.props.navigator.pop() },
-          rightButtonTitle: 'Logout',
-          onRightButtonPress: () => {
-            ref.unauth();                 // Destroys User Auth
-            this.props.navigator.popToTop();
-          },
-        })
       }).catch((err)=>console.log('ERROR getting listings from Search: ',err))
+
   }
 
   // Redirect back to Homepage Component
