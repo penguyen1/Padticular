@@ -67,7 +67,7 @@ class Homepage extends React.Component{
 
     // get all user's apts
     console.log('getting favorites')
-    this.userAptRef.once("child_added", (snap)=>{
+    this.userAptRef.on("child_added", (snap)=>{
       var apt_uid = snap.key()
       ref.child(`/apts/${apt_uid}`).once('value', (snapshot)=>{
         this.state.favorites.push(snapshot.val())
