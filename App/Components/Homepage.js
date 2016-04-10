@@ -29,12 +29,6 @@ var IMAGE_HEIGHT = IMAGE_WIDTH / 2;
 var PIXEL_RATIO = PixelRatio.get();
 var PARALLAX_FACTOR = 0.3;
 
-
-// verifies user auth state 
-function authDataCallback(authData) {
-  console.log( authData ? "@Home: User is logged in!" : "@Home: User is logged out!" );
-}
-
 class Homepage extends React.Component{
   constructor(props){
     super(props);

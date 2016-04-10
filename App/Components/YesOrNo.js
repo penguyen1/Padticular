@@ -8,14 +8,16 @@
 'use strict'
 const React = require('react-native');
 const Firebase = require('firebase');
-const SwipeCards = require('react-native-swipe-cards');
-var api = require('../Utils/api');
-var clamp = require('clamp');
-// var styles = require('./Helpers/Styles');
-var Homepage = require('./Homepage');
-var Defaults = require('./Helpers/Defaults');
-// var Nav = require('./Nav');
+const SwipeCards = require('react-native-swipe-cards');  // .default;
+const clamp = require('clamp');
+const Dimensions = require('Dimensions');
+const Defaults = require('./Helpers/Defaults');
+
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
+var api = require('../Utils/api');
+var Homepage = require('./Homepage');
+// var styles = require('./Helpers/Styles');
+// var Nav = require('./Nav');
 var SWIPE_THRESHOLD = 120;
 
 var {
@@ -33,7 +35,7 @@ var {
   View,
 } = React;
 
-class YesOrNo extends React.Component{
+class YesOrNo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -100,6 +102,7 @@ class YesOrNo extends React.Component{
       }
     })
     this.handleNextApt()
+    // this.resetState()
   }
 
   // performs before rendering to Homepage
@@ -147,19 +150,12 @@ class YesOrNo extends React.Component{
     // adds apt_uid to '.../users/user_uid/apts'
     this.userRef.child(`${this.props.user.uid}/apts/${newApt.key()}`).set(true)
     // TOTO: find 5 most recent crimes, check if apt_uid exists in crimes, push/update with new crimes
-    this.handleNextApt()
+    this.resetState()
+    // this.handleNextApt()
   }
-
 
   // shows the current apartment ------ renderApt() - n/A
   renderApt(){
-    // <Text style={styles.listFavs}>Apts for {this.props.user.name} </Text>
-    // <Text style={styles.listFavs}>Images: {this.state.apt.picture_urls[0]} </Text>
-    // <Text style={styles.listFavs}>{this.state.apt.price_formatted} per night</Text>
-    // <Text style={styles.listFavs}>{this.state.apt.property_type} | </Text>
-    // <Text style={styles.listFavs}>{this.state.apt.smart_location}</Text>
-    // <Text style={styles.listFavs}>Fits: {this.state.apt.person_capacity} </Text>
-    // <Text style={styles.listFavs}>Min nights: {this.state.apt.min_nights} </Text>
     return (
       <View style={styles.card}>
         <Image style={styles.thumbnail} source={{ uri: this.state.apt.picture_urls[0] }} />
@@ -167,13 +163,11 @@ class YesOrNo extends React.Component{
       </View>
     )
   }
-
   // gets next apartment
   handleNextApt(){
     console.log('Apartments left: ', this.props.apts.length)
     // are there any apartments left in this.props.apts?
     if(this.props.apts.length){
-
       var next = this.props.apts.pop()
       // call getApartmentInfo in api.js & get back a response
       api.getApartmentInfo(next)
@@ -191,22 +185,19 @@ class YesOrNo extends React.Component{
       var home = this.props.homepage
       this.props.navigator.popToRoute(home)
     }
-    console.log('I PRESENT TO YOU --- ', this.state.apt)
+    console.log('I PRESENT TO YOU --- ', this.state.apt);
   }
 
-
-  _resetState() {
+  resetState() {
+    this.state.pan = new Animated.ValueXY();
     this.state.pan.setValue({x: 0, y: 0});
     this.state.enter.setValue(0);
     this.handleNextApt();
     this._animateEntrance();
   }
 
-
   render(){
-    /** CREDIT: code was copied from brentvatne.github.com for the react-native-animated-tinder swipe effects **/
-    /** LINK:   https://github.com/brentvatne/react-native-animated-demo-tinder/blob/master/index.ios.js      **/
-    let { pan, enter, } = this.state;
+    let { pan, enter } = this.state;
     let [translateX, translateY] = [pan.x, pan.y];
 
     let rotate = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-30deg", "0deg", "30deg"]});
@@ -226,7 +217,7 @@ class YesOrNo extends React.Component{
     return (
       <View style={styles.container}>
         <Animated.View 
-          style={[styles.card, animatedCardStyles, {backgroundColor: this.state.person}]} 
+          style={[styles.card, animatedCardStyles, {backgroundColor: 'red'}]} 
           {...this._panResponder.panHandlers}>
         </Animated.View>
 
@@ -281,15 +272,6 @@ var styles = StyleSheet.create({
     fontSize: 16,
     color: 'red',
   },
-  // card: {
-  //   alignItems: 'center',
-  //   borderRadius: 5,
-  //   overflow: 'hidden',
-  //   borderColor: 'grey',
-  //   backgroundColor: 'white',
-  //   borderWidth: 1,
-  //   elevation: 1,
-  // },
   thumbnail: {
     flex: 1,
     width: 300,
