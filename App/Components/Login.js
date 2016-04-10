@@ -1,9 +1,10 @@
 'use strict'
 const React = require('react-native');
 const Firebase = require('firebase');
+
 var Signup = require('./Signup');
 var Homepage = require('./Homepage');
-// var Separator = require('./Helpers/Separator');
+var Search = require('./Search');
 var styles = require('./Helpers/Styles');
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
 var userRef = ref.child('users/');
@@ -42,8 +43,10 @@ class Login extends React.Component{
         this.props.navigator.push({ 
           title: 'Homepage',
           component: Homepage,
-          backButtonTitle: '',
-          onBackButtonPress: () => { console.log('cant ever go back!') },
+          leftButtonTitle: 'Find Apartments',
+          onLeftButtonPress: () => { console.log('lets find you an apartment!') },
+          rightButtonTitle: 'Logout',
+          onRightButtonPress: () => { console.log('Logging yo ass out!') },
           passProps: {
             user: {
               uid: ref.getAuth().uid,
@@ -76,7 +79,11 @@ class Login extends React.Component{
             title: 'Homepage', 
             component: Homepage, 
             leftButtonTitle: ' ',
-            onLeftButtonPress: () => { console.log('cant ever go back!') },
+            rightButtonTitle: 'Logout',
+            onRightButtonPress: () => {
+              ref.unauth();                 // Destroys User Auth
+              this.props.navigator.popToTop();   // go back to previous component - Signup
+            },
             passProps: { 
               user: { 
                 uid: authData.uid,
@@ -91,7 +98,11 @@ class Login extends React.Component{
 
   // Redirect to Signup Component
   handleGoToSignup() {
-    this.props.navigator.pop()
+    this.props.navigator.push({      // use replace???
+      title: 'Signup',
+      component: Signup,
+      leftButtonTitle: ' '
+    })
   }
 
   render(){

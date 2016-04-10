@@ -1,6 +1,7 @@
 'use strict'
 const React = require('react-native');
 const Firebase = require('firebase');
+
 var Login = require('./Login');
 var Homepage = require('./Homepage');
 var styles = require('./Helpers/Styles');
@@ -76,7 +77,11 @@ class Signup extends React.Component{
               title: 'Homepage',
               component: Homepage,
               leftButtonTitle: ' ',
-              onLeftButtonPress: () => { console.log('cant ever go back!') },
+              rightButtonTitle: 'Logout',
+              onRightButtonPress: () => {
+                ref.unauth();                 // Destroys User Auth
+                this.props.navigator.pop();   // go back to previous component - Signup
+              },
               passProps: {
                 user: {
                   uid: authData.uid,
@@ -92,11 +97,7 @@ class Signup extends React.Component{
 
   // Redirect to Login Component
   handleGoToLogin() {
-    this.props.navigator.push({      // use replace???
-      title: 'Login',
-      component: Login,
-      leftButtonTitle: 'Back to Signup'
-    })
+    this.props.navigator.pop()
   }
 
   render(){

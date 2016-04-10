@@ -1,10 +1,10 @@
 const React = require('react-native');
 const Firebase = require('firebase');
-var Signup = require('./App/Components/Signup');
-var Homepage = require('./App/Components/Homepage');
 const userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
-// const user = new Firebase('https://dazzling-inferno-3629.firebaseio.com/users');
 const user = userRef.child('users'); 
+
+var Login = require('./App/Components/Login');
+var Homepage = require('./App/Components/Homepage');
 
 var {
   AppRegistry,
@@ -45,8 +45,8 @@ class Padticular extends React.Component{
     } else {
       console.log('Whoops! No user currently available.')
       goHere = {
-        title: 'Signup', 
-        component: Signup,
+        title: 'Login', 
+        component: Login,
       }
     }
 

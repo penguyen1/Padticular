@@ -63,13 +63,20 @@ class Search extends React.Component{
 
         // pass info to YesOrNo Component
         this.props.navigator.push({
-          title: 'Swipe: Right to save, Left to skip!',
+          title: 'Here\'s what we found!',
           component: YesOrNo,
           passProps: {
             user: this.props.user,
             apts: apartment_ids,
             homepage: this.props.homepage,
-          }
+          },
+          leftButtonTitle: 'Back',
+          onLeftButtonPress: () => { this.props.navigator.pop() },
+          rightButtonTitle: 'Logout',
+          onRightButtonPress: () => {
+            ref.unauth();                 // Destroys User Auth
+            this.props.navigator.popToTop();
+          },
         })
       }).catch((err)=>console.log('ERROR getting listings from Search: ',err))
   }
@@ -157,7 +164,7 @@ class Search extends React.Component{
 
 Search.propTypes = {
   user: React.PropTypes.object.isRequired,
-  homepage: React.PropTypes.object.isRequired,
+  homepage: React.PropTypes.object,
 };
 
 module.exports = Search;

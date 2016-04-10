@@ -54,7 +54,7 @@ class Homepage extends React.Component{
   // called when Homepage Component is unmounting
   componentWillUnmount(){
     // removes all Firebase callbacks (no repeatitive issues)
-    userAptRef.off()
+    ref.child(`/users/${this.props.user.uid}/apts`).off()
     console.log('Leaving homepage: ', this.state.favorites)
   }
 
@@ -87,10 +87,17 @@ class Homepage extends React.Component{
     this.props.navigator.push({
       title: 'Search',
       component: Search,
+      leftButtonTitle: 'Back',
+      onLeftButtonPress: () => { this.props.navigator.pop() },
+      rightButtonTitle: 'Logout',
+      onRightButtonPress: () => {
+        ref.unauth();                 // Destroys User Auth
+        this.props.navigator.popToTop();
+      },
       passProps: {
         user: this.props.user,
         homepage: this.props.navigator.navigationContext._currentRoute,
-      }
+      },
     })
   }
 
@@ -99,7 +106,9 @@ class Homepage extends React.Component{
     this.props.navigator.push({
       title: 'Web View',
       component: Web,
-      passProps: {url}
+      leftButtonTitle: 'Back',
+      onLeftButtonPress: () => { this.props.navigator.pop() },
+      passProps: {url},
     })
   }
 
@@ -138,25 +147,28 @@ class Homepage extends React.Component{
               refreshing={this.state.refreshing}
               onRefresh={this._onRefresh.bind(this)} />}
       >
+        {/* Temp 'Search' Button to Search Component */}
+        <View style={styles.footer}>
+          <TouchableHighlight
+            style={styles.button}
+            onPress={this.handleGoToSearch.bind(this)}
+            underlayColor='white' >
+            <Text style={styles.buttonText}>Find Apartments</Text>
+          </TouchableHighlight>
+
+          {/* Temp Logout Button */}
+          <TouchableHighlight
+            style={styles.button}
+            onPress={this.handleLogout.bind(this)}
+            underlayColor='white' >
+            <Text style={styles.buttonText}>Logout</Text>
+          </TouchableHighlight>
+        </View>
+
+
         {/* lists EACH user's favorites */}
         {check}
         
-
-        {/* Temp 'Search' Button to Search Component */}
-        <TouchableHighlight
-          style={styles.button}
-          onPress={this.handleGoToSearch.bind(this)}
-          underlayColor='white' >
-          <Text style={styles.buttonText}>Find Apartments</Text>
-        </TouchableHighlight>
-
-        {/* Temp Logout Button */}
-        <TouchableHighlight
-          style={styles.button}
-          onPress={this.handleLogout.bind(this)}
-          underlayColor='white' >
-          <Text style={styles.buttonText}>Logout</Text>
-        </TouchableHighlight>
       </ScrollView>
     )
   }
@@ -223,6 +235,28 @@ var styles = StyleSheet.create({
   },
   scrollview: {
     flex: 1,
+  },
+  buttonText: {
+    fontSize: 15,
+    color: '#111',
+    alignSelf: 'center'
+  },
+  button: {
+    height: 35,
+    width: 100,
+    backgroundColor: '#00b8ff',
+    borderColor: '#233fc7',
+    borderWidth: 2,
+    borderRadius: 8,
+    marginBottom: 10,
+    marginTop: 30,
+    marginLeft: 15,
+    justifyContent: 'center'
+  },
+  footer: {
+    marginTop: 200,
+    marginLeft: 85,
+    flexDirection: 'row',
   },
 });
 
