@@ -10,6 +10,7 @@ var Search = require('./Search');               // for testing -- belongs in Nav
 
 var {
   Dimensions,
+  Image,
   Navigator,
   PixelRatio,
   RefreshControl,
@@ -17,7 +18,6 @@ var {
   StyleSheet,
   Text,
   TouchableHighlight,
-  TouchableWithoutFeedback,
   View
 } = React;
 
@@ -102,14 +102,15 @@ class Homepage extends React.Component{
   }
 
   // Redirects to Apartment Listing Website 
-  handleGoToSite(url){
-    this.props.navigator.push({
-      title: 'Web View',
-      component: Web,
-      leftButtonTitle: 'Back',
-      onLeftButtonPress: () => { this.props.navigator.pop() },
-      passProps: {url},
-    })
+  handleGoToSite(id){
+    console.log('going to listing site for AirBnB id: ', id)
+    // this.props.navigator.push({
+    //   title: 'Web View',
+    //   component: Web,
+    //   leftButtonTitle: 'Back',
+    //   onLeftButtonPress: () => { this.props.navigator.pop() },
+    //   passProps: {url},
+    // })
   }
 
   // Logout & Redirect to Login Component --- belongs in Nav Bar!
@@ -129,11 +130,17 @@ class Homepage extends React.Component{
   renderApt(apt, i){
     console.log('rendering apt: ', apt)
     console.log('rendering key: ', i)
-    // return (
-    //   <View>
-    //     <Text> Apt Info Here </Text>
-    //   </View>
-    // )
+    var pic_url = apt.picture_urls[0].toString()
+    
+    // need to include the Parallax Factor???? (dimensions)
+    return (
+      <Image key={i}
+        style={styles.image}
+        overlayStyle={styles.overlay}
+        source={{ uri: pic_url }}>
+          <Text style={styles.title}> {apt.address} </Text>
+      </Image>
+    )
   }
 
   render(){
@@ -153,22 +160,13 @@ class Homepage extends React.Component{
             style={styles.button}
             onPress={this.handleGoToSearch.bind(this)}
             underlayColor='white' >
-            <Text style={styles.buttonText}>Find Apartments</Text>
-          </TouchableHighlight>
-
-          {/* Temp Logout Button */}
-          <TouchableHighlight
-            style={styles.button}
-            onPress={this.handleLogout.bind(this)}
-            underlayColor='white' >
-            <Text style={styles.buttonText}>Logout</Text>
+            <Text style={styles.buttonText}>Find More Apartments</Text>
           </TouchableHighlight>
         </View>
 
-
         {/* lists EACH user's favorites */}
         {check}
-        
+
       </ScrollView>
     )
   }
@@ -194,11 +192,11 @@ var styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.3)',
   },
   title: {
-    fontSize: 20,
+    fontSize: 15,
     textAlign: 'center',
     lineHeight: 25,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'black',
     shadowOffset: {
       width: 0,
       height: 0,
@@ -237,25 +235,26 @@ var styles = StyleSheet.create({
     flex: 1,
   },
   buttonText: {
-    fontSize: 15,
+    fontSize: 18,
     color: '#111',
-    alignSelf: 'center'
+    alignSelf: 'center',
+    textAlign: 'center',
   },
   button: {
-    height: 35,
-    width: 100,
+    height: 50,
+    width: 140,
     backgroundColor: '#00b8ff',
     borderColor: '#233fc7',
     borderWidth: 2,
     borderRadius: 8,
     marginBottom: 10,
-    marginTop: 30,
+    marginTop: 10,
     marginLeft: 15,
     justifyContent: 'center'
   },
   footer: {
-    marginTop: 200,
-    marginLeft: 85,
+    marginTop: 10,
+    marginLeft: 95,
     flexDirection: 'row',
   },
 });
