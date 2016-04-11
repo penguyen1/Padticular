@@ -99,12 +99,33 @@ class Signup extends React.Component{
 
   // Redirect to Login Component
   handleGoToLogin() {
-    this.props.navigator.resetTo({
-      title: 'Login',
-      component: Login,
-      leftButtonTitle: ' '
+    // this.props.navigator.resetTo({
+    //   title: 'Login',
+    //   component: Login,
+    //   leftButtonTitle: ' '
+    // })
+    this.props.navigator.pop()
+  }
+
+  // handles Fullname input
+  handleFullName(e){
+    this.setState({
+      fullname: e.nativeEvent.text
     })
-    // this.props.navigator.popToTop()
+  }
+
+  // handles Password input
+  handlePassword(e){
+    this.setState({
+      password: e.nativeEvent.text
+    })
+  }
+
+  // handles Email input
+  handleEmail(e){
+    this.setState({
+      email: e.nativeEvent.text
+    })
   }
 
   render(){
@@ -124,8 +145,8 @@ class Signup extends React.Component{
             autoCapitalize="words"
             autoCorrect={false}
             clearTextOnFocus={true}
-            onChangeText={(text)=>this.setState({ fullname: text })}
-            value={this.state.fullname} />
+            value={this.state.fullname} 
+            onChange={this.handleFullName.bind(this)} />
  
           {/* Email Address */}
           <TextInput
@@ -134,8 +155,8 @@ class Signup extends React.Component{
             autoCapitalize="none"
             autoCorrect={false}
             clearTextOnFocus={true}
-            onChangeText={(text)=>this.setState({ email: text})}
-            value={this.state.email} />
+            value={this.state.email}
+            onChange={this.handleEmail.bind(this)} />
 
           {/* Create Password */}
           <TextInput
@@ -145,8 +166,8 @@ class Signup extends React.Component{
             autoCorrect={false}
             secureTextEntry={true}
             clearTextOnFocus={true}
-            onChangeText={(text)=>this.setState({ password: text})}
-            value={this.state.password} />
+            value={this.state.password}
+            onChange={this.handlePassword.bind(this)} />
 
           {/* Submit Button */}
           <TouchableHighlight 

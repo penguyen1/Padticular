@@ -102,10 +102,24 @@ class Login extends React.Component {
 
   // Redirect to Signup Component
   handleGoToSignup() {
-    this.props.navigator.replace({ 
+    this.props.navigator.push({ 
       title: 'Signup',
       component: Signup,
       leftButtonTitle: ' '
+    })
+  }
+  
+  // handles Password input
+  handlePassword(e){
+    this.setState({
+      password: e.nativeEvent.text
+    })
+  }
+
+  // handles Email input
+  handleEmail(e){
+    this.setState({
+      email: e.nativeEvent.text
     })
   }
 
@@ -126,8 +140,8 @@ class Login extends React.Component {
             autoCapitalize="none"
             autoCorrect={false}
             clearTextOnFocus={true}
-            onChangeText={(text)=>this.setState({ email: text})}
-            value={this.state.email} />
+            value={this.state.email} 
+            onChange={this.handleEmail.bind(this)} />
 
           {/* Password */}
           <TextInput
@@ -137,8 +151,8 @@ class Login extends React.Component {
             autoCorrect={false}
             secureTextEntry={true}
             clearTextOnFocus={true}
-            onChangeText={(text)=>this.setState({ password: text})}
-            value={this.state.password} />
+            value={this.state.password}
+            onChange={this.handlePassword.bind(this)} />
 
           {/* Login Button */}
           <TouchableHighlight 

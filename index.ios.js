@@ -2,7 +2,6 @@ const React = require('react-native');
 const Firebase = require('firebase');
 const userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
 const user = userRef.child('users'); 
-
 var Login = require('./App/Components/Login');
 var Homepage = require('./App/Components/Homepage');
 
@@ -54,7 +53,6 @@ class Padticular extends React.Component{
       <NavigatorIOS
         style={styles.container}
         translucent={true}
-        navigationBarHidden={true}
         initialRoute={goHere} />
     )
   }
