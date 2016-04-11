@@ -1,7 +1,6 @@
 'use strict'
 const React = require('react-native');
 const Firebase = require('firebase');
-
 var Signup = require('./Signup');
 var Homepage = require('./Homepage');
 var Search = require('./Search');
@@ -38,9 +37,7 @@ class Login extends React.Component {
   componentWillMount(){
     // user auth exists - but WHO??
     if(ref.getAuth()){
-      // this.props.navigator.jumpBack();
       var user = userRef.child(ref.getAuth().uid)
-
       user.once('value', (snapshot)=>{
         var firstname = snapshot.val().fullname.split(' ')[0]
 
@@ -74,7 +71,8 @@ class Login extends React.Component {
     // authenticate & logs in returning user -- authData contains UID!!
     ref.authWithPassword(login, (error, authData) => {
       if(error || !authData){
-        alert('Oops! Invalid login credentials, please try again!');
+        // alert('Oops! Invalid login credentials, please try again!');
+        this.props.navigator.popToTop();
       } else {
         userRef.once('value', (snapshot)=>{
           var member = snapshot.val()[authData.uid];
@@ -104,22 +102,11 @@ class Login extends React.Component {
 
   // Redirect to Signup Component
   handleGoToSignup() {
-    this.props.navigator.replace({      // use replace???
+    this.props.navigator.replace({ 
       title: 'Signup',
       component: Signup,
       leftButtonTitle: ' '
     })
-  }
-
-
-  onPress() {
-    // call getValue() to get the values of the form
-    var value = this.refs.form.getValue();
-    if (value) { // if validation fails, value will be null
-      console.log('Testing Login Values: ', value); // value here is an instance of LoginInfo
-    } else {
-      console.log('NO LOGIN MET')
-    }
   }
 
   render() {
@@ -128,7 +115,7 @@ class Login extends React.Component {
     );
 
     return (
-      <Image source={require('./Images/NYC.jpg')} style={styles.backgroundImage} >
+      <Image source={require('./Images/NYC2.jpg')} style={styles.backgroundImage} >
         <View style={styles.container}>
           <Text style={styles.welcome}>Hello again!</Text>
  
@@ -157,7 +144,7 @@ class Login extends React.Component {
           <TouchableHighlight 
             style={styles.button}
             onPress={this.handleSubmit.bind(this)}
-            underlayColor="red" >
+            underlayColor="#e99695" >
               <Text style={styles.buttonText}>Login</Text>
           </TouchableHighlight>
 
@@ -188,7 +175,7 @@ var styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
     resizeMode: 'cover',
-    width: IMAGE_WIDTH+210,
+    width: IMAGE_WIDTH,
     height: IMAGE_HEIGHT,
   },
   container: {              // view
@@ -196,6 +183,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.6)',
     marginTop: 140,
     marginLeft: 27,
+    borderRadius: 11,
     width: 330,
     height: 400
   },
@@ -232,7 +220,7 @@ var styles = StyleSheet.create({
   },
   button: {
     position: 'relative',
-    backgroundColor: '#00b8ff',
+    backgroundColor: '#99ff99',
     height: 45,
     width: 120,
     borderWidth: 0.3,
