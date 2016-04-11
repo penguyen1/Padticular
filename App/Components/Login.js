@@ -90,7 +90,8 @@ class Login extends React.Component {
             passProps: { 
               user: { 
                 uid: authData.uid,
-                name: firstname  // user's first name
+                name: firstname,  // user's first name
+                start: this.props.navigator.navigationContext._currentRoute
               }
             }
           })
@@ -102,13 +103,16 @@ class Login extends React.Component {
 
   // Redirect to Signup Component
   handleGoToSignup() {
-    this.props.navigator.push({ 
+    this.props.navigator.replace({ 
       title: 'Signup',
       component: Signup,
-      leftButtonTitle: ' '
+      leftButtonTitle: ' ',
+      passProps: {
+        start: this.props.navigator.navigationContext._currentRoute
+      }
     })
   }
-  
+
   // handles Password input
   handlePassword(e){
     this.setState({
@@ -213,15 +217,17 @@ var styles = StyleSheet.create({
     color: 'white',
   },
   textInput: {
-    flex: 1,
     position: 'relative',
     backgroundColor: 'white',
     opacity: 0.6,
-    height: 40,
-    padding: 2,
+    height: 50,
+    paddingLeft: 10,
     marginTop: 10,
+    marginLeft: 10,
+    marginRight: 10,
     fontSize: 18,
     borderWidth: 0.4,
+    borderRadius: 4,
     borderColor: 'black',
     color: 'black',
     textAlign: 'center',

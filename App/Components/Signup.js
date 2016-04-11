@@ -82,7 +82,7 @@ class Signup extends React.Component{
               rightButtonTitle: 'Logout',
               onRightButtonPress: () => {
                 ref.unauth();                 // Destroys User Auth
-                this.props.navigator.pop();   // go back to previous component - Signup
+                this.props.navigator.popToTop();   // go back to previous component - Signup
               },
               passProps: {
                 user: {
@@ -104,7 +104,7 @@ class Signup extends React.Component{
     //   component: Login,
     //   leftButtonTitle: ' '
     // })
-    this.props.navigator.pop()
+    this.props.navigator.resetTo(this.props.start)
   }
 
   // handles Fullname input
@@ -199,6 +199,10 @@ class Signup extends React.Component{
   }
 }
 
+Signup.propTypes = {
+  start: React.PropTypes.object.isRequired
+};
+
 // Signup StyleSheet
 var styles = StyleSheet.create({
   backgroundImage: {
@@ -228,15 +232,17 @@ var styles = StyleSheet.create({
     color: 'white',
   },
   textInput: {
-    flex: 1,
     position: 'relative',
     backgroundColor: 'white',
     opacity: 0.6,
     height: 50,
     padding: 2,
     marginTop: 10,
+    marginLeft: 10,
+    marginRight: 10,
     fontSize: 18,
     borderWidth: 0.4,
+    borderRadius: 4,
     borderColor: 'black',
     color: 'black',
     textAlign: 'center',

@@ -82,7 +82,7 @@ class Homepage extends React.Component{
   // Redirect to Search Component
   handleGoToSearch(){
     this.props.navigator.push({
-      title: 'Search',
+      title: 'Padticular Apartments',
       component: Search,
       leftButtonTitle: 'Back',
       onLeftButtonPress: () => { this.props.navigator.pop() },
@@ -110,12 +110,6 @@ class Homepage extends React.Component{
     })
   }
 
-  // Logout & Redirect to Login Component --- belongs in Nav Bar!
-  handleLogout(){
-    ref.unauth();                 // Destroys User Auth
-    this.props.navigator.pop();   // go back to previous component - Signup
-  }
-
   // solution to reupdating new additions to favorites list???
   _onRefresh() {
     console.log('refreshing - updating for new favorites!')
@@ -130,7 +124,7 @@ class Homepage extends React.Component{
         style={{ height: Dimensions.get('window').height,  }}
         overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.4)'}}
         source={{ uri: 'http://loremflickr.com/640/480' }} >
-          <Text style={styles.title}>You dont got no favorites!</Text>
+          <Text style={styles.title}>You got no favorites</Text>
       </Parallax.Image>
     )
   }
@@ -157,26 +151,31 @@ class Homepage extends React.Component{
                   ? (this.state.favorites.map((apt, i)=>this.renderApt(apt, i))) 
                   : (this.renderEmptyMsg()) 
     return (
-      <Parallax.ScrollView
-        style={styles.scrollView}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh.bind(this)} />}
-      >
-      {/* Temp 'Search' Button to Search Component */}
-      <Parallax.Image
-        style={{ height: IMAGE_HEIGHT }}
-        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.45)'}}
-        source={{ uri: 'http://clarityonfire.com/wp-content/uploads/2014/04/2.jpg' }} 
-        onPress={this.handleGoToSearch.bind(this)} >
-          <Text style={styles.search}>Search Apartments</Text>
-      </Parallax.Image>
+      <View style={[styles.container]}>
+        <View >
+          <Image source={require('./Images/NYC2.jpg')} style={styles.backgroundImage} ></Image>
+        </View>
+        <Parallax.ScrollView
+          style={styles.scrollView}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)} />}
+        >
+        {/* Temp 'Search' Button to Search Component */}
+        <Parallax.Image
+          style={{ height: IMAGE_HEIGHT }}
+          overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.45)'}}
+          source={{ uri: 'http://clarityonfire.com/wp-content/uploads/2014/04/2.jpg' }} 
+          onPress={this.handleGoToSearch.bind(this)} >
+            <Text style={styles.search}>Search Apartments</Text>
+        </Parallax.Image>
 
-      {/* lists EACH user's favorites */}
-      {check}
+        {/* lists EACH user's favorites */}
+        {check}
 
-      </Parallax.ScrollView>
+        </Parallax.ScrollView>
+      </View>
     )
   }
 }
@@ -185,11 +184,28 @@ class Homepage extends React.Component{
 var styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: 'relative',
     backgroundColor: '#F6F6EF',
     flexDirection: 'column',
+    width: IMAGE_WIDTH,
+    height: IMAGE_HEIGHT,
+  },
+  fixed: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  backgroundImage: {
+    position: 'absolute',
+    resizeMode: 'cover',
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
   },
   title: {
-    fontSize: 40,
+    position: 'relative',
+    fontSize: 30,
     textAlign: 'center',
     lineHeight: 55,
     fontWeight: 'bold',
@@ -218,6 +234,7 @@ var styles = StyleSheet.create({
     marginTop: 0,
   },
   search: {
+    position: 'absolute',
     fontSize: 35,
     textAlign: 'center',
     paddingBottom: 10,
@@ -232,6 +249,7 @@ var styles = StyleSheet.create({
     shadowColor: 'black',
     shadowOpacity: 0.8,
     marginTop: 60,
+    marginLeft: 28
   },
   empty: {
     fontSize: 24,
@@ -288,7 +306,7 @@ var styles = StyleSheet.create({
 });
 
 Homepage.propTypes = {
-  user: React.PropTypes.object.isRequired
+  user: React.PropTypes.object.isRequired,
 };
 
 module.exports = Homepage;

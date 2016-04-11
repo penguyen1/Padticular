@@ -53,6 +53,8 @@ class Padticular extends React.Component{
       <NavigatorIOS
         style={styles.container}
         translucent={true}
+        tintColor="#e99695"
+        tileTextColor="#99ff99"
         initialRoute={goHere} />
     )
   }
