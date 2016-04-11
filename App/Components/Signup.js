@@ -97,11 +97,12 @@ class Signup extends React.Component{
 
   // Redirect to Login Component
   handleGoToLogin() {
-    this.props.navigator.replace({
+    this.props.navigator.resetTo({
       title: 'Login',
       component: Login,
       leftButtonTitle: ' '
     })
+    // this.props.navigator.popToTop()
   }
 
   render(){

@@ -1,15 +1,12 @@
 'use strict'
 const React = require('react-native');
 const Firebase = require('firebase');
-var BlurView = require('react-native-blur').BlurView;
-var VibrancyView = require('react-native-blur').VibrancyView;
 
 var Signup = require('./Signup');
 var Homepage = require('./Homepage');
 var Search = require('./Search');
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
 var userRef = ref.child('users/');
-
 
 var {
   Dimensions,
@@ -27,7 +24,7 @@ var IMAGE_HEIGHT = Dimensions.get('window').height;
 // console.log('login width: ', IMAGE_WIDTH)
 // console.log('login height: ', IMAGE_HEIGHT)
 
-class Login extends React.Component{
+class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state={
@@ -99,6 +96,7 @@ class Login extends React.Component{
               }
             }
           })
+
         })
       }     // end if-else statement
     })
@@ -113,7 +111,18 @@ class Login extends React.Component{
     })
   }
 
-  render(){
+
+  onPress() {
+    // call getValue() to get the values of the form
+    var value = this.refs.form.getValue();
+    if (value) { // if validation fails, value will be null
+      console.log('Testing Login Values: ', value); // value here is an instance of LoginInfo
+    } else {
+      console.log('NO LOGIN MET')
+    }
+  }
+
+  render() {
     const showError = (
       this.state.error ? <Text style={styles.errorMsg}>{this.state.error}</Text> : <Text style={styles.errorMsg}></Text>
     );
@@ -172,9 +181,9 @@ class Login extends React.Component{
       </Image>   
     )
   }
-}
+} // end of Login Component
 
-// Blur StyleSheet
+// Login StyleSheet
 var styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
@@ -190,7 +199,7 @@ var styles = StyleSheet.create({
     width: 330,
     height: 400
   },
-  welcome: {              // not used
+  welcome: {             
     position: 'relative',
     backgroundColor: 'transparent',
     fontSize: 52,
@@ -255,8 +264,6 @@ var styles = StyleSheet.create({
     marginLeft: 7
   },
 });
-
-
 
 module.exports = Login;
 
