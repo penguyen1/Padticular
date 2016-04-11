@@ -5,11 +5,15 @@ const Firebase = require('firebase');
 var Signup = require('./Signup');
 var Homepage = require('./Homepage');
 var Search = require('./Search');
-var styles = require('./Helpers/Styles');
+// var styles = require('./Helpers/Styles');
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
 var userRef = ref.child('users/');
 
+var BlurView = require('react-native-blur').BlurView;
+var VibrancyView = require('react-native-blur').VibrancyView;
+
 var {
+  Image,
   Text,
   TextInput,
   TouchableHighlight,
@@ -111,59 +115,30 @@ class Login extends React.Component{
     );
 
     return (
-      <View style={styles.mainContainer}>
-        <View style={styles.formContainer}>
-          <Text style={styles.title}> Login </Text>
-
-          {/* Email Address */}
-          <TextInput
-            style={styles.textInput}
-            placeholder="Email Address"
-            autoCapitalize="none"
-            autoCorrect={false}
-            clearTextOnFocus={true}
-            onChangeText={(text)=>this.setState({ email: text})}
-            value={this.state.email} />
-
-          {/* Password */}
-          <TextInput
-            style={styles.textInput}
-            placeholder="Password"
-            autoCapitalize="none"
-            autoCorrect={false}
-            secureTextEntry={true}
-            clearTextOnFocus={true}
-            onChangeText={(text)=>this.setState({ password: text})}
-            value={this.state.password} />
-
-          {/* Login Button */}
-          <TouchableHighlight 
-            style={styles.button}
-            onPress={this.handleSubmit.bind(this)}
-            underlayColor="white" >
-              <Text style={styles.buttonText}>Login</Text>
-          </TouchableHighlight>
-
-          {/* Spinning Status */}
-          <ActivityIndicatorIOS
-            animating={this.state.isLoading}
-            color="#111"
-            size="large"  />
-          {showError}
-
-          {/* Link to Signup Component */}
-          <View style={styles.footer}>
-            <Text>Not a member?</Text>
-            <TouchableHighlight 
-              onPress={this.handleGoToSignup.bind(this)}>
-              <Text style={styles.link}>Sign up here</Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      </View>
+      <Image source={{ uri: '../Images/NYC-Traffic.jpg' }} style={styles.menu}>
+        <VibrancyView blurType="light" style={styles.blur}>
+          <Text>IT WORKSSSSSSS</Text>
+        </VibrancyView>
+      </Image>   
     )
   }
 }
+
+// Blur StyleSheet
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+    color: '#FFFFFF',
+  },
+});
+
 
 
 module.exports = Login;
