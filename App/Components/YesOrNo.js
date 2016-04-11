@@ -1,5 +1,3 @@
-                                            
-
                                             /*** ATTENTION!! ***/ 
 /** CREDIT: some of the code was copied from GitHub/brentvatne for react-native-animated-tinder swipe animation  **/
 /** FOLLOWING METHODS WERE COPIED: componentDidMount, _animateEntrance, componentWillMount, _resetState & render **/
@@ -12,15 +10,10 @@ const SwipeCards = require('react-native-swipe-cards');  // .default;
 const clamp = require('clamp');
 const Dimensions = require('Dimensions');
 const Defaults = require('./Helpers/Defaults');
-
+var TimerMixin = require('react-timer-mixin');
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
 var api = require('../Utils/api');
 var Homepage = require('./Homepage');
-// var styles = require('./Helpers/Styles');
-// var Nav = require('./Nav');
-var SWIPE_THRESHOLD = 120;
-var NEXT_CARD_POSITION_OFFSET = 4;
-var NEXT_CARD_SIZE_OFFSET = 8;
 
 var {
   ActivityIndicatorIOS,
@@ -36,6 +29,11 @@ var {
   StyleSheet,
   View,
 } = React;
+
+// Tinder Card effects
+var SWIPE_THRESHOLD = 120;
+var NEXT_CARD_POSITION_OFFSET = 4;
+var NEXT_CARD_SIZE_OFFSET = 8;
 var IMAGE_WIDTH = Dimensions.get('window').width;
 var IMAGE_HEIGHT = Dimensions.get('window').height;
 
@@ -47,19 +45,22 @@ class Card extends Component {
           <Animated.View style={[styles.card, this.props.animatedCardStyles]} {...this.props.panResponder}>
             <Image source={{uri: this.props.picture_urls[0]}} style={styles.cardImage}>
               <Animated.View style={[styles.cardImageTextContainer, styles.cardImageYupContainer, this.props.animatedYupStyles]}>
-                <Text style={[styles.cardImageText, styles.cardImageYupText]}>SAVE IT!</Text>
+                <Text style={[styles.cardImageText, styles.cardImageYupText]}>WANT IT!</Text>
+              </Animated.View>
+              <Animated.View style={[styles.cardImageTextContainer, styles.cardImageNopeContainer, this.props.animatedNopeStyles]}>
+                <Text style={[styles.cardImageText, styles.cardImageNopeText]}>NO THANK YOU</Text>
               </Animated.View>
               <Text style={styles.title}>{this.props.price_formatted}/night</Text>
               <Text style={styles.subtitle}>{this.props.property_type} | {this.props.smart_location}</Text>
-              <Animated.View style={[styles.cardImageTextContainer, styles.cardImageNopeContainer, this.props.animatedNopeStyles]}>
-                <Text style={[styles.cardImageText, styles.cardImageNopeText]}>PASS</Text>
-              </Animated.View>
+              <Text style={styles.subtitle}>{this.props.bedrooms} Bedrooms | {this.props.bathrooms} Bathrooms</Text>
+              <Text style={styles.subtitle}>{this.props.min_nights} night min | Fits {this.props.person_capacity} people</Text>
+              <Text style={styles.fill}></Text>
             </Image>
           </Animated.View>   
         </Animated.View>
       </View>
     );
-  }
+  } 
 }
 
 class YesOrNo extends React.Component {
@@ -134,7 +135,7 @@ class YesOrNo extends React.Component {
   // performs before rendering to Homepage
   componentWillUnmount(){
     console.log('unmounting YesOrNo')
-    ref.off()
+    // ref.off()
   }
 
   componentDidMount() {
@@ -176,7 +177,9 @@ class YesOrNo extends React.Component {
     // adds apt_uid to '.../users/user_uid/apts'
     this.userRef.child(`${this.props.user.uid}/apts/${newApt.key()}`).set(true)
     // TOTO: find 5 most recent crimes, check if apt_uid exists in crimes, push/update with new crimes
-    this._resetState()
+    
+    // delays asynchronous issue 
+    TimerMixin.setTimeout(()=>{this._resetState()}, 500)
     // this.handleNextApt()
   }
 
@@ -205,7 +208,6 @@ class YesOrNo extends React.Component {
       this.props.navigator.popToRoute(home)
     }
     console.log('I PRESENT TO YOU --- ', this.state.apt);
-    // this._animateEntrance();
   }
 
   _resetState() {
@@ -237,30 +239,12 @@ class YesOrNo extends React.Component {
     let { pan, enter, apt } = this.state;
     let [translateX, translateY] = [pan.x, pan.y];
 
-    // card 0 animation
-    // let rotate = pan.x.interpolate({inputRange: [-240, 0, 240], outputRange: ["-30deg", "0deg", "30deg"]});
-    // let opacity = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.5, 1, 0.5]})   // opt out
-    // let scale = enter;  // opt out
-
-    // let animatedCardStyles = {transform: [{translateX}, {translateY}, {rotate}, {scale}], opacity};  // cut off end
-
-    // let yupOpacity = pan.x.interpolate({inputRange: [0, 150], outputRange: [0, 1]});
-    // let yupScale = pan.x.interpolate({inputRange: [0, 150], outputRange: [0.5, 1], extrapolate: 'clamp'});
-    // let animatedYupStyles = {transform: [{scale: yupScale}], opacity: yupOpacity}
-
-    // let nopeOpacity = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0]});
-    // let nopeScale = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0.5], extrapolate: 'clamp'});
-    // let animatedNopeStyles = {transform: [{scale: nopeScale}], opacity: nopeOpacity}
-
-    // card 0 animation
     let rotate = pan.x.interpolate({inputRange: [-240, 0, 240], outputRange: ["-30deg", "0deg", "30deg"]});
     let animatedCardStyles = {transform: [{translateX}, {translateY}, {rotate}]};
 
-    let yupOpacity = pan.x.interpolate({inputRange: [0, SWIPE_THRESHOLD], outputRange: [0, 1], extrapolate: 'clamp'});      // save apt??
-    // console.log('yupOpacity: ', yupOpacity)
+    let yupOpacity = pan.x.interpolate({inputRange: [0, SWIPE_THRESHOLD], outputRange: [0, 1], extrapolate: 'clamp'});      // save apt here??
     let animatedYupStyles = {opacity: yupOpacity}
     let nopeOpacity = pan.x.interpolate({inputRange: [-SWIPE_THRESHOLD, 0], outputRange: [1, 0], extrapolate: 'clamp'});
-    // console.log('NopeOpacity: ', NopeOpacity)
     let animatedNopeStyles = {opacity: nopeOpacity}
 
     let card0AnimatedStyles = {
@@ -270,24 +254,7 @@ class YesOrNo extends React.Component {
     }
 
     let person0 = this.state.apt
-
-    // return (
-    //   <View style={styles.container}>
-    //     <Animated.View 
-    //       style={[styles.card, animatedCardStyles, {backgroundColor: 'red'}]} 
-    //       {...this._panResponder.panHandlers}>
-    //     </Animated.View>
-
-    //     <Animated.View style={[styles.nope, animatedNopeStyles]}>
-    //       <Text style={styles.nopeText}>Nope!</Text>
-    //     </Animated.View>
-
-    //     <Animated.View style={[styles.yup, animatedYupStyles]}>
-    //       <Text style={styles.yupText}>Yup!</Text>
-    //     </Animated.View>
-    //   </View>
-    // )
-
+    console.log('person0: ', person0)
     return(
       <View style={styles.bodyContainer}>
         <View style={styles.responsiveContainer}>
@@ -306,7 +273,7 @@ class YesOrNo extends React.Component {
           </View>
 
           <View style={styles.cardsContainer}>
-            <Card key={person0.name} {...person0} {...card0AnimatedStyles} panResponder={this._panResponder.panHandlers}/>
+            <Card key={person0.id} {...person0} {...card0AnimatedStyles} panResponder={this._panResponder.panHandlers}/>
           </View>
 
         </View>   
@@ -319,7 +286,6 @@ var styles = StyleSheet.create({
   // main container
   bodyContainer: {
     flex: 1,
-    //margin: 10,
     backgroundColor: '#F5FCFF',
   },
 
@@ -329,13 +295,11 @@ var styles = StyleSheet.create({
     flex: 1,
     paddingBottom: 100,
   },
-
   // cards
   cardsContainer: {
     flex: 1,
     width: IMAGE_WIDTH
   },
-
   cardResizeContainer: {
     flex: 1,
     position: 'absolute',
@@ -343,9 +307,7 @@ var styles = StyleSheet.create({
     left: 0,
     bottom: 0, 
     right: 0,
-
   },
-
   cardContainer: {
     position: 'absolute',
     top: 0,
@@ -355,14 +317,12 @@ var styles = StyleSheet.create({
     justifyContent: 'flex-end',
     width: IMAGE_WIDTH,
   },
-
   card: {   
     position: 'relative',
     borderColor: '#AAA',
     borderWidth: 1,
     borderRadius: 8,  
     flex: 1,
-    //overflow: 'hidden',
     shadowRadius: 2,
     shadowColor: '#BBB',
     shadowOpacity: 0.8,
@@ -371,13 +331,11 @@ var styles = StyleSheet.create({
       width: 0,
     }
   },
-
   cardImage: {
     flex: 1,
     borderRadius: 8,
     backgroundColor: 'rgba(0,0,0,0.8)',
   },
-
   cardImageTextContainer: {
     position: 'absolute',
     borderWidth: 3,
@@ -427,7 +385,7 @@ var styles = StyleSheet.create({
     shadowOpacity: 0.8,
     marginTop: 160,
     opacity: 1,
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: 'rgba(0,0,0,0.3)',
   },
   subtitle: {
     fontSize: 20,
@@ -441,22 +399,14 @@ var styles = StyleSheet.create({
     shadowRadius: 1,
     shadowColor: 'black',
     shadowOpacity: 0.8,
-    marginTop: 0,
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: 'rgba(0,0,0,0.3)',
   },
-  name: {
-    fontWeight: 'bold',
-    color: '#999',
+  fill: {
+    lineHeight: 10,
+    backgroundColor: 'rgba(0,0,0,0.3)',
   },
-  value: {
-    flex: 1,
-    textAlign: 'right',
-    fontWeight: 'bold',
-    color: '#999',
-  },
-  
-  // buttons
 
+  // buttons
   buttonsContainer: {
     height:100,
     position: 'absolute',
@@ -492,63 +442,6 @@ var styles = StyleSheet.create({
 
 });
 
-// // YesOrNo StyleSheet
-// var styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     backgroundColor: '#F5FCFF',
-//   },
-//   card: {
-//     width: 200,
-//     height: 200,
-//     backgroundColor: 'red',
-//   },
-//   yup: {
-//     borderColor: 'green',
-//     borderWidth: 2,
-//     position: 'absolute',
-//     padding: 20,
-//     bottom: 20,
-//     borderRadius: 5,
-//     right: 20,
-//   },
-//   yupText: {
-//     fontSize: 16,
-//     color: 'green',
-//   },
-//   nope: {
-//     borderColor: 'red',
-//     borderWidth: 2,
-//     position: 'absolute',
-//     bottom: 20,
-//     padding: 20,
-//     borderRadius: 5,
-//     left: 20,
-//   },
-//   nopeText: {
-//     fontSize: 16,
-//     color: 'red',
-//   },
-//   thumbnail: {
-//     flex: 1,
-//     width: 300,
-//     height: 300,
-//   },
-//   text: {
-//     fontSize: 20,
-//     paddingTop: 10,
-//     paddingBottom: 10
-//   },
-//   noMoreCards: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-// })
-
-
 YesOrNo.propTypes = {
   user: React.PropTypes.object.isRequired,
   apts: React.PropTypes.array.isRequired,
@@ -556,41 +449,3 @@ YesOrNo.propTypes = {
 };
 
 module.exports = YesOrNo;
-
-
-
-
-
-
-
-
-/// ORIGINAL RENDER 
-
-      // <View style={styles.mainContainer}>
-      //   <View style={styles.formContainer}>
-      //     <Text style={styles.listFavs}>Apts for {this.props.user.name} </Text>
-      //     <Text style={styles.listFavs}>Images: {this.state.apt.picture_urls[0]} </Text>
-      //     <Text style={styles.listFavs}>{this.state.apt.price_formatted} per night</Text>
-      //     <Text style={styles.listFavs}>{this.state.apt.property_type} | </Text>
-      //     <Text style={styles.listFavs}>{this.state.apt.smart_location}</Text>
-      //     <Text style={styles.listFavs}>Fits: {this.state.apt.person_capacity} </Text>
-      //     <Text style={styles.listFavs}>Min nights: {this.state.apt.min_nights} </Text>
-
-      //     {/* Temp 'YES' Button to Save Apt */}
-      //     <TouchableHighlight
-      //       style={styles.button}
-      //       onPress={this.handleSaveApt.bind(this)}
-      //       underlayColor='white' >
-      //       <Text style={styles.buttonText}>I WANT!</Text>
-      //     </TouchableHighlight>
-
-      //     {/* Temp 'NAHH' Button to get Next Apt */}
-      //     <TouchableHighlight
-      //       style={styles.button}
-      //       onPress={this.handleNextApt.bind(this)}
-      //       underlayColor='white' >
-      //       <Text style={styles.buttonText}>Nah, Pass</Text>
-      //     </TouchableHighlight>
-
-      //   </View>
-      // </View>

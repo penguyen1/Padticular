@@ -3,13 +3,12 @@ const React = require('react-native');
 const Parallax = require('react-native-parallax');
 const Firebase = require('firebase');
 var TimerMixin = require('react-timer-mixin');
-var Web = require('./Helpers/Web');
-var ViewSite = require('./Helpers/Web');        // WebView     
+var Web = require('./Helpers/Web');               // WebView 
+var Search = require('./Search');            
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com');
-var Search = require('./Search');               // for testing -- belongs in Nav
-// var Nav = require('./Nav');
 
 var {
+  Component,
   Dimensions,
   Image,
   Navigator,
@@ -50,7 +49,7 @@ class Homepage extends React.Component{
   // called when Homepage Component is unmounting
   componentWillUnmount(){
     // removes all Firebase callbacks (no repeatitive issues)
-    ref.off()
+    // ref.off()
     console.log('Leaving homepage: ', this.state.favorites)
   }
 
@@ -70,12 +69,12 @@ class Homepage extends React.Component{
 
     // delays asynchronous issue 
     TimerMixin.setTimeout(()=>{
-      console.log('PART 1 - checking favorites state: ', this.state.favorites)
+      // console.log('PART 1 - checking favorites state: ', this.state.favorites)
       this.setState({
         refreshing: false,
         favorites: this.state.favorites
       })
-      console.log('PART 2 - apt update: ', this.state.favorites)
+      // console.log('PART 2 - apt update: ', this.state.favorites)
     },500)
   }
 
@@ -99,14 +98,17 @@ class Homepage extends React.Component{
   }
 
   // Redirects to Apartment Listing Website 
-  handleGoToSite(i){
-    var url = `https://www.airbnb.com/rooms/${this.state.favorites[i].id}`
-    console.log('id: ', this.state.favorites[i].id)
+  handleGoToSite(apt){
+    // console.log('handleGoToSite: ', this)
+    // console.log('handleGoToSite apt: ', apt)
+    var url = `https://www.airbnb.com/rooms/${apt}`
     this.props.navigator.push({
       title: 'Web View',
       component: Web,
-      key: {i},
-      passProps: {url}
+      passProps: {
+        id: apt,
+        url: url
+      }
     })
   }
 
@@ -121,40 +123,42 @@ class Homepage extends React.Component{
   renderEmptyMsg() {
     return ( 
       <Parallax.Image
-        style={{ height: Dimensions.get('window').height,  }}
-        overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.4)'}}
-        source={{ uri: 'http://loremflickr.com/640/480' }} >
-          <Text style={styles.title}>You got no favorites</Text>
+        key={999999999}
+        style={{ height: 420, width: 380 }}
+        source={{ uri: 'http://images.reachsite.com/5a519b0f-ba89-4015-9c21-6c56515ef1fd/media/429876/medium/429876.PNG?gen=1' }} >
+          <Text style={styles.empty}>You got no favorites!</Text>
       </Parallax.Image>
     )
   }
 
   // displays info of an apartment - id, capacity, address, pic_url, price & property_type
-  renderApt(apt, i){
+  renderApt(apt){
+    // console.log('rendering apt: ', apt)
+    // console.log('rendering this: ', this)
     var pic_url = apt.picture_urls[0].toString()
     return (
       <Parallax.Image
-        key={i}
+        key={apt.id}
         style={{ height: IMAGE_HEIGHT }}
         overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.5)'}}
         source={{ uri: pic_url }} 
-        onPress={this.handleGoToSite.bind(this, i)} >
-          <Text style={styles.title} key={i}> {apt.price_formatted}/night</Text>
+        onPress={this.handleGoToSite.bind(this, apt.id)} >
+          <Text style={styles.title} key={apt.id}> {apt.price_formatted}/night</Text>
           <Text style={styles.subtitle}> {apt.property_type} | {apt.smart_location}</Text>
       </Parallax.Image>
     )
-    // .state.favorites[i]
   }
 
   render() {
     var check = this.state.favorites.length 
-                  ? (this.state.favorites.map((apt, i)=>this.renderApt(apt, i))) 
+                  ? (this.state.favorites.map(this.renderApt.bind(this))) 
                   : (this.renderEmptyMsg()) 
     return (
       <View style={[styles.container]}>
         <View >
           <Image source={require('./Images/NYC2.jpg')} style={styles.backgroundImage} ></Image>
         </View>
+
         <Parallax.ScrollView
           style={styles.scrollView}
           refreshControl={
@@ -165,7 +169,7 @@ class Homepage extends React.Component{
         {/* Temp 'Search' Button to Search Component */}
         <Parallax.Image
           style={{ height: IMAGE_HEIGHT }}
-          overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.45)'}}
+          overlayStyle={{ backgroundColor: 'rgba(0,0,0,0.1)'}}
           source={{ uri: 'http://clarityonfire.com/wp-content/uploads/2014/04/2.jpg' }} 
           onPress={this.handleGoToSearch.bind(this)} >
             <Text style={styles.search}>Search Apartments</Text>
@@ -173,7 +177,6 @@ class Homepage extends React.Component{
 
         {/* lists EACH user's favorites */}
         {check}
-
         </Parallax.ScrollView>
       </View>
     )
@@ -240,23 +243,21 @@ var styles = StyleSheet.create({
     paddingBottom: 10,
     lineHeight: 50,
     fontWeight: 'bold',
-    color: '#99ff99',
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowRadius: 1,
+    color: 'white',
     shadowColor: 'black',
-    shadowOpacity: 0.8,
+    shadowOpacity: 1,
     marginTop: 60,
     marginLeft: 28
   },
   empty: {
-    fontSize: 24,
+    fontSize: 34,
     textAlign: 'center',
+    backgroundColor: 'transparent',
     fontWeight: 'bold',
     color: 'black',
     lineHeight: 40,
+    marginTop: 170,
+    shadowColor: 'black',
   },
   url: {
     opacity: 0.5,
