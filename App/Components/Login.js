@@ -33,23 +33,33 @@ var {
 
 
 // defining the domain model
-var Login = t.struct({
+var LoginInfo = t.struct({
   email: t.String,        // required string
   password: t.String,     // required string
 });
 var options = {};   // optional rendering options (see documentation)
 
 
-class Login extends React.Component{
-  constructor(props) {
-    super(props);
-    this.state={
+class Login extends React.Component {
+  // constructor(props) {
+  //   super(props);
+  //   this.state={
+  //     email: '',
+  //     password: '',
+  //     isLoading: false,
+  //     error: false
+  //   }
+  // }
+
+  getInitialState(){
+    return {
       email: '',
       password: '',
       isLoading: false,
-      error: false
+      error: false,
     }
   }
+
 
   componentWillMount(){
     // user auth exists - but WHO??
@@ -112,6 +122,7 @@ class Login extends React.Component{
               }
             }
           })
+
         })
       }     // end if-else statement
     })
@@ -131,30 +142,29 @@ class Login extends React.Component{
     // call getValue() to get the values of the form
     var value = this.refs.form.getValue();
     if (value) { // if validation fails, value will be null
-      console.log('Testing Login Values: ', value); // value here is an instance of Login
+      console.log('Testing Login Values: ', value); // value here is an instance of LoginInfo
     } else {
       console.log('NO LOGIN MET')
     }
-  },
+  }
 
   render() {
     const showError = (
       this.state.error ? <Text>{this.state.error}</Text> : <View />
-    );
+    )
 
     return (
       <View style={styles.container}>
         {/* display */}
         <Form
           ref="form"
-          type={Login}
-          options={options} />
+          type={LoginInfo} />
 
         <TouchableHighlight style={styles.button} onPress={this.onPress} underlayColor='#99d9f4'>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableHighlight>
       </View>
-    );
+    )
   }
 
 } // end of Login Component
@@ -188,7 +198,7 @@ var styles = StyleSheet.create({
     alignSelf: 'stretch',
     justifyContent: 'center'
   }
-});
+})
 
 
 
