@@ -46,7 +46,7 @@ class Search extends React.Component{
   // call AirBnB API, get response, redirect & pass info to YesOrNo Component
   // **** how do we reset the Search Form fields?? ****
   handleSubmit(){
-    this.setState({ location: this.state.location+", US" })    // search specification to US only
+    this.setState({ location: this.state.location }) 
 
     // convert this.state values into a valid AirBnB URL parameter string
     var params = Object.keys(this.state).map((el)=>{
