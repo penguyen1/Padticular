@@ -54,6 +54,7 @@ class Padticular extends React.Component{
       <NavigatorIOS
         style={styles.container}
         translucent={true}
+        navigationBarHidden={true}
         initialRoute={goHere} />
     )
   }
