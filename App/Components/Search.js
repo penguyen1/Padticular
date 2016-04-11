@@ -2,7 +2,7 @@
 const React = require('react-native');
 const Firebase = require('firebase');
 var api = require('../Utils/api');
-var styles = require('./Helpers/Styles');
+// var styles = require('./Helpers/Styles');
 var YesOrNo = require('./YesOrNo');
 // var Nav = require('./Nav');
 var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
@@ -10,7 +10,8 @@ var ref = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
 var {
   ActivityIndicatorIOS,
   Alert,
-  ListView,
+  Dimensions,
+  Image,
   Navigator,
   Text,
   TextInput,
@@ -18,6 +19,10 @@ var {
   TouchableHighlight,
   View,
 } = React;
+var IMAGE_WIDTH = Dimensions.get('window').width;
+var IMAGE_HEIGHT = Dimensions.get('window').height;
+// console.log('login width: ', IMAGE_WIDTH)
+// console.log('login height: ', IMAGE_HEIGHT)
 
 class Search extends React.Component{
   constructor(props) {
@@ -41,7 +46,7 @@ class Search extends React.Component{
   // call AirBnB API, get response, redirect & pass info to YesOrNo Component
   // **** how do we reset the Search Form fields?? ****
   handleSubmit(){
-    this.setState({ location: this.state.location+",US" })    // search specification to US only
+    this.setState({ location: this.state.location+", US" })    // search specification to US only
 
     // convert this.state values into a valid AirBnB URL parameter string
     var params = Object.keys(this.state).map((el)=>{
@@ -89,9 +94,9 @@ class Search extends React.Component{
   
   render(){
     return(
-      <View style={styles.mainContainer}>
-        <Text style={styles.title}> Search Form </Text>
-        <View style={styles.formContainer}>
+      <Image source={require('./Images/NYC2.jpg')} style={styles.backgroundImage} >
+        <Text style={styles.welcome}>Search Form</Text>
+        <View style={styles.container}>
 
         {/* Location Input: Neighborhood, City, State or Zipcode */}
         <TextInput
@@ -101,12 +106,6 @@ class Search extends React.Component{
           clearTextOnFocus={true}
           onChangeText={(text)=>this.setState({ location: text })}
           value={this.state.location} />
-
-
-          {/* need to move setState in handleSubmit to refresh text fields?? */}
-          {/* validate text inputs?? */}
-
-
         {/* Min number of Bedrooms */}
         <TextInput
           style={styles.textInput}
@@ -154,11 +153,11 @@ class Search extends React.Component{
         <TouchableHighlight 
           style={styles.button}
           onPress={this.handleSubmit.bind(this)}
-          underlayColor="white" >
+          underlayColor="#e99695" >
           <Text style={styles.buttonText}>Search Apt</Text>
         </TouchableHighlight>
       </View>
-    </View>
+    </Image>
     )
   }
 }
@@ -167,6 +166,68 @@ Search.propTypes = {
   user: React.PropTypes.object.isRequired,
   homepage: React.PropTypes.object,
 };
+
+
+// Search StyleSheet
+var styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+    width: IMAGE_WIDTH,
+    height: IMAGE_HEIGHT,
+  },
+  container: {              // view
+    position: 'absolute',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    marginLeft: 0,
+    paddingLeft: 20,
+    paddingRight: 20,
+    width: 380,
+    height: 540
+  },
+  welcome: {             
+    position: 'relative',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    fontSize: 52,
+    textAlign: 'center',
+    marginTop: 64,
+    height: 70,
+    color: 'orange',
+  },
+  textInput: {
+    position: 'relative',
+    backgroundColor: 'white',
+    opacity: 0.7,
+    height: 50,
+    padding: 2,
+    marginTop: 10,
+    fontSize: 15,
+    borderWidth: 0.4,
+    borderRadius: 6,
+    borderColor: 'black',
+    color: 'black',
+    textAlign: 'center',
+  },
+  buttonText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: 'black',
+    alignSelf: 'center'
+  },
+  button: {
+    position: 'relative',
+    backgroundColor: 'orange',
+    height: 45,
+    width: 190,
+    borderWidth: 0.3,
+    borderRadius: 10,
+    marginTop: 20,
+    marginLeft: 76,
+    marginBottom: -20,
+    justifyContent: 'center'
+  },
+});
+
 
 module.exports = Search;
 
