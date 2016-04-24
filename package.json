@@ -13,8 +13,12 @@
     "react-native": "^0.22.2",
     "react-native-blur": "^0.7.11",
     "react-native-parallax": "^0.2.2",
+    "react-native-redux-router": "^1.0.6",
+    "react-native-router-redux": "^0.2.2",
     "react-native-swipe-cards": "0.0.7",
+    "react-redux": "^4.4.5",
     "react-timer-mixin": "^0.13.3",
+    "redux": "^3.5.1",
     "watchman": "^0.1.8"
   }
 }
