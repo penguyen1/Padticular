@@ -19,7 +19,7 @@ var Intro     = require('./components/Intro');
 
 // Redux modules 
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
+import { Provider } from 'react-redux/native';
 import createLogger from 'redux-logger';
 
 const loggerMiddleWare = createLogger();
@@ -48,7 +48,7 @@ class App extends Component {
 }
 
 // Original Version
-// class App extends React.Component {
+// class App extends Component {
 //   render() {
 //     return (
 //       <View style={{ flex:1 }}>
@@ -73,7 +73,7 @@ class App extends Component {
 //   }
 // }
 
-class Padticular2 extends Component {
+class Padticular extends Component {
   render() {
     return (
       <Provider store={store}>
@@ -83,5 +83,5 @@ class Padticular2 extends Component {
   }
 }
 
-AppRegistry.registerComponent('Padticular2', () => Padticular2);
+AppRegistry.registerComponent('Padticular', () => Padticular);
 
