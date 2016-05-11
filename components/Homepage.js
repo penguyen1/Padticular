@@ -33,7 +33,7 @@ class Homepage extends React.Component {
 
 
 // Styling for Homepage page
-const styles = Stylesheet.create({
+var styles = Stylesheet.create({
   container: {
     flex: 1, 
     justifyContent: 'center',
