@@ -1,7 +1,12 @@
 'use strict'
 const React = require('react-native');
-var { Stylesheet, Text, TouchableHighlight, View } = React;
 const Button = require('react-native-button');
+var { 
+  Stylesheet, 
+  Text, 
+  TouchableHighlight, 
+  View,
+} = React;
 
 // Initial component page the user will see 
 class Intro extends React.Component {
@@ -26,7 +31,7 @@ var styles = Stylesheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
-  }
+  },
 });
 
 module.exports = Intro;
