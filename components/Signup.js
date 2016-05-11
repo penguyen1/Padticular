@@ -1,7 +1,19 @@
 'use strict'
 const React = require('react-native');
-var { Stylesheet, Text, View } = React;
 const Button = require('react-native-button');
+var { 
+  Dimensions, 
+  Image, 
+  Stylesheet, 
+  Text, 
+  TextInput, 
+  TouchableHighlight, 
+  View 
+} = React;
+var IMAGE_WIDTH = Dimensions.get('window').width;
+var IMAGE_HEIGHT = Dimensions.get('window').height;
+// console.log('Signup width: ', IMAGE_WIDTH)
+// console.log('Signup height: ', IMAGE_HEIGHT)
 
 // Database connection to Firebase
 const Firebase = require('firebase');
@@ -11,8 +23,11 @@ const user = userRef.child('/users');
 // Signup component - registration form for new members
 class Signup extends React.Component {
   
-  // need methods to create & verify new member info in Firebase!
+  // need methods to verify & create new member info in Firebase!
   // need to create Registration form with TextInput fields for: Full Name, Email & Create Password!
+  
+  // if user info is valid (not repeated), add user to Firebase & redirect to Login component
+  // else, display error popup: "Oops! That email is already taken - please try again!" & reset form fields 
 
   render() {
     let Actions = this.props.routes;      // what info is inside this.props.routes??
@@ -27,7 +42,8 @@ class Signup extends React.Component {
   }
 }
 
-// Styling for Intro component page
+
+// Styling for Signup page
 var styles = Stylesheet.create({
   container: {
     flex: 1, 

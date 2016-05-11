@@ -27,11 +27,7 @@ const createStoreWithMiddleware = applyMiddleware(loggerMiddleWare)(createStore)
 const reducer = combineReducers({routerReducer});
 let store = createStoreWithMiddleware(reducer);
 
-// Database connection to Firebase
-// const Firebase = require('firebase');
-// const userRef = new Firebase('https://dazzling-inferno-3629.firebaseio.com/');
-// const user = userRef.child('users'); 
-
+// Initialization of all Padticular2 routes
 class App extends React.Component {
   render() {
     return (
