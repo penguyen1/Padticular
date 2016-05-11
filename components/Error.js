@@ -2,7 +2,7 @@
 const React = require('react-native');
 const Button = require('react-native-button');
 var {
-  Stylesheet,
+  // Stylesheet,
   Text,
   View,
 } = React;
@@ -13,7 +13,7 @@ class Error extends React.Component {
     let Actions = this.props.routes;  // what info is inside this.props.routes??
 
     return (
-      <View style={styles.container}>
+      <View style={{ width:300, height:300, justifyContent:'center', alignItems:'center', backgroundColor:'white' }}>
         <Text>{this.props.data}</Text>
         <Button onPress={Actions.dismiss}>Ok, got it!</Button>
       </View>
@@ -22,15 +22,14 @@ class Error extends React.Component {
 }
 
 // Styling for Error component
-var styles = Stylesheet.create({
-  container: {
-    // flex: 1,
-    width: 300,
-    height: 300,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
-  },
-});
+// var styles = Stylesheet.create({
+//   container: {
+//     width: 300,
+//     height: 300,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     backgroundColor: 'white',
+//   },
+// });
 
 module.exports = Error;
