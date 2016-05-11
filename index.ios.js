@@ -3,8 +3,8 @@
 
 'use strict'
 const React = require('react-native');
-var {AppRegistry, StyleSheet, Text, View} = React;
-var {Animations, Container, Route, Router, routerReducer, Schema} = require('react-native-redux-router');
+var { AppRegistry, StyleSheet, Text, View } = React;
+var { Animations, Container, Route, Router, routerReducer, Schema } = require('react-native-redux-router');
 
 // Padticular 2 components
 var Error     = require('./components/Error');
@@ -15,7 +15,7 @@ var Profile   = require('./components/Profile');
 var Search    = require('./components/Search');
 var Signup    = require('./components/Signup');
 var YesOrNo   = require('./components/YesOrNo');
-var {NavBar, NavBarModal} = require('./components/NavBar');
+var { NavBar, NavBarModal } = require('./components/NavBar');
 
 // Redux modules 
 import { createStore, combineReducers, applyMiddleware } from 'redux';
