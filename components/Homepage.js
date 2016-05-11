@@ -4,7 +4,7 @@ const Button = require('react-native-button');
 var { 
   Dimensions, 
   Image, 
-  Stylesheet, 
+  // Stylesheet, 
   Text, 
   TextInput, 
   TouchableHighlight, 
@@ -23,7 +23,7 @@ class Homepage extends React.Component {
     let Actions = this.props.routes;      // what info is inside this.props.routes??
 
     return (
-      <View style={styles.container}>
+      <View style={{ flex:1, justifyContent:'center', alignItems:'center', backgroundColor:'#F5FCFF' }}>
         <Text>This is the Homepage Component</Text>
         <Button onPress={Actions.pop}>Back</Button>
       </View>
@@ -33,13 +33,13 @@ class Homepage extends React.Component {
 
 
 // Styling for Homepage page
-var styles = Stylesheet.create({
-  container: {
-    flex: 1, 
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-});
+// var styles = Stylesheet.create({
+//   container: {
+//     flex: 1, 
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     backgroundColor: '#F5FCFF',
+//   },
+// });
 
 module.exports = Homepage;

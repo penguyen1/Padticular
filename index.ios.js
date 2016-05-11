@@ -19,8 +19,8 @@ var { NavBar, NavBarModal } = require('./components/NavBar');
 
 // Redux modules 
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
-import { createLogger } from 'redux-logger';
+import Provider from 'react-redux';
+import createLogger from 'redux-logger';
 
 const loggerMiddleWare = createLogger();
 const createStoreWithMiddleware = applyMiddleware(loggerMiddleWare)(createStore);
